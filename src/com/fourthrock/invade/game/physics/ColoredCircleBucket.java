@@ -11,10 +11,10 @@ import java.util.List;
  * @author Joseph
  *
  */
-public class CircleBucket implements Iterable<ColoredCircle> {
+public class ColoredCircleBucket implements Iterable<ColoredCircle> {
 	private final List<ColoredCircle> circles;
 	
-	public CircleBucket() {
+	public ColoredCircleBucket() {
 		circles = new ArrayList<>();
 	}
 

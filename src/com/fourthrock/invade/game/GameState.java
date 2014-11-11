@@ -1,6 +1,8 @@
-package com.fourthrock.invade.game.scene;
+package com.fourthrock.invade.game;
 
 import com.fourthrock.invade.draw.CanvasRenderer;
+import com.fourthrock.invade.draw.Screen2D;
+import com.fourthrock.invade.game.scene.Scene;
 import com.fourthrock.invade.util.Clock;
 
 
@@ -56,7 +58,7 @@ public class GameState {
 	 * @param y, the y coordinate
 	 */
 	public void handleTap(final float x, final float y) {
-		scene.handleTap(x, y);
+		scene.handleTap(new Screen2D(x, y));
 	}
 
 	/**

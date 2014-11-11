@@ -25,7 +25,26 @@ public class Position2D extends Vector2D {
 				(float)Math.cos(angle),
 				(float)Math.sin(angle)
 		);
-		return this.add(dir.scale(radius)).toPosition();
+		return lerp(radius, dir);
+	}
+	
+	/**
+	 * If this Position2D represents the center of a circle,
+	 * this method takes another Position2D p and a radius
+	 * and computes the point closest to p on the circumference
+	 * of this circle.
+	 */
+	public Position2D nearestOnCircle(final float radius, final Position2D p) {
+		final Vector2D dir = p.minus(this).unitize();
+		return lerp(radius, dir);
+	}
+	
+	/**
+	 * If this Position2D is (x,y), this method returns
+	 * (x + k*dx, y + k*dy)
+	 */
+	private Position2D lerp(final float k, final Vector2D d) {
+		return this.add(d.scale(k)).toPosition();
 	}
 
 }

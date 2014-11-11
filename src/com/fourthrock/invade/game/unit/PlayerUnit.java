@@ -1,0 +1,70 @@
+package com.fourthrock.invade.game.unit;
+
+import com.fourthrock.invade.draw.Color;
+import com.fourthrock.invade.draw.ScaleVec;
+import com.fourthrock.invade.game.physics.ColoredCircle;
+import com.fourthrock.invade.game.physics.Position2D;
+import com.fourthrock.invade.game.tower.Tower;
+
+public class PlayerUnit implements ColoredCircle {
+	public static final float RADIUS = 0.07f;
+	public static ScaleVec SCALE = new ScaleVec(RADIUS, RADIUS, RADIUS);
+			
+	private final Color color;
+	private final UnitAttributes attributes;
+	private Position2D position;
+	private UnitState state;
+	private Tower targetTower;
+	
+	public PlayerUnit(final Color color, final Position2D position, final UnitAttributes attributes) {
+		this.color = color;
+		this.position = position;
+		this.attributes = attributes;
+		this.state = UnitState.MOVING;
+	}
+
+	public void setMoving() {
+		state = UnitState.MOVING;
+	}
+	
+	public void setAttackingUnit() {
+		state = UnitState.ATTACKING_UNIT;
+	}
+	
+	public void setAttackingTower(final Tower t) {
+		if(t.equals(targetTower)) {
+			state = UnitState.ATTACKING_TOWER;
+		}
+	}
+
+
+
+	@Override
+	public Position2D getPosition() {
+		return position;
+	}
+	
+	@Override
+	public Color getColor() {
+		return color;
+	}
+	
+	@Override
+	public float getRadius() {
+		return RADIUS;
+	}
+	
+	public void moveTowards(final Position2D target, final Tower targetTower, final long dt) {
+		this.targetTower = targetTower;
+		position = state.moveTowards(position, target, attributes.getSpeed(), dt);
+	}
+	
+	public void moveOffTower(final Tower t) {
+		position = state.moveOffTower(position, t, targetTower);
+	}
+	
+	public Color getRenderColor() {
+		return state.getRenderColor(color);
+	}
+
+}

@@ -43,8 +43,9 @@ public abstract class ZoomAndPanScene implements Scene {
 	@Override
 	public void handlePan(final float dx, final float dy) {
 		final Position2D adjustedCam =
-				cameraBounds.adjustToFit(eyeX - dx * GameInput.SCROLL_SPEED,
-										 eyeY - dy * GameInput.SCROLL_SPEED);
+				cameraBounds.getClosestInBounds(
+						new Position2D(eyeX - dx * GameInput.SCROLL_SPEED,
+									   eyeY - dy * GameInput.SCROLL_SPEED));
 		eyeX = adjustedCam.x;
 		eyeY = adjustedCam.y;
 	}

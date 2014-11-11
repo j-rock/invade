@@ -1,7 +1,8 @@
 package com.fourthrock.invade.game.scene;
 
 import com.fourthrock.invade.draw.CanvasRenderer;
-import com.fourthrock.invade.game.Player;
+import com.fourthrock.invade.draw.Screen2D;
+import com.fourthrock.invade.game.player.Player;
 
 public class EndGameScene implements Scene {
 
@@ -10,25 +11,25 @@ public class EndGameScene implements Scene {
 	}
 
 	@Override
-	public Scene step(long dt) {
+	public Scene step(final long dt) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void handlePan(float dx, float dy) {
+	public void handlePan(final float dx, final float dy) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void handleTap(float x, float y) {
+	public void handleTap(final Screen2D screenCoords) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void handleScaling(float scaleFactor) {
+	public void handleScaling(final float scaleFactor) {
 		// TODO Auto-generated method stub
 
 	}
@@ -46,7 +47,7 @@ public class EndGameScene implements Scene {
 	}
 
 	@Override
-	public void render(CanvasRenderer renderer) {
+	public void render(final CanvasRenderer renderer) {
 		// TODO Auto-generated method stub
 
 	}

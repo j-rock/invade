@@ -1,4 +1,4 @@
-package com.fourthrock.invade.game;
+package com.fourthrock.invade.game.tower;
 
 public class TowerAttributes {
 

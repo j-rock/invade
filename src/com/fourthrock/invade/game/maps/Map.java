@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fourthrock.invade.draw.Color;
-import com.fourthrock.invade.game.Tower;
 import com.fourthrock.invade.game.physics.BoundingBox2D;
+import com.fourthrock.invade.game.tower.Tower;
 
 /**
  * A class to hold the initial configuration of an Invade game.

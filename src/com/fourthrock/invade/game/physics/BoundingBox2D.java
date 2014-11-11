@@ -21,9 +21,9 @@ public class BoundingBox2D {
 	 * Takes a test point and retrieves the nearest point contained
 	 * within the bounding box.
 	 */
-	public Position2D adjustToFit(final float x, final float y) {
-		final float nearX = Math.min(topRight.x, Math.max(bottomLeft.x, x));
-		final float nearY = Math.min(topRight.y, Math.max(bottomLeft.y, y));
+	public Position2D getClosestInBounds(final Position2D p) {
+		final float nearX = Math.min(topRight.x, Math.max(bottomLeft.x, p.x));
+		final float nearY = Math.min(topRight.y, Math.max(bottomLeft.y, p.y));
 		return new Position2D(nearX, nearY);
 	}
 	

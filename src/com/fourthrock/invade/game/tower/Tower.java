@@ -1,9 +1,10 @@
-package com.fourthrock.invade.game;
+package com.fourthrock.invade.game.tower;
 
 import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.draw.ScaleVec;
 import com.fourthrock.invade.game.physics.ColoredCircle;
 import com.fourthrock.invade.game.physics.Position2D;
+import com.fourthrock.invade.game.player.Player;
 
 /**
  * Represents a tower that can be captured by a PlayerUnit.
@@ -37,5 +38,13 @@ public class Tower implements ColoredCircle {
 	
 	public void setPlayer(final Player p) {
 		this.player = p;
+	}
+
+	/**
+	 * Attacking units should stay around the radius of the tower.
+	 * This method returns the Position2D to put the unit at.
+	 */
+	public Position2D positionForAttackingUnit(final Position2D unitPos) {
+		return position.nearestOnCircle(getRadius(), unitPos);
 	}
 }

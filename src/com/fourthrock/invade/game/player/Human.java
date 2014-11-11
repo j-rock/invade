@@ -1,6 +1,7 @@
-package com.fourthrock.invade.game;
+package com.fourthrock.invade.game.player;
 
 import com.fourthrock.invade.draw.Color;
+import com.fourthrock.invade.game.physics.ColoredCircleCollider;
 
 /**
  * A class to represent a human player.
@@ -10,8 +11,8 @@ import com.fourthrock.invade.draw.Color;
  */
 public class Human extends Player {
 	
-	public Human(final Color color) {
-		super(color);
+	public Human(final Color color, final ColoredCircleCollider collider) {
+		super(color, collider);
 	}
 
 	@Override

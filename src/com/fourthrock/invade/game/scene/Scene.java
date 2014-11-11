@@ -1,6 +1,7 @@
 package com.fourthrock.invade.game.scene;
 
 import com.fourthrock.invade.draw.CanvasRenderer;
+import com.fourthrock.invade.draw.Screen2D;
 
 /**
  * Represents a logical state or "scene" in the GameState
@@ -31,10 +32,11 @@ public interface Scene {
 	/**
 	 * The user made a quick, single tap. Take the tap's
 	 * location in screen space and determine what to do.
+	 * @param screenCoords TODO
 	 * @param x, the x coordinate
 	 * @param y, the y coordinate
 	 */
-	public void handleTap(final float x, final float y);
+	public void handleTap(final Screen2D screenCoords);
 
 	/**
 	 * The user made a scaling gesture (pinching, zooming).

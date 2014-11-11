@@ -1,6 +1,7 @@
-package com.fourthrock.invade.game;
+package com.fourthrock.invade.game.player;
 
 import com.fourthrock.invade.draw.Color;
+import com.fourthrock.invade.game.physics.ColoredCircleCollider;
 
 /**
  * Represents an artificially intelligent Player
@@ -9,8 +10,8 @@ import com.fourthrock.invade.draw.Color;
  */
 public class AI extends Player {
 	
-	public AI(final Color color) {
-		super(color);
+	public AI(final Color color, final ColoredCircleCollider collider) {
+		super(color, collider);
 	}
 
 	@Override

@@ -15,8 +15,8 @@ import com.fourthrock.invade.draw.objects.DrawObject;
 import com.fourthrock.invade.draw.objects.Square;
 import com.fourthrock.invade.draw.objects.Triangle;
 import com.fourthrock.invade.draw.resource.ShaderProgramManager;
+import com.fourthrock.invade.game.GameState;
 import com.fourthrock.invade.game.physics.Position2D;
-import com.fourthrock.invade.game.scene.GameState;
 
 /**
  * Class for rendering the GameState.

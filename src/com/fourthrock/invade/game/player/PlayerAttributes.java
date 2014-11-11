@@ -1,4 +1,7 @@
-package com.fourthrock.invade.game;
+package com.fourthrock.invade.game.player;
+
+import com.fourthrock.invade.game.tower.TowerAttributes;
+import com.fourthrock.invade.game.unit.UnitAttributes;
 
 public class PlayerAttributes {
 	private final UnitAttributes unitAttrs;

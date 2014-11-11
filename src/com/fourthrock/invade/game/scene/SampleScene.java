@@ -1,11 +1,13 @@
 package com.fourthrock.invade.game.scene;
 
-import com.fourthrock.invade.draw.Color;
+import static com.fourthrock.invade.draw.DrawEnum.SQUARE;
+import static com.fourthrock.invade.draw.DrawEnum.TRIANGLE;
+
 import com.fourthrock.invade.draw.CanvasRenderer;
+import com.fourthrock.invade.draw.Color;
+import com.fourthrock.invade.draw.Screen2D;
 import com.fourthrock.invade.game.physics.BoundingBox2D;
 import com.fourthrock.invade.game.physics.Position2D;
-
-import static com.fourthrock.invade.draw.DrawEnum.*;
 
 /**
  * Simple class to demonstrate how easy it is
@@ -36,7 +38,7 @@ public class SampleScene extends ZoomAndPanScene {
 	}
 	
 	@Override
-	public void handleTap(final float x, final float y) {
+	public void handleTap(final Screen2D screenCoords) {
 		// do nothing!
 	}
 

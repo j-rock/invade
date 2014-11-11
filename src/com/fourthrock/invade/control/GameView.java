@@ -6,7 +6,7 @@ import android.opengl.GLSurfaceView;
 import android.view.MotionEvent;
 
 import com.fourthrock.invade.draw.OpenGLRunner;
-import com.fourthrock.invade.game.scene.GameState;
+import com.fourthrock.invade.game.GameState;
 import com.fourthrock.invade.game.scene.SampleScene;
 
 /**

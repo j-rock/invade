@@ -6,7 +6,7 @@ import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 
-import com.fourthrock.invade.game.scene.GameState;
+import com.fourthrock.invade.game.GameState;
 
 /**
  * GameInput allows classification of taps, pans, and scales.
