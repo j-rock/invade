@@ -17,7 +17,7 @@ public class MovingState extends UnitState {
 	public Position2D moveTowards(final Position2D startPos, final Position2D target, final float speed, final long dt) {
 		final Vector2D dir = target.minus(startPos).unitize();
 		final Vector2D translation = dir.scale(speed * dt);
-		return startPos.add(translation).toPosition();
+		return startPos.add(translation).asPosition();
 	}
 
 	@Override

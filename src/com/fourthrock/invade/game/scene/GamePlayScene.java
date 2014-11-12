@@ -6,6 +6,7 @@ import static com.fourthrock.invade.draw.DrawEnum.SQUARE;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
 import android.util.Pair;
 
 import com.fourthrock.invade.draw.CanvasRenderer;
@@ -31,8 +32,8 @@ import com.fourthrock.invade.game.unit.PlayerUnit;
  *
  */
 public class GamePlayScene extends ZoomAndPanScene {
-	private static final float MIN_ZOOM = 1f;  // TODO - determine values
-	private static final float MAX_ZOOM = 10f; // ^
+	private static final float MIN_ZOOM = 1f;
+	private static final float MAX_ZOOM = 6f;
 	
 	private final Human human;
 	private final List<Player> players;
@@ -42,7 +43,7 @@ public class GamePlayScene extends ZoomAndPanScene {
 	public GamePlayScene(final Map map, final Color humanColor) {
 		super(MIN_ZOOM, MAX_ZOOM, map.getBounds());
 		
-		this.collider = new ColoredCircleCollider(map.getBounds(), Tower.RADIUS);
+		this.collider = new ColoredCircleCollider(map.getBounds());
 		this.towers = map.getTowers();
 		
 		this.players = new ArrayList<>();
@@ -53,8 +54,10 @@ public class GamePlayScene extends ZoomAndPanScene {
 			}
 		}
 		human = new Human(humanColor, collider);
+		final Player white = new AI(Color.WHITE, collider);
 		players.add(human);
-		map.assignPlayers(players);
+		map.assignPlayers(players, white);
+		players.add(white);
 	}
 
 	public GamePlayScene() {
@@ -63,15 +66,11 @@ public class GamePlayScene extends ZoomAndPanScene {
 
 	@Override
 	public void handleTap(final Screen2D screenCoords) {
-		final Position2D tapPos = convertScreenToWorld(screenCoords);
+		final Position2D tapPos = getPositionFromScreen(screenCoords);
+		Log.e("GPS", "" + tapPos.x + "," + tapPos.y);
 		human.updateTarget(tapPos);
 		
 		// TODO - add some graphical response
-	}
-
-	private Position2D convertScreenToWorld(final Screen2D screenCoords) {
-		//TODO - implement
-		return null;
 	}
 
 	@Override
@@ -94,8 +93,13 @@ public class GamePlayScene extends ZoomAndPanScene {
 			for(final Player p : players) {
 				p.fireUnits(dt);
 			}
-			for(final Player p : players) {
-				p.removeDeadUnits();
+			for(int i=players.size()-1; i>=0; i--) {
+				final Player p = players.get(i);
+				if(!p.isAlive()) {
+					players.remove(i);
+				} else {
+					p.removeDeadUnits();
+				}
 			}
 			return this;
 		}
@@ -120,7 +124,7 @@ public class GamePlayScene extends ZoomAndPanScene {
 	@Override
 	public void render(final CanvasRenderer renderer) {
 		for(final Tower t : towers) {
-			renderer.draw(SQUARE, t.getPosition(), Tower.SCALE, t.getColor());
+			renderer.draw(SQUARE, t.getPosition(), Tower.SCALE, t.getRenderColor());
 		}
 		for(final Player p : players) {
 			for(final PlayerUnit u : p.getUnits()) {

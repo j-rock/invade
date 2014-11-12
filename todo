@@ -1,0 +1,22 @@
+Picker2D
+  +++++++ Fix bad object picking
+  
+BoundingCircle2D
+  ++++++ Fix bounding circle
+
+GamePlayScene
+  ++++++++++Figure out how to spend human achievement points
+  ++++++++++And how to decide target
+
+EndGameScene
+  ++++++++++Everything
+
+PlayerAttributes
+  -? determine parameters???
+
+GamePlayScene
+  - Up the graphics
+  - parallelize
+
+ColoredCircleCollider
+  - parallelize

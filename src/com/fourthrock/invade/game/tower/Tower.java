@@ -1,6 +1,5 @@
 package com.fourthrock.invade.game.tower;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,9 +16,9 @@ import com.fourthrock.invade.game.player.Player;
  *
  */
 public class Tower implements ColoredCircle {
-	public static final float RADIUS = 10f;
+	public static final float RADIUS = 0.0825f;
 	public static final ScaleVec SCALE = new ScaleVec(RADIUS, RADIUS, RADIUS);
-	private static final float BASE_HEALTH = 1000f;
+	private static final float BASE_HEALTH = 10000f;
 	private static final float REGEN_RATE = BASE_HEALTH / (60 * 1000); // takes one minute to fully heal
 	
 	private final Position2D position;
@@ -47,6 +46,11 @@ public class Tower implements ColoredCircle {
 	public Color getColor() {
 		return player.getColor();
 	}
+	
+	public Color getRenderColor() {
+		final Color healthBlack = new Color(0f, 0f, 0f, 1 - health/BASE_HEALTH);
+		return healthBlack.blend(player.getColor());
+	}
 
 	public float getHealth() {
 		return health;
@@ -71,6 +75,7 @@ public class Tower implements ColoredCircle {
 	
 	public void setPlayer(final Player p) {
 		this.player = p;
+		p.addTower(this);
 	}
 
 	/**

@@ -23,9 +23,9 @@ public class ColoredCircleCollider {
 	private final float bucketSize;
 	private final ColoredCircleBucket[][] buckets;
 	
-	public ColoredCircleCollider(final BoundingBox2D worldBounds, final float maxCircleRadius) {
+	public ColoredCircleCollider(final BoundingBox2D worldBounds) {
 		this.bounds = worldBounds;
-		this.bucketSize = maxCircleRadius;
+		this.bucketSize = Math.max(bounds.getWidth(), bounds.getHeight()) / 9;
 		final int xBuckets = (int) Math.ceil(bounds.getWidth() / bucketSize);
 		final int yBuckets = (int) Math.ceil(bounds.getHeight() / bucketSize);
 		buckets = new ColoredCircleBucket[xBuckets][yBuckets];
@@ -49,7 +49,7 @@ public class ColoredCircleCollider {
 	 * this method tries to find any Tower that does not have
 	 * color playerColor and is within range of target
 	 */
-	public Tower findTower(final Color playerColor, final Position2D target) {
+	public synchronized Tower findTower(final Color playerColor, final Position2D target) {
 		final Index2D b = getBucketIndexFor(target);
 		final List<Index2D> neighbors = getBucketNeighbors(b.x, b.y);
 		
@@ -173,7 +173,11 @@ public class ColoredCircleCollider {
 	private Index2D getBucketIndexFor(final Position2D p) {
 		final int x = (int) Math.floor((p.x - bounds.getMinX()) / bucketSize);
 		final int y = (int) Math.floor((p.y - bounds.getMinY()) / bucketSize);
-		return new Index2D(x, y);
+		
+		final int xI = Math.max(0, Math.min(x, buckets.length - 1));
+		final int yI = Math.max(0, Math.min(y, buckets[xI].length - 1));
+		
+		return new Index2D(xI, yI);
 	}
 	
 	/**
@@ -198,7 +202,7 @@ public class ColoredCircleCollider {
 		return x >= 0 && x < buckets.length && y >= 0 && y < buckets[x].length;
 	}
 	
-	private void clear() {
+	private synchronized void clear() {
 		for(int x=0; x<buckets.length; x++) {
 			for(int y=0; y<buckets[x].length; y++) {
 				buckets[x][y].clear();

@@ -21,18 +21,16 @@ public interface Scene {
 	public Scene step(final long dt);
 
 	/**
-	 * The user made a pan motion. Take the distances
-	 * in screen space dx and dy and determine what to do.
-	 * 
-	 * @param dx, the x distance traversed
-	 * @param dy, the y distance traversed
+	 * The user made a pan motion. Take the coordinates
+	 * of the beginning of the motion and the end, and
+	 * figure it out from there.
 	 */
-	public void handlePan(final float dx, final float dy);
+	public void handlePan(final Screen2D start, final Screen2D end);
 
 	/**
 	 * The user made a quick, single tap. Take the tap's
 	 * location in screen space and determine what to do.
-	 * @param screenCoords TODO
+	 * @param screenCoords
 	 * @param x, the x coordinate
 	 * @param y, the y coordinate
 	 */

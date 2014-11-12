@@ -10,6 +10,9 @@ public class BoundingBox2D {
 	public static final BoundingBox2D UNBOUNDED =
 			new BoundingBox2D(new Position2D(Float.MIN_VALUE, Float.MIN_VALUE),
 							  new Position2D(Float.MAX_VALUE, Float.MAX_VALUE));
+
+	public static final BoundingBox2D ORIGIN_POINT =
+			new BoundingBox2D(new Position2D(0f, 0f), new Position2D(0f, 0f));
 	
 	private final Position2D bottomLeft, topRight;
 	
@@ -65,7 +68,7 @@ public class BoundingBox2D {
 	}
 
 	public BoundingCircle2D toCircleBounds() {
-		final Position2D center = (bottomLeft.add(topRight)).scale(0.5f).toPosition();
+		final Position2D center = (bottomLeft.add(topRight)).scale(0.5f).asPosition();
 		final float radius = Math.max(getWidth(), getHeight());
 		return new BoundingCircle2D(center, radius);
 	}

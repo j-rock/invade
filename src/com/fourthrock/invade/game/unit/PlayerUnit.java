@@ -8,7 +8,7 @@ import com.fourthrock.invade.game.player.Player;
 import com.fourthrock.invade.game.tower.Tower;
 
 public class PlayerUnit implements ColoredCircle {
-	public static final float RADIUS = 0.07f;
+	public static final float RADIUS = 0.0035f;
 	public static ScaleVec SCALE = new ScaleVec(RADIUS, RADIUS, RADIUS);
 
 	private final Player player;

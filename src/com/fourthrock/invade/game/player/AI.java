@@ -38,7 +38,7 @@ public class AI extends Player {
 	@Override
 	public void spendAchievementPoints() {
 		while(getAttributes().getAchievementPoints() > 0) {
-			switch(achievementChoice) {
+			switch(achievementChoice++) {
 				case 0:
 					getAttributes().improveAttack();
 				case 1:

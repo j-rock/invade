@@ -41,14 +41,12 @@ public class GameState {
 	}
 	
 	/**
-	 * The user made a pan motion. Take the distances
-	 * in screen space dx and dy and determine what to do.
-	 * 
-	 * @param dx, the x distance traversed
-	 * @param dy, the y distance traversed
+	 * The user made a pan motion. Take the start and end
+	 * positions in screen coordinates, and figure out
+	 * what to do.
 	 */
-	public void handlePan(final float dx, final float dy) {
-		scene.handlePan(dx, dy);
+	public void handlePan(final Screen2D start, final Screen2D end) {
+		scene.handlePan(start, end);
 	}
 
 	/**

@@ -83,6 +83,9 @@ public abstract class Player {
 	 * Shifts all units in their respective directions.
 	 */
 	public void moveUnits(final long dt) {
+		if (target == null) {
+			target = towers.get(0).getPosition();
+		}
 		for(final PlayerUnit u : units) {
 			u.moveTowardsTarget(dt);
 			u.setMoving(); // we go to the Move state after moving so that collisions can determine the next state.
@@ -122,6 +125,10 @@ public abstract class Player {
 				units.remove(i);
 			}
 		}
+	}
+	
+	public void addTower(final Tower t) {
+		towers.add(t);
 	}
 	
 	public void removeTower(final Tower t) {

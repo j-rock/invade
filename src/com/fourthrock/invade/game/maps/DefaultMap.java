@@ -21,22 +21,24 @@ public class DefaultMap extends Map {
 	public DefaultMap() {
 		super();
 
+		final float k = 180f;
+
 		// inner-pentagon vertices
-		addNewTower(0, 100);    // top			//0
-		addNewTower(-95, 31);   // top-left     //1
-		addNewTower(-59, -81);  // bottom-left  //2
-		addNewTower(59, -81);   // bottom-right //3
-		addNewTower(95, 31);    // top-right    //4
+		addNewTower(0, 100/k);      // top			//0
+		addNewTower(-95/k, 31/k);   // top-left     //1
+		addNewTower(-59/k, -81/k);  // bottom-left  //2
+		addNewTower(59/k, -81/k);   // bottom-right //3
+		addNewTower(95/k, 31/k);    // top-right    //4
 		
 		// outer-star vertices
-		addNewTower(-82, 113);  // top-left     //5
-		addNewTower(-133, -43); // bottom-left  //6
-		addNewTower(0, -140); 	// bottom		//7
-		addNewTower(133, -43);  // bottom-right //8
-		addNewTower(82, 113);   // top-right    //9
+		addNewTower(-82/k, 113/k);  // top-left     //5
+		addNewTower(-133/k, -43/k); // bottom-left  //6
+		addNewTower(0, -140/k); 	// bottom		//7
+		addNewTower(133/k, -43/k);  // bottom-right //8
+		addNewTower(82/k, 113/k);   // top-right    //9
 		
 		// center
-		addNewTower(0, 0);						//10
+		addNewTower(0, 0);							//10
 		
 		for(int i=0; i<5; i++) {
 			// center is adjacent to all inner pentagon vertices

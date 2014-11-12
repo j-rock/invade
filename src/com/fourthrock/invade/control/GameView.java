@@ -7,7 +7,7 @@ import android.view.MotionEvent;
 
 import com.fourthrock.invade.draw.OpenGLRunner;
 import com.fourthrock.invade.game.GameState;
-import com.fourthrock.invade.game.scene.SampleScene;
+import com.fourthrock.invade.game.scene.GamePlayScene;
 
 /**
  * A view container in which to draw OpenGL graphics.
@@ -21,7 +21,7 @@ public class GameView extends GLSurfaceView {
         super(context);
         setEGLContextClientVersion(2);
         
-        gameState = new GameState(new SampleScene());
+        gameState = new GameState(new GamePlayScene());
         gameInput = new GameInput(context, gameState);
 
         renderer = new OpenGLRunner(gameState);

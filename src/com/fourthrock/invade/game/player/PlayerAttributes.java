@@ -25,7 +25,7 @@ public class PlayerAttributes {
 		this.maxUnitCount = 10;
 		this.unitCreationWaitTime = ONE_SEC;
 		
-		this.unitMoveSpeed = 0.01f / ONE_SEC;
+		this.unitMoveSpeed = 0.03f / ONE_SEC;
 		this.unitBaseHealth = 50f;
 		this.unitAttackSpeed = unitBaseHealth / (2 * ONE_SEC);
 		

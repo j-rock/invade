@@ -1,11 +1,10 @@
 package com.fourthrock.invade.game.scene;
 
-import android.util.Log;
-
-import com.fourthrock.invade.control.GameInput;
+import com.fourthrock.invade.draw.Screen2D;
 import com.fourthrock.invade.game.physics.BoundingBox2D;
 import com.fourthrock.invade.game.physics.BoundingCircle2D;
 import com.fourthrock.invade.game.physics.Position2D;
+import com.fourthrock.invade.game.physics.Vector2D;
 
 /**
  * Scene starter-kit to have zooming (scaling) with pinch gestures
@@ -22,7 +21,9 @@ public abstract class ZoomAndPanScene implements Scene {
 	private float zoom;
 
 	private final BoundingCircle2D cameraBounds;
-	private float eyeX, eyeY, eyeZ;
+	private Position2D eye;
+	
+	private final Picker2D picker;
 	
 
 	public ZoomAndPanScene(final float minZoom, final float maxZoom, final BoundingBox2D cameraBounds) {
@@ -31,8 +32,9 @@ public abstract class ZoomAndPanScene implements Scene {
 		zoom = Math.max(minZoom, Math.min(1f, maxZoom));
 		
 		this.cameraBounds = cameraBounds.toCircleBounds();
-		eyeX = eyeY = 0f;
-		eyeZ = -3f;
+		eye = new Position2D(0f, 0f);
+		
+		this.picker = new Picker2D(this);
 	}
 
 	public ZoomAndPanScene(final BoundingBox2D cameraBounds) {
@@ -44,13 +46,10 @@ public abstract class ZoomAndPanScene implements Scene {
 	}
 	
 	@Override
-	public void handlePan(final float dx, final float dy) {
-		final Position2D adjustedCam =
-				cameraBounds.getClosestInBounds(
-						new Position2D(eyeX/zoom - dx * GameInput.SCROLL_SPEED,
-									   eyeY/zoom - dy * GameInput.SCROLL_SPEED));
-		eyeX = adjustedCam.x;
-		eyeY = adjustedCam.y;
+	public void handlePan(final Screen2D start, final Screen2D end) {
+		final Vector2D d = getPositionFromScreen(end).minus(getPositionFromScreen(start));
+		final Position2D p = new Position2D(eye.x - d.x, eye.y + d.y);
+		eye = cameraBounds.getClosestInBounds(p);
 	}
 
 	@Override
@@ -60,11 +59,15 @@ public abstract class ZoomAndPanScene implements Scene {
 
 	@Override
 	public float[] getEye() {
-		return new float[] { eyeX, eyeY, eyeZ };
+		return new float[] { eye.x, eye.y, -3 };
 	}
 
 	@Override
 	public float getZoom() {
-		return 1f;//zoom;
+		return zoom;
+	}
+	
+	protected Position2D getPositionFromScreen(final Screen2D screenCoords) {
+		return picker.convertScreenToWorld(screenCoords);
 	}
 }

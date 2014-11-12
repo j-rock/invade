@@ -44,7 +44,7 @@ public class Position2D extends Vector2D {
 	 * (x + k*dx, y + k*dy)
 	 */
 	private Position2D lerp(final float k, final Vector2D d) {
-		return this.add(d.scale(k)).toPosition();
+		return this.add(d.scale(k)).asPosition();
 	}
 
 }

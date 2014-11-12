@@ -6,7 +6,9 @@ import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 
+import com.fourthrock.invade.draw.Screen2D;
 import com.fourthrock.invade.game.GameState;
+import com.fourthrock.invade.game.physics.Vector2D;
 
 /**
  * GameInput allows classification of taps, pans, and scales.
@@ -61,9 +63,10 @@ public class GameInput {
 		}
 
 		@Override
-		public boolean onScroll(final MotionEvent e1, final MotionEvent e2,
-				float distanceX, float distanceY) {
-			gameState.handlePan(distanceX, distanceY);
+		public boolean onScroll(final MotionEvent e1, final MotionEvent e2, final float dx, final float dy) {
+			final Screen2D end = new Screen2D(e2.getX(),  e2.getY());
+			final Screen2D start = end.minus(new Vector2D(dx, dy)).asScreen2D();
+			gameState.handlePan(start, end);
 			return true;
 		}
 

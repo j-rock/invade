@@ -28,7 +28,7 @@ public class Map {
 	}
 
 	public Map() {
-		this(BoundingBox2D.UNBOUNDED, new ArrayList<Tower>());
+		this(BoundingBox2D.ORIGIN_POINT, new ArrayList<Tower>());
 	}
 
 	public BoundingBox2D getBounds() {
@@ -39,9 +39,12 @@ public class Map {
 		return towers;
 	}
 	
-	public void assignPlayers(final List<Player> players) {
+	public void assignPlayers(final List<Player> players, final Player white) {
 		for(int i=0; i<players.size(); i++) {
 			towers.get(i).setPlayer(players.get(i));
+		}
+		for(int i=players.size(); i<towers.size(); i++) {
+			towers.get(i).setPlayer(white);
 		}
 	}
 	

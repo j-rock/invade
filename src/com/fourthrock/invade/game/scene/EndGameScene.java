@@ -17,15 +17,15 @@ public class EndGameScene implements Scene {
 	}
 
 	@Override
-	public void handlePan(final float dx, final float dy) {
+	public void handleTap(final Screen2D screenCoords) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void handleTap(final Screen2D screenCoords) {
+	public void handlePan(final Screen2D start, final Screen2D end) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override

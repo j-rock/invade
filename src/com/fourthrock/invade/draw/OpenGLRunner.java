@@ -56,7 +56,7 @@ public class OpenGLRunner extends CanvasRenderer implements GLSurfaceView.Render
     @Override
     public void onSurfaceChanged(GL10 unused, int width, int height) {
         GLES20.glViewport(0, 0, width, height);
-        float ratio = (float) width / height;
+        final float ratio = (float) width / height;
         Matrix.frustumM(projMat, 0, -ratio, ratio, -1, 1, 3, 7);
     }
 
@@ -92,11 +92,11 @@ public class OpenGLRunner extends CanvasRenderer implements GLSurfaceView.Render
      * From the game's eye position and zoom factor, we set up our mvpMat
      */
     private void generateModelViewProjectionMatrix() {
-    	float[] eye = gameState.getEye();
+    	final float[] eye = gameState.getEye();
         Matrix.setLookAtM(viewMat, 0, eye[0], eye[1], eye[2], eye[0], eye[1], 0f, 0f, 1.0f, 0.0f);
         Matrix.multiplyMM(mvpMat, 0, projMat, 0, viewMat, 0);
         
-        float scale = gameState.getZoom();
+        final float scale = gameState.getZoom();
         Matrix.scaleM(mvpMat, 0, scale, scale, scale);
     }
     
@@ -110,7 +110,7 @@ public class OpenGLRunner extends CanvasRenderer implements GLSurfaceView.Render
 
 	@Override
 	public void draw(final DrawEnum drawEnum, final Position2D p, final ScaleVec s, final float angle, final Color color) {
-		float[] updatedMVP = new float[16];
+		final float[] updatedMVP = new float[16];
 		Matrix.translateM(updatedMVP, 0, mvpMat, 0, -p.x, p.y, 0);
 		Matrix.rotateM(updatedMVP, 0, angle, 0f, 0f, 1f);
 		Matrix.scaleM(updatedMVP, 0, s.sx, s.sy, s.sz);
