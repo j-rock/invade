@@ -60,6 +60,8 @@ public class ColoredCircleCollider {
 	
 	/**
 	 * Returns a pair of sets of collisions and resets the internal spatial structure.
+	 * Note that for every colliding objects A and B, there will be two collisions registered:
+	 * 		A on B and B on A.
 	 * 
 	 * First list:
 	 * 	 Unit-Tower collisions
@@ -71,7 +73,7 @@ public class ColoredCircleCollider {
 		final List<TowerCollision> towerColls = new ArrayList<>();
 		final List<UnitCollision> unitColls = new ArrayList<>();
 		
-		for(int x=0; x<buckets.length; x++){
+		for(int x=0; x<buckets.length; x++){ // TODO - parallelize
 			for(int y=0; y<buckets[x].length; y++) {
 				final ColoredCircleBucket bucket = buckets[x][y];
 				final List<Index2D> bucketNeighborIndices = getBucketNeighbors(x, y);

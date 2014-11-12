@@ -1,5 +1,6 @@
 package com.fourthrock.invade.game.player;
 
+
 /*
  * Represents the stats a Player has throughout the course of the game.
  * Handles upgrading logic.
@@ -73,13 +74,31 @@ public class PlayerAttributes {
 	public void registerTowerCapture() {
 		registerPoints(50);
 	}
+
+	public void improveAttack() {
+		if(readyTakeAchievement()) {
+			unitAttackSpeed *= 1.1;
+		}
+	}
+
+	public void improveHealth() {
+		if(readyTakeAchievement()) {
+			unitBaseHealth *= 1.1;
+		}
+	}
+
+	public void improveSpeed() {
+		if(readyTakeAchievement()) {
+			unitMoveSpeed *= 1.1;
+		}
+	}
 	
 	/**
 	 * Augments progress by points.
 	 * If a level has been surpassed, we record it
 	 * and gain an achievement point.
 	 */
-	private void registerPoints(final long points) {
+	private void registerPoints(final int points) {
 		progress += points;
 		if(remainingPointsUntilNextLevel() <= 0) {
 			level++;
@@ -94,6 +113,15 @@ public class PlayerAttributes {
 	private static int minPointsForLevel(final int lvl) {
 		// O(n^3 / logn) function for level growth.
 		return 100 + (int)((4 * lvl * lvl * lvl) / Math.log(lvl + 1));
+	}
+
+	private boolean readyTakeAchievement() {
+		if(achievementPoints > 0) {
+			achievementPoints--;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

@@ -46,12 +46,15 @@ public class GamePlayScene extends ZoomAndPanScene {
 		this.towers = map.getTowers();
 		
 		this.players = new ArrayList<>();
-		final List<Color> playerColors = map.getColorsNotEqual(humanColor);
-		for(final Color c : playerColors) {
-			players.add(new AI(c, collider));
+		final Color[] colors = {Color.GREEN, Color.ORANGE, Color.PURPLE, Color.RED, Color.BLUE};
+		for(final Color c : colors) {
+			if(!c.equals(humanColor)) {
+				players.add(new AI(c, collider));
+			}
 		}
 		human = new Human(humanColor, collider);
 		players.add(human);
+		map.assignPlayers(players);
 	}
 
 	public GamePlayScene() {
@@ -79,6 +82,7 @@ public class GamePlayScene extends ZoomAndPanScene {
 		} else {
 			for(final Tower t : towers) {
 				collider.placeCircle(t);
+				t.regainHealth(dt);
 			}
 			for(final Player p : players) {
 				p.tryGenerateUnit(dt);
@@ -89,6 +93,9 @@ public class GamePlayScene extends ZoomAndPanScene {
 			processCollisions(colls.first, colls.second);
 			for(final Player p : players) {
 				p.fireUnits(dt);
+			}
+			for(final Player p : players) {
+				p.removeDeadUnits();
 			}
 			return this;
 		}

@@ -3,8 +3,9 @@ package com.fourthrock.invade.game.maps;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.game.physics.BoundingBox2D;
+import com.fourthrock.invade.game.physics.Position2D;
+import com.fourthrock.invade.game.player.Player;
 import com.fourthrock.invade.game.tower.Tower;
 
 /**
@@ -18,14 +19,16 @@ import com.fourthrock.invade.game.tower.Tower;
  *
  */
 public class Map {
-	private final BoundingBox2D bounds;
-	private final Color[] colors;
-	private final List<Tower> towers;
+	private BoundingBox2D bounds;
+	protected final List<Tower> towers;
 	
 	public Map(final BoundingBox2D bounds, final List<Tower> towers) {
 		this.bounds = bounds;
-		this.colors = new Color[]{Color.GREEN, Color.ORANGE, Color.PURPLE, Color.RED, Color.BLUE};
 		this.towers = towers;
+	}
+
+	public Map() {
+		this(BoundingBox2D.UNBOUNDED, new ArrayList<Tower>());
 	}
 
 	public BoundingBox2D getBounds() {
@@ -35,15 +38,18 @@ public class Map {
 	public List<Tower> getTowers() {
 		return towers;
 	}
-
-	public List<Color> getColorsNotEqual(final Color u) {
-		final List<Color> cs = new ArrayList<>(colors.length);
-		for(final Color c : colors) {
-			if(!c.equals(u)) {
-				cs.add(c);
-			}
+	
+	public void assignPlayers(final List<Player> players) {
+		for(int i=0; i<players.size(); i++) {
+			towers.get(i).setPlayer(players.get(i));
 		}
-		return cs;
 	}
+	
+	protected void addNewTower(final float x, final float y) {
+		final Position2D p = new Position2D(x, y);
+		bounds = bounds.expandWith(p);
+		towers.add(new Tower(p));
+	}
+	
 
 }

@@ -1,7 +1,10 @@
 package com.fourthrock.invade.game.scene;
 
+import android.util.Log;
+
 import com.fourthrock.invade.control.GameInput;
 import com.fourthrock.invade.game.physics.BoundingBox2D;
+import com.fourthrock.invade.game.physics.BoundingCircle2D;
 import com.fourthrock.invade.game.physics.Position2D;
 
 /**
@@ -18,16 +21,16 @@ public abstract class ZoomAndPanScene implements Scene {
 	private final float minZoom, maxZoom;
 	private float zoom;
 
-	private final BoundingBox2D cameraBounds;
+	private final BoundingCircle2D cameraBounds;
 	private float eyeX, eyeY, eyeZ;
 	
 
 	public ZoomAndPanScene(final float minZoom, final float maxZoom, final BoundingBox2D cameraBounds) {
 		this.minZoom = minZoom;
 		this.maxZoom = maxZoom;
-		zoom = 1f;
+		zoom = Math.max(minZoom, Math.min(1f, maxZoom));
 		
-		this.cameraBounds = cameraBounds;
+		this.cameraBounds = cameraBounds.toCircleBounds();
 		eyeX = eyeY = 0f;
 		eyeZ = -3f;
 	}
@@ -44,8 +47,8 @@ public abstract class ZoomAndPanScene implements Scene {
 	public void handlePan(final float dx, final float dy) {
 		final Position2D adjustedCam =
 				cameraBounds.getClosestInBounds(
-						new Position2D(eyeX - dx * GameInput.SCROLL_SPEED,
-									   eyeY - dy * GameInput.SCROLL_SPEED));
+						new Position2D(eyeX/zoom - dx * GameInput.SCROLL_SPEED,
+									   eyeY/zoom - dy * GameInput.SCROLL_SPEED));
 		eyeX = adjustedCam.x;
 		eyeY = adjustedCam.y;
 	}
@@ -62,6 +65,6 @@ public abstract class ZoomAndPanScene implements Scene {
 
 	@Override
 	public float getZoom() {
-		return zoom;
+		return 1f;//zoom;
 	}
 }

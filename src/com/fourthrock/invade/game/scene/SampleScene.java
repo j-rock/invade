@@ -19,14 +19,14 @@ import com.fourthrock.invade.game.physics.Position2D;
  *
  */
 public class SampleScene extends ZoomAndPanScene {
-	private static final float MIN_ZOOM = 0.000001f;
-	private static final float MAX_ZOOM = 100f;
+	private static final float MIN_ZOOM = 0.01f;
+	private static final float MAX_ZOOM = 2f;
 	private float t;
 
 	public SampleScene() {
 		super(MIN_ZOOM, MAX_ZOOM,
-				new BoundingBox2D(new Position2D(-20f, -20f),
-								  new Position2D(20f, 20f)));
+				new BoundingBox2D(new Position2D(-1f, -1f),
+								  new Position2D(1f, 1f)));
 		t = 0f;
 	}
 
@@ -43,20 +43,26 @@ public class SampleScene extends ZoomAndPanScene {
 	}
 
 	@Override
-	public void render(CanvasRenderer renderer) {
+	public void render(final CanvasRenderer renderer) {
 		final float x = 0.75f;
 		final Position2D left = new Position2D(-x, 0f);
 		final Position2D right = new Position2D(x, 0f);
+		final Position2D top = new Position2D(0f, x);
+		final Position2D bot = new Position2D(0f, -x);
 		
 		final Color lightBlue = new Color(0f, 0.7f, 0.9f, 1f);
 		final Color darkPurple =  new Color(0.3f, 0f, 0.6f, 0.4f);
 		final Color lightPurple = new Color(0.6f, 0f, 0.9f, 1f);
 		
-		renderer.draw(SQUARE, left, t, lightBlue);
-		renderer.draw(TRIANGLE, left, -t, Color.WHITE);
-		
-		renderer.draw(SQUARE, right, -t*2, darkPurple);
-		renderer.draw(TRIANGLE, right, t*2, lightPurple);
+		renderSqrTri(renderer, left, t, lightBlue, Color.WHITE);
+		renderSqrTri(renderer, right, -t*2, darkPurple, lightPurple);
+		renderSqrTri(renderer, top, t*4, Color.GREEN, Color.BLUE);
+		renderSqrTri(renderer, bot, -t*4, Color.RED, Color.ORANGE);
 	}
 
+	private static void renderSqrTri(final CanvasRenderer r, final Position2D pos, final float angle, final Color sqrC, final Color triC) {
+		r.draw(SQUARE,  pos,  angle, sqrC);
+		r.draw(TRIANGLE, pos, -angle, triC);
+	}
+	
 }

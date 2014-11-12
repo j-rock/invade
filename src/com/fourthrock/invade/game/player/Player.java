@@ -21,10 +21,10 @@ public abstract class Player {
 	private final List<Tower> towers;
 	private final ColoredCircleCollider collider;
 	private final PlayerAttributes attrs;
-	private Position2D target;
+	protected Position2D target;
 	private Tower targetTower;
 	private long unitGenTime;
-	
+
 	protected Player(final Color color, final ColoredCircleCollider collider) {
 		this.color = color;
 		this.collider = collider;
@@ -40,6 +40,22 @@ public abstract class Player {
 	public List<PlayerUnit> getUnits() {
 		return units;
 	}
+
+	public List<Tower> getTowers() {
+		return towers;
+	}
+
+	public Position2D getTarget() {
+		return target;
+	}
+
+	public PlayerAttributes getAttributes() {
+		return attrs;
+	}
+
+	public Tower getTargetTower() {
+		return targetTower;
+	}
 	
 	/*
 	 * If you don't own any Towers, you're dead.
@@ -47,12 +63,7 @@ public abstract class Player {
 	public boolean isAlive() {
 		return towers.size() > 0;
 	}
-	
-	/**
-	 * Decide a target position for the Player's units.
-	 */
-	public abstract void decideTarget();
-	
+
 	/**
 	 * Updates the target position for the Player's units.
 	 * If the target contains a Tower, we update
@@ -61,7 +72,11 @@ public abstract class Player {
 	 */
 	public void updateTarget(final Position2D target) {
 		this.target = target;
-		targetTower = collider.findTower(color, target);
+		setTargetTower(collider.findTower(color, target));
+	}
+	
+	public void setTargetTower(final Tower targetTower) {
+		this.targetTower = targetTower;
 	}
 
 	/**
@@ -69,7 +84,7 @@ public abstract class Player {
 	 */
 	public void moveUnits(final long dt) {
 		for(final PlayerUnit u : units) {
-			u.moveTowards(target, targetTower, dt);
+			u.moveTowardsTarget(dt);
 			u.setMoving(); // we go to the Move state after moving so that collisions can determine the next state.
 			collider.placeCircle(u);
 		}
@@ -90,15 +105,51 @@ public abstract class Player {
 			final Tower tower = towers.get(randIndex);
 			final Position2D towerPos = tower.getPosition();
 			final Position2D unitPos = towerPos.randomPositionOnCircle(tower.getRadius());
-			final PlayerUnit unit = new PlayerUnit(color, unitPos, attrs);
+			final PlayerUnit unit = new PlayerUnit(this, unitPos);
 			units.add(unit);
 		}
 	}
 
 	public void fireUnits(final long dt) {
 		for(final PlayerUnit u : units) {
-			u.fireAtTarget();
+			u.fireAtTarget(dt);
 		}
 	}
 
+	public void removeDeadUnits() {
+		for(int i=units.size()-1; i>=0; i--) {
+			if(!units.get(i).alive()) {
+				units.remove(i);
+			}
+		}
+	}
+	
+	public void removeTower(final Tower t) {
+		// Since we need random access, we use an ArrayList
+		// unfortunately, this means we have to do an O(n)
+		// search to remove a Tower.
+		// Player's don't lose Towers too often,
+		// so this shouldn't slow us down too much.
+		
+		for(int i=towers.size()-1; i>=0; i--) {
+			if(towers.get(i).equals(t)) {
+				towers.remove(i);
+				return;
+			}
+		}
+	}
+	
+	
+	/**
+	 * Decide a target position for the Player's units.
+	 */
+	public abstract void decideTarget();
+	
+	/**
+	 * Spend achievement points on skills
+	 */
+	public abstract void spendAchievementPoints();
+
+	
+	
 }

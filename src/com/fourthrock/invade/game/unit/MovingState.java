@@ -3,6 +3,7 @@ package com.fourthrock.invade.game.unit;
 import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.game.physics.Position2D;
 import com.fourthrock.invade.game.physics.Vector2D;
+import com.fourthrock.invade.game.player.Player;
 import com.fourthrock.invade.game.tower.Tower;
 
 public class MovingState extends UnitState {
@@ -21,12 +22,12 @@ public class MovingState extends UnitState {
 
 	@Override
 	public Position2D moveOffTower(final Position2D startPos, final Tower t, final Tower targetTower) {
+		// if we were colliding with our targetTower, we wouldn't be in the moving state. IGNORE!
 		return startPos;
 	}
 
 	@Override
-	public void fireAtTarget(final Tower targetTower, final PlayerUnit targetUnit) {
+	public void fireAtTarget(final Player player, final Tower targetTower, final PlayerUnit targetUnit, final long dt) {
+		// don't fire, you're only moving this turn.
 	}
-
-
 }

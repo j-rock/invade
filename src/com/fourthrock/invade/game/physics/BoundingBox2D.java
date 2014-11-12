@@ -1,5 +1,6 @@
 package com.fourthrock.invade.game.physics;
 
+
 /**
  * A class to represent a 2D bounding box in world space.
  * @author Joseph
@@ -47,5 +48,25 @@ public class BoundingBox2D {
 	
 	public float getMinY() {
 		return bottomLeft.y;
+	}
+	
+	public BoundingBox2D expandWith(final Position2D p) {
+		final Position2D nextBot = new Position2D(
+				Math.min(bottomLeft.x, p.x),
+				Math.min(bottomLeft.y, p.y)
+		);
+		
+		final Position2D nextTop = new Position2D(
+				Math.max(topRight.x, p.x),
+				Math.max(topRight.y, p.y)
+		);
+		
+		return new BoundingBox2D(nextBot, nextTop);
+	}
+
+	public BoundingCircle2D toCircleBounds() {
+		final Position2D center = (bottomLeft.add(topRight)).scale(0.5f).toPosition();
+		final float radius = Math.max(getWidth(), getHeight());
+		return new BoundingCircle2D(center, radius);
 	}
 }

@@ -4,24 +4,23 @@ import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.draw.ScaleVec;
 import com.fourthrock.invade.game.physics.ColoredCircle;
 import com.fourthrock.invade.game.physics.Position2D;
-import com.fourthrock.invade.game.player.PlayerAttributes;
+import com.fourthrock.invade.game.player.Player;
 import com.fourthrock.invade.game.tower.Tower;
 
 public class PlayerUnit implements ColoredCircle {
 	public static final float RADIUS = 0.07f;
 	public static ScaleVec SCALE = new ScaleVec(RADIUS, RADIUS, RADIUS);
-			
-	private final Color color;
-	private final PlayerAttributes attributes;
+
+	private final Player player;
 	private Position2D position;
+	private float health;
 	private UnitState state;
-	private Tower targetTower;
 	private PlayerUnit targetUnit;
 	
-	public PlayerUnit(final Color color, final Position2D position, final PlayerAttributes attributes) {
-		this.color = color;
+	public PlayerUnit(final Player player, final Position2D position) {
+		this.player = player;
 		this.position = position;
-		this.attributes = attributes;
+		this.health = player.getAttributes().getBaseUnitHealth();
 		this.state = UnitState.MOVING;
 	}
 
@@ -32,7 +31,7 @@ public class PlayerUnit implements ColoredCircle {
 	
 	@Override
 	public Color getColor() {
-		return color;
+		return player.getColor();
 	}
 	
 	@Override
@@ -41,7 +40,15 @@ public class PlayerUnit implements ColoredCircle {
 	}
 	
 	public Color getRenderColor() {
-		return state.getRenderColor(color);
+		return blendOnHealth(state.getRenderColor(getColor()));
+	}
+
+	public boolean alive() {
+		return health > 0f;
+	}
+	
+	public void takeDamage(final float damage) {
+		health = Math.max(0f, health - damage);
 	}
 	
 	public void setMoving() {
@@ -58,26 +65,26 @@ public class PlayerUnit implements ColoredCircle {
 		// Only attack Tower t
 		// if commanded to attack it
 		
-		if(t.equals(targetTower)) {
+		if(t.equals(player.getTargetTower())) {
 			state = UnitState.ATTACKING_TOWER;
 		}
 	}
 	
-	public void moveTowards(final Position2D target, final Tower targetTower, final long dt) {
-		this.targetTower = targetTower;
-		position = state.moveTowards(position, target, attributes.getUnitMoveSpeed(), dt);
+	public void moveTowardsTarget(final long dt) {
+		position = state.moveTowards(position, player.getTarget(), player.getAttributes().getUnitMoveSpeed(), dt);
 	}
 	
 	public void moveOffTower(final Tower t) {
-		position = state.moveOffTower(position, t, targetTower);
+		position = state.moveOffTower(position, t, player.getTargetTower());
 	}
 
-	/**
-	 * Returns whether or not the 
-	 */
-	public void fireAtTarget() {
-		state.fireAtTarget(targetTower, targetUnit);
+	public void fireAtTarget(final long dt) {
+		state.fireAtTarget(player, player.getTargetTower(), targetUnit, dt);
 	}
-
-
+	
+	private Color blendOnHealth(final Color renderColor) {
+		final float healthRatio = health / player.getAttributes().getBaseUnitHealth();
+		final Color healthBlack = new Color(0f, 0f, 0f, 1 - healthRatio);
+		return healthBlack.blend(renderColor);
+	}
 }

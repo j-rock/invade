@@ -21,4 +21,11 @@ public class Human extends Player {
 		// screen taps will dictate
 		// where to target units.
 	}
+
+	@Override
+	public void spendAchievementPoints() {
+		// do nothing...
+		// screen taps will dictate
+		// how to spend points
+	}
 }

@@ -33,4 +33,8 @@ public class Vector2D {
 	public Position2D toPosition() {
 		return new Position2D(x, y);
 	}
+
+	public float sqrMagnitude() {
+		return (x*x) + (y*y);
+	}
 }
