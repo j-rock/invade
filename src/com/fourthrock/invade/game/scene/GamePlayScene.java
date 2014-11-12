@@ -5,7 +5,6 @@ import static com.fourthrock.invade.draw.DrawEnum.SQUARE;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import android.util.Pair;
 
@@ -62,7 +61,7 @@ public class GamePlayScene extends ZoomAndPanScene {
 	@Override
 	public void handleTap(final Screen2D screenCoords) {
 		final Position2D tapPos = convertScreenToWorld(screenCoords);
-		human.updateTarget(tapPos.x, tapPos.y);
+		human.updateTarget(tapPos);
 		
 		// TODO - add some graphical response
 	}
@@ -86,18 +85,25 @@ public class GamePlayScene extends ZoomAndPanScene {
 				p.decideTarget();
 				p.moveUnits(dt);
 			}
-			final Pair<Set<TowerCollision>, Set<UnitCollision>> colls = collider.withdrawCollisions();
+			final Pair<List<TowerCollision>, List<UnitCollision>> colls = collider.withdrawCollisions();
 			processCollisions(colls.first, colls.second);
+			for(final Player p : players) {
+				p.fireUnits(dt);
+			}
 			return this;
 		}
 	}
 
-	private void processCollisions(final Set<TowerCollision> towerColls, final Set<UnitCollision> unitColls) {
+	private void processCollisions(final List<TowerCollision> towerColls, final List<UnitCollision> unitColls) {
 		for(final TowerCollision tc : towerColls) {
 			tc.u.setAttackingTower(tc.t);
 			tc.u.moveOffTower(tc.t);
 		}
-		// TODO - MORE PROCESSING
+		for(final UnitCollision uc : unitColls) {
+			uc.u.setAttackingUnit(uc.u2);
+		}
+
+		// TODO - add graphical triggers
 	}
 
 	private boolean moreThanOnePlayerAlive() {

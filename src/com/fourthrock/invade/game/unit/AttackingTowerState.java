@@ -21,5 +21,9 @@ public class AttackingTowerState extends UnitState {
 		return (!t.equals(targetTower)) ? startPos : t.positionForAttackingUnit(startPos);
 	}
 
+	@Override
+	public void fireAtTarget(final Tower targetTower, final PlayerUnit targetUnit) {
+	}
+
 
 }

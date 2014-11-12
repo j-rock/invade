@@ -1,9 +1,7 @@
 package com.fourthrock.invade.game.physics;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import android.util.Pair;
 
@@ -40,7 +38,6 @@ public class ColoredCircleCollider {
 
 	/**
 	 * Keeps track of the colored circle in the internal spatial structure.
-	 * @param c
 	 */
 	public void placeCircle(final ColoredCircle c) {
 		final Index2D b = getBucketIndexFor(c.getPosition());
@@ -57,15 +54,12 @@ public class ColoredCircleCollider {
 		final List<Index2D> neighbors = getBucketNeighbors(b.x, b.y);
 		
 		final ColoredCircle c = new ColoredPoint(playerColor, target);
-		final Set<TowerCollision> towerColls = findCollisions(c, neighbors).first;
-		for(final TowerCollision tc : towerColls) {
-			return tc.t;
-		}
-		return null;
+		final List<TowerCollision> towerColls = findCollisions(c, neighbors).first;
+		return towerColls.isEmpty() ? null : towerColls.get(0).t;
 	}
 	
 	/**
-	 * Returns a pair of lists of collisions and resets the internal spatial structure.
+	 * Returns a pair of sets of collisions and resets the internal spatial structure.
 	 * 
 	 * First list:
 	 * 	 Unit-Tower collisions
@@ -73,16 +67,16 @@ public class ColoredCircleCollider {
 	 * Second list:
 	 * 	 Unit-Unit collisions
 	 */
-	public Pair<Set<TowerCollision>, Set<UnitCollision>> withdrawCollisions() {
-		final Set<TowerCollision> towerColls = new HashSet<>();
-		final Set<UnitCollision> unitColls = new HashSet<>();
+	public Pair<List<TowerCollision>, List<UnitCollision>> withdrawCollisions() {
+		final List<TowerCollision> towerColls = new ArrayList<>();
+		final List<UnitCollision> unitColls = new ArrayList<>();
 		
 		for(int x=0; x<buckets.length; x++){
 			for(int y=0; y<buckets[x].length; y++) {
 				final ColoredCircleBucket bucket = buckets[x][y];
+				final List<Index2D> bucketNeighborIndices = getBucketNeighbors(x, y);
 				for(final ColoredCircle c : bucket) {
-					final List<Index2D> bucketNeighborIndices = getBucketNeighbors(x, y);
-					final Pair<Set<TowerCollision>, Set<UnitCollision>> colls = findCollisions(c, bucketNeighborIndices);
+					final Pair<List<TowerCollision>, List<UnitCollision>> colls = findCollisions(c, bucketNeighborIndices);
 					towerColls.addAll(colls.first);
 					unitColls.addAll(colls.second);
 				}
@@ -92,10 +86,10 @@ public class ColoredCircleCollider {
 		return new Pair<>(towerColls, unitColls);
 	}
 
-	private Pair<Set<TowerCollision>, Set<UnitCollision>> findCollisions(final ColoredCircle c, final List<Index2D> neighbors) {
-		final Pair<Set<TowerCollision>, Set<UnitCollision>> colls =
-				new Pair<Set<TowerCollision>, Set<UnitCollision>>(new HashSet<TowerCollision>(),
-																  new HashSet<UnitCollision>());
+	private Pair<List<TowerCollision>, List<UnitCollision>> findCollisions(final ColoredCircle c, final List<Index2D> neighbors) {
+		final Pair<List<TowerCollision>, List<UnitCollision>> colls =
+				new Pair<List<TowerCollision>, List<UnitCollision>>(new ArrayList<TowerCollision>(),
+																  new ArrayList<UnitCollision>());
 		
 		for(final Index2D b : neighbors) {
 			for(final ColoredCircle c2 : buckets[b.x][b.y]) {
@@ -112,15 +106,23 @@ public class ColoredCircleCollider {
 		return colls;
 	}
 	
-	public Pair<TowerCollision, UnitCollision> tryMakeCollision(final ColoredCircle c, final ColoredCircle c2) {
+	/**
+	 * If the circles collide, it will return a pair of the form
+	 * Pair(T, null) or
+	 * Pair(null, U)
+	 * where T is a TowerCollision and U is a UnitCollision
+	 * 
+	 * otherwise it will return null
+	 */
+	private Pair<TowerCollision, UnitCollision> tryMakeCollision(final ColoredCircle c, final ColoredCircle c2) {
 		return (!circlesCollide(c, c2))
 				? null
 				: new Pair<>(makeTowerCollision(c, c2), makeUnitCollision(c, c2));
 	}
 
-
 	/*
-	 * Circles are assumed to overlap and be different colors
+	 * Assuming these circles overlap, if both are PlayerUnits
+	 * return a UnitCollision, else null
 	 */
 	private UnitCollision makeUnitCollision(final ColoredCircle c, final ColoredCircle c2) {
 		if(c instanceof PlayerUnit && c2 instanceof PlayerUnit) {
@@ -129,6 +131,10 @@ public class ColoredCircleCollider {
 		return null;
 	}
 
+	/*
+	 * Assuming these circles overlap, if one is a Tower and the other a PlayerUnit
+	 * return a TowerCollision, else null
+	 */
 	private TowerCollision makeTowerCollision(final ColoredCircle c, final ColoredCircle c2) {
 		if(c instanceof Tower && c2 instanceof PlayerUnit) {
 			return new TowerCollision((Tower)c, (PlayerUnit)c2);
@@ -139,6 +145,11 @@ public class ColoredCircleCollider {
 		}
 	}
 
+	/**
+	 * Checks that the centers of each circle
+	 * are closer than the sum of radii, as well
+	 * as the circles having different colors.
+	 */
 	private boolean circlesCollide(final ColoredCircle c0, final ColoredCircle c1) {
 		if(c0.getColor().equals(c1.getColor())) return false;
 		
@@ -153,6 +164,10 @@ public class ColoredCircleCollider {
 		return sqrDist <= (dR * dR);
 	}
 
+	/**
+	 * Converts a world space Position2D
+	 * into the bucket that keeps track of those positions.
+	 */
 	private Index2D getBucketIndexFor(final Position2D p) {
 		final int x = (int) Math.floor((p.x - bounds.getMinX()) / bucketSize);
 		final int y = (int) Math.floor((p.y - bounds.getMinY()) / bucketSize);
@@ -189,6 +204,9 @@ public class ColoredCircleCollider {
 		}
 	}
 	
+	/*
+	 * A class to represent an index into the buckets array.
+	 */
 	private static class Index2D {
 		public final int x,y;
 		

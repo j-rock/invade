@@ -33,6 +33,21 @@ public abstract class Player {
 		attrs = new PlayerAttributes();
 	}
 
+	public Color getColor() {
+		return color;
+	}
+	
+	public List<PlayerUnit> getUnits() {
+		return units;
+	}
+	
+	/*
+	 * If you don't own any Towers, you're dead.
+	 */
+	public boolean isAlive() {
+		return towers.size() > 0;
+	}
+	
 	/**
 	 * Decide a target position for the Player's units.
 	 */
@@ -40,14 +55,13 @@ public abstract class Player {
 	
 	/**
 	 * Updates the target position for the Player's units.
+	 * If the target contains a Tower, we update
+	 * the target Tower as well so PlayerUnits know to fire
+	 * when they get close.
 	 */
-	public void updateTarget(final float x, final float y) {
-		target = new Position2D(x, y);
+	public void updateTarget(final Position2D target) {
+		this.target = target;
 		targetTower = collider.findTower(color, target);
-	}
-	
-	public boolean isAlive() {
-		return towers.size() > 0;
 	}
 
 	/**
@@ -59,10 +73,6 @@ public abstract class Player {
 			u.setMoving(); // we go to the Move state after moving so that collisions can determine the next state.
 			collider.placeCircle(u);
 		}
-	}
-
-	public List<PlayerUnit> getUnits() {
-		return units;
 	}
 
 	/**
@@ -80,14 +90,15 @@ public abstract class Player {
 			final Tower tower = towers.get(randIndex);
 			final Position2D towerPos = tower.getPosition();
 			final Position2D unitPos = towerPos.randomPositionOnCircle(tower.getRadius());
-			final PlayerUnit unit = new PlayerUnit(color, unitPos, attrs.getUnitAttributes());
+			final PlayerUnit unit = new PlayerUnit(color, unitPos, attrs);
 			units.add(unit);
 		}
 	}
 
-	public Color getColor() {
-		return color;
+	public void fireUnits(final long dt) {
+		for(final PlayerUnit u : units) {
+			u.fireAtTarget();
+		}
 	}
-	
 
 }

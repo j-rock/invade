@@ -24,5 +24,9 @@ public class MovingState extends UnitState {
 		return startPos;
 	}
 
+	@Override
+	public void fireAtTarget(final Tower targetTower, final PlayerUnit targetUnit) {
+	}
+
 
 }

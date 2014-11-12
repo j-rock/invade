@@ -29,4 +29,6 @@ public abstract class UnitState {
 	 * collided with Tower t and its your targetTower, what do you do?!
 	 */
 	public abstract Position2D moveOffTower(final Position2D startPos, final Tower t, final Tower targetTower);
+
+	public abstract void fireAtTarget(final Tower targetTower, final PlayerUnit targetUnit);
 }
