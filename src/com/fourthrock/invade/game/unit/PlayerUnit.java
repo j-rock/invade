@@ -57,6 +57,10 @@ public class PlayerUnit implements ColoredCircle {
 		return health > 0f;
 	}
 	
+	public float getHealth() {
+		return health;
+	}
+	
 	public void takeDamage(final float damage) {
 		health = Math.max(0f, health - damage);
 	}

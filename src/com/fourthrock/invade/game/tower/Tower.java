@@ -19,7 +19,7 @@ import com.fourthrock.invade.game.unit.PlayerUnit;
 public class Tower implements ColoredCircle {
 	public static final float RADIUS = 0.0825f;
 	public static final ScaleVec SCALE = new ScaleVec(RADIUS, RADIUS, RADIUS);
-	private static final float BASE_HEALTH = 10000f;
+	public static final float BASE_HEALTH = 10000f;
 	private static final float REGEN_RATE = BASE_HEALTH / (60 * 1000); // takes one minute to fully heal
 	
 	private final Position2D position;
