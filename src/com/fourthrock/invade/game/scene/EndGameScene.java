@@ -4,10 +4,17 @@ import com.fourthrock.invade.draw.CanvasRenderer;
 import com.fourthrock.invade.draw.Screen2D;
 import com.fourthrock.invade.game.player.Player;
 
+/**
+ * After a Player has won the game,
+ * this Scene depicts their victory.
+ * 
+ * @author Joseph
+ *
+ */
 public class EndGameScene implements Scene {
 
 	public EndGameScene(final Player winner, final boolean wasWinnerHuman) {
-		// TODO Auto-generated constructor stub
+		// TODO
 	}
 
 	@Override
@@ -18,32 +25,27 @@ public class EndGameScene implements Scene {
 
 	@Override
 	public void handleTap(final Screen2D screenCoords) {
-		// TODO Auto-generated method stub
-
+		// TODO - handle input
 	}
 
 	@Override
 	public void handlePan(final Screen2D start, final Screen2D end) {
-		// TODO Auto-generated method stub
-		
+		// do nothing
 	}
 
 	@Override
 	public void handleScaling(final float scaleFactor) {
-		// TODO Auto-generated method stub
-
+		// do nothing
 	}
 
 	@Override
 	public float[] getEye() {
-		// TODO Auto-generated method stub
-		return null;
+		return new float[]{0f, 0f, -3f};
 	}
 
 	@Override
 	public float getZoom() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 1f;
 	}
 
 	@Override

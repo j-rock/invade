@@ -8,7 +8,12 @@ import com.fourthrock.invade.game.physics.ColoredCircleCollider;
 import com.fourthrock.invade.game.tower.Tower;
 
 /**
- * Represents an artificially intelligent Player
+ * Represents an artificially intelligent Player.
+ * Evenly distributes achievement points across skills.
+ * 
+ * Chooses random adjacent Towers to capture. If its target
+ * becomes non-adjacent, it chooses again.
+ * 
  * @author Joseph
  *
  */
@@ -22,21 +27,24 @@ public class AI extends Player {
 
 	@Override
 	public void decideTarget() {
-		
-		if(getTargetTower() == null || getTargetTower().getColor().equals(getColor())) {
-			// already captured the current target, time to move on.
-		
+		if(getTargetTower() == null) {
+			
 			final List<Tower> allAdjacentTowers = new ArrayList<>();
 			for(final Tower t : getTowers()) {
 				allAdjacentTowers.addAll(t.getAdjacents());
 			}
 			
-			while(!allAdjacentTowers.isEmpty()) {
-				final int randIdx = (int) (Math.random() * allAdjacentTowers.size());
-				final Tower randTower = allAdjacentTowers.remove(randIdx);
-				if (!randTower.getColor().equals(getColor())) {
-					setTargetTower(randTower);
-				}
+			final boolean targetIsEnemy = !getTargetTower().getColor().equals(getColor());
+			final boolean targetIsAdjacent = allAdjacentTowers.contains(getTargetTower());
+			
+			if (!(targetIsEnemy && targetIsAdjacent)) {
+				while(!allAdjacentTowers.isEmpty()) {
+					final int randIdx = (int) (Math.random() * allAdjacentTowers.size());
+					final Tower randTower = allAdjacentTowers.remove(randIdx);
+					if (!randTower.getColor().equals(getColor())) {
+						setTargetTower(randTower);
+					}
+				}	
 			}
 		}
 	}

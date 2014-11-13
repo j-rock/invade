@@ -61,10 +61,17 @@ public class Tower implements ColoredCircle {
 		health = Math.max(0f, health - attackPower);
 	}
 
+	/**
+	 * Every round, the Tower heals a little bit (but never more than its base health).
+	 */
 	public void regainHealth(final long dt) {
 		health = Math.min(BASE_HEALTH, health + REGEN_RATE * dt);
 	}
 	
+	/**
+	 * After an enemy captures this Tower, it will immediately
+	 * gain half its base health.
+	 */
 	public void resetHealth() {
 		health = BASE_HEALTH / 2;
 	}
@@ -92,6 +99,10 @@ public class Tower implements ColoredCircle {
 		}
 	}
 
+	/**
+	 * Returns whether or not there is a Tower in the
+	 * passed list that is adjacent to this Tower.
+	 */
 	public boolean adjacentTo(final List<Tower> towers) {
 		for(final Tower t : towers) {
 			if(adjacents.contains(t)) {

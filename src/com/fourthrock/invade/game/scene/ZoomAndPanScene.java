@@ -21,8 +21,9 @@ import com.fourthrock.invade.game.physics.Vector2D;
  * Scene starter-kit to have zooming (scaling) with pinch gestures
  * and panning with scroll gestures. One can specify minimum
  * and maximum zoom factors, as well as bounds on scrolling.
- * If one leaves zoom bounds or panning bounds out, they
- * are assumed to be unbounded.
+ * 
+ * It also provides Screen -> World coordinate functions with
+ * the object picking Picker2D.
  * 
  * @author Joseph
  *

@@ -4,9 +4,7 @@ import static com.fourthrock.invade.draw.DrawEnum.CIRCLE;
 import static com.fourthrock.invade.draw.DrawEnum.SQUARE;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import android.util.Pair;
 
@@ -24,7 +22,6 @@ import com.fourthrock.invade.game.physics.Vector2D;
 import com.fourthrock.invade.game.player.AI;
 import com.fourthrock.invade.game.player.Human;
 import com.fourthrock.invade.game.player.Player;
-import com.fourthrock.invade.game.player.WhiteAI;
 import com.fourthrock.invade.game.tower.Tower;
 import com.fourthrock.invade.game.unit.PlayerUnit;
 import com.fourthrock.invade.util.Index2D;
@@ -48,7 +45,7 @@ public class GamePlayScene extends ZoomAndPanScene {
 		
 		this.collider = new ColoredCircleCollider(map.getBounds());
 		this.towers = map.getTowers();
-		this.towerEdges = getAdjSet(towers);
+		this.towerEdges = map.getAdjSet();
 		this.players = new ArrayList<>();
 		this.human = new Human(humanColor, collider);
 		
@@ -146,8 +143,6 @@ public class GamePlayScene extends ZoomAndPanScene {
 	}
 
 	private void setupPlayersFromMap(final Map map) {
-		final Player white = new WhiteAI(collider);
-		players.add(white);
 		players.add(human);
 		
 		final Color[] colors = {Color.GREEN, Color.ORANGE, Color.PURPLE, Color.RED, Color.BLUE};
@@ -158,42 +153,10 @@ public class GamePlayScene extends ZoomAndPanScene {
 			}
 		}
 
-		map.assignPlayers(players, white);
+		map.assignPlayers(players, collider);
 	}
-	
 
 	private boolean moreThanOnePlayerAlive() {
 		return players.size() > 1;
 	}
-	
-
-	/**
-	 * Computes list of pairs of indices (i, j) such
-	 * that the ith Tower is adjacent to the jth Tower.
-	 */
-	private static List<Index2D> getAdjSet(final List<Tower> towers) {
-		
-		// Get a mapping from Tower to its Index
-		final HashMap<Tower, Integer> towerToIndex = new HashMap<>();
-		for(int i=0; i<towers.size(); i++) {
-			towerToIndex.put(towers.get(i), i);
-		}
-		
-		// Over each tower_i in towers
-		//    Over each tower_j adjacent to tower_i
-		//         if i < j, add it to the list
-		final List<Index2D> adjIndices = new ArrayList<>();
-		for(int i=0; i<towers.size(); i++) {
-			final Set<Tower> iAdjs = towers.get(i).getAdjacents();
-			for(final Tower tJ : iAdjs) {
-				final int j = towerToIndex.get(tJ).intValue();
-				if(i < j) {
-					adjIndices.add(new Index2D(i, j));
-				}
-			}
-		}
-		
-		return adjIndices;
-	}
-
 }

@@ -53,6 +53,11 @@ public class BoundingBox2D {
 		return bottomLeft.y;
 	}
 	
+	/**
+	 * Tries to create the smallest BoundingBox2D that contains the circle
+	 * centered at Position2D with radius radius and also contains this
+	 * BoundingBox2D
+	 */
 	public BoundingBox2D expandWith(final Position2D p, final float radius) {
 		final Position2D nextBot = new Position2D(
 				Math.min(bottomLeft.x, p.x-radius),
@@ -67,6 +72,9 @@ public class BoundingBox2D {
 		return new BoundingBox2D(nextBot, nextTop);
 	}
 
+	/**
+	 * Try to make a BoundingCircle to represent this box (even if crudely).
+	 */
 	public BoundingCircle2D toCircleBounds() {
 		final Position2D center = (bottomLeft.add(topRight)).scale(0.5f).asPosition();
 		final float radius = Math.max(getWidth(), getHeight());

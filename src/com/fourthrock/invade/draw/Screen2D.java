@@ -4,6 +4,9 @@ import com.fourthrock.invade.game.physics.Vector2D;
 
 /**
  * Represents a 2D vector in device screen coordinates.
+ * 
+ * The greater the y value, the farther down on the screen it goes.
+ * 
  * @author Joseph
  *
  */

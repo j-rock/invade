@@ -6,6 +6,12 @@ import com.fourthrock.invade.game.physics.Vector2D;
 import com.fourthrock.invade.game.player.Player;
 import com.fourthrock.invade.game.tower.Tower;
 
+/**
+ * Represents the state in which a PlayerUnit
+ * is neither attacking a Tower nor another PlayerUnit.
+ * @author Joseph
+ *
+ */
 public class MovingState extends UnitState {
 
 	@Override

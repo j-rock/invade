@@ -72,8 +72,10 @@ public class DrawObject {
 	 */
 	public static FloatBuffer floatBufferFromArray(final float[] coords) {
 		final FloatBuffer vertexBuffer = ByteBuffer
-				.allocateDirect(coords.length * 4)
-				.order(ByteOrder.nativeOrder()).asFloatBuffer().put(coords);
+											.allocateDirect(coords.length * 4)
+											.order(ByteOrder.nativeOrder())
+											.asFloatBuffer()
+											.put(coords);
 		vertexBuffer.position(0);
 		return vertexBuffer;
 	}

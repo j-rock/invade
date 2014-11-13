@@ -1,6 +1,11 @@
 package com.fourthrock.invade.draw;
 
-
+/**
+ * A class to represent RGBA colors.
+ * 
+ * @author Joseph
+ *
+ */
 public class Color {
 
 	public static final Color WHITE = new Color(1f, 1f, 1f, 1f);
@@ -35,6 +40,7 @@ public class Color {
 	@Override
 	public boolean equals(final Object that) {
 		if (!(that instanceof Color)) return false;
+		
 		final Color c = (Color)that;
 		return this.r == c.r
 			&& this.g == c.g

@@ -2,6 +2,13 @@ package com.fourthrock.invade.game.physics;
 
 import com.fourthrock.invade.draw.Color;
 
+/**
+ * For testing if screen taps are contained by Towers,
+ * we create a very small ColoredPoint with a given Position2D.
+ * 
+ * @author Joseph
+ *
+ */
 public class ColoredPoint implements ColoredCircle {
 	private final Color color;
 	private final Position2D position;

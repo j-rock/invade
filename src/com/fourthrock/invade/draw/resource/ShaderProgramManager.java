@@ -28,6 +28,12 @@ public class ShaderProgramManager {
 		programs = new HashMap<>();
 	}
 
+	/*
+	 * Given a VertexShader and a FragmentShader, try and load the bare minimum
+	 * resources to yield a compiled program that uses the shaders.
+	 * 
+	 * Returns a handle to the compiled program.
+	 */
 	public int getOrLoadProgram(final VertexShader vShader, final FragmentShader fShader) {
 		final Pair<VertexShader, FragmentShader> shaders = new Pair<>(vShader, fShader);
 		if (programs.containsKey(shaders)) {

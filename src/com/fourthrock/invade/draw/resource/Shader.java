@@ -2,6 +2,17 @@ package com.fourthrock.invade.draw.resource;
 
 import android.opengl.GLES20;
 
+/**
+ * Shaders are specialized OpenGL programs that help color
+ * vertices and fragments. They provide more functionality
+ * than vanilla OpenGL.
+ * 
+ * Here we capture the shared logic of Vertex and Fragment
+ * Shaders so that they can be reified as first-class objects.
+ * 
+ * @author Joseph
+ *
+ */
 public abstract class Shader {
 	private final String code;
 	private final int shaderType;
@@ -11,6 +22,9 @@ public abstract class Shader {
 		this.shaderType = shaderType;
 	}
 	
+	/**
+	 * Compiles an OpenGL shader and returns a handle to it.
+	 */
 	public int load() {
 		return loadShader(shaderType, code);
 	}
@@ -22,12 +36,10 @@ public abstract class Shader {
 	
 	@Override
 	public int hashCode() {
+		// The only unique component of a Shader is the code to be compiled.
 		return code.hashCode();
 	}
 	
-	/**
-	 * Compiles an OpenGL shader and returns a handle to it.
-	 */
 	private static int loadShader(final int type, final String shaderCode) {
 		final int shader = GLES20.glCreateShader(type);
 		GLES20.glShaderSource(shader, shaderCode);

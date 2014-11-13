@@ -7,6 +7,10 @@ import java.nio.ShortBuffer;
 /**
  * Specifies how the DrawObject will interpret its vertices.
  * 
+ * Either it draws the vertices in order of the DrawObject's
+ * vertex float buffer, or it uses a draw-order list to specify
+ * draw order.
+ * 
  * @author Joseph
  */
 public class DrawMethod {
@@ -44,8 +48,10 @@ public class DrawMethod {
 	 */
 	private static ShortBuffer shortBufferFromArray(final short[] drawOrder) {
 		final ShortBuffer drawBuffer = ByteBuffer
-				.allocateDirect(drawOrder.length * 2)
-				.order(ByteOrder.nativeOrder()).asShortBuffer().put(drawOrder);
+										.allocateDirect(drawOrder.length * 2)
+										.order(ByteOrder.nativeOrder())
+										.asShortBuffer()
+										.put(drawOrder);
 		drawBuffer.position(0);
 		return drawBuffer;
 	}

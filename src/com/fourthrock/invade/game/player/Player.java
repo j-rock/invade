@@ -136,9 +136,9 @@ public abstract class Player {
 	}
 	
 	public void removeTower(final Tower t) {
-		// Since we need random access, we use an ArrayList
-		// unfortunately, this means we have to do an O(n)
-		// search to remove a Tower.
+		// Since we need random access, we need a List.
+		// Unfortunately, this means we have to do an O(n)
+		// search to find and remove a Tower.
 		// Player's don't lose Towers too often,
 		// so this shouldn't slow us down too much.
 		

@@ -1,12 +1,17 @@
 package com.fourthrock.invade.game.maps;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import com.fourthrock.invade.game.physics.BoundingBox2D;
+import com.fourthrock.invade.game.physics.ColoredCircleCollider;
 import com.fourthrock.invade.game.physics.Position2D;
 import com.fourthrock.invade.game.player.Player;
+import com.fourthrock.invade.game.player.WhiteAI;
 import com.fourthrock.invade.game.tower.Tower;
+import com.fourthrock.invade.util.Index2D;
 
 /**
  * A class to hold the initial configuration of an Invade game.
@@ -19,9 +24,8 @@ import com.fourthrock.invade.game.tower.Tower;
  * 
  * Subclasses must specify appropriate zooms, add towers,
  * and remember to mark their adjacency. This class
- * takes care of the rest. Note that the WhiteAI will
- * be assigned to the first Tower and the Human will
- * be assigned to the second Tower.
+ * takes care of the rest. Note that the Human will
+ * be assigned to the first Tower.
  * 
  * @author Joseph
  *
@@ -63,13 +67,50 @@ public abstract class Map {
 		return maxZoom;
 	}
 	
-	public void assignPlayers(final List<Player> players, final Player white) {
+	/**
+	 * Computes list of pairs of indices (i, j) such
+	 * that the ith Tower is adjacent to the jth Tower.
+	 */
+	public List<Index2D> getAdjSet() {
+		
+		// Get a mapping from Tower to its Index
+		final HashMap<Tower, Integer> towerToIndex = new HashMap<>();
+		for(int i=0; i<towers.size(); i++) {
+			towerToIndex.put(towers.get(i), i);
+		}
+		
+		// Over each tower_i in towers
+		//    Over each tower_j adjacent to tower_i
+		//         if i < j, add it to the list
+		final List<Index2D> adjIndices = new ArrayList<>();
+		for(int i=0; i<towers.size(); i++) {
+			final Set<Tower> iAdjs = towers.get(i).getAdjacents();
+			for(final Tower tJ : iAdjs) {
+				final int j = towerToIndex.get(tJ).intValue();
+				if(i < j) {
+					adjIndices.add(new Index2D(i, j));
+				}
+			}
+		}
+		
+		return adjIndices;
+	}
+
+	
+	/**
+	 * For each Player in players, we assign one Tower.
+	 * The remainder get their own unique WhiteAI protector,
+	 * which is added to the list of Players.
+	 */
+	public void assignPlayers(final List<Player> players, final ColoredCircleCollider collider) {
 		for(int i=0; i<players.size() && i<towers.size(); i++) {
 			towers.get(i).setPlayer(players.get(i));
 		}
 		
 		//If there are any spots left over, fill them with the White AI
 		for(int i=players.size(); i<towers.size(); i++) {
+			final Player white = new WhiteAI(collider);
+			players.add(white);
 			towers.get(i).setPlayer(white);
 		}
 	}

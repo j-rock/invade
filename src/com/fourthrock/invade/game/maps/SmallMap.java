@@ -3,7 +3,7 @@ package com.fourthrock.invade.game.maps;
 import com.fourthrock.invade.game.tower.Tower;
 
 /**
- *	Map shaped like this :
+ *	Map shaped like this:
  *
  * 		 O -- O
  * 
@@ -18,9 +18,8 @@ public class SmallMap extends Map {
 	public SmallMap() {
 		super(MIN_ZOOM, MAX_ZOOM);
 
-		final float x = 1f;
-		final Tower left = addNewTower(-x, 0);
-		final Tower right = addNewTower(x, 0);
+		final Tower left = addNewTower(-1f, 0);
+		final Tower right = addNewTower(1f, 0);
 
 		left.setAdjacentTo(right);
 	}

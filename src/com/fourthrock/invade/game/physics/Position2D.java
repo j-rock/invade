@@ -3,7 +3,7 @@ package com.fourthrock.invade.game.physics;
 /**
  * Represents a 2D position in world space
  * 
- * Unlike an image, larger y-values are supposed to be "higher"
+ * Unlike an image, larger y-values are more positively valued.
  * 
  * @author Joseph
  *

@@ -47,13 +47,12 @@ public class ColoredCircleCollider {
 
 	/**
 	 * Since the number of towers is small and so are
-	 * the queries to findTower (only on user taps), we do
-	 * an O(n) scan and leave it at that.
+	 * the number of queries to findTower (only on user taps),
+	 * we do an O(n) scan and leave it at that.
 	 * 
 	 * I would use the more optimal findCollisions method,
 	 * but this method is called in a different thread
-	 * and would otherwise generate ConcurrentModificationExceptions
-	 * left, right, and center.
+	 * and would otherwise generate ConcurrentModificationExceptions.
 	 */
 	public static Tower findTower(final Color playerColor, final Position2D target, final List<Tower> towers) {
 		for(final Tower t : towers) {

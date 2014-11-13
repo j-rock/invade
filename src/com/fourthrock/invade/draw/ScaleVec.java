@@ -4,6 +4,7 @@ package com.fourthrock.invade.draw;
  * Represents a vector by which to scale
  * OpenGL drawables. Specifically created to reject
  * type errors caused by passing in incorrect vectors.
+ * 
  * @author Joseph
  *
  */

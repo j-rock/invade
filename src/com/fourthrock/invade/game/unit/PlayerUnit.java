@@ -7,6 +7,13 @@ import com.fourthrock.invade.game.physics.Position2D;
 import com.fourthrock.invade.game.player.Player;
 import com.fourthrock.invade.game.tower.Tower;
 
+/**
+ * A PlayerUnit represents the little minions
+ * a Player has to go and invade Towers.
+ * 
+ * @author Joseph
+ *
+ */
 public class PlayerUnit implements ColoredCircle {
 	public static final float RADIUS = 0.0035f;
 	public static ScaleVec SCALE = new ScaleVec(RADIUS, RADIUS, RADIUS);
@@ -39,6 +46,9 @@ public class PlayerUnit implements ColoredCircle {
 		return player.getAttributes().getUnitAttackRadius();
 	}
 	
+	/**
+	 * Gets the color used by GamePlayScene to draw the PlayerUnit
+	 */
 	public Color getRenderColor() {
 		return blendOnHealth(state.getRenderColor(getColor()));
 	}
@@ -70,6 +80,10 @@ public class PlayerUnit implements ColoredCircle {
 		}
 	}
 	
+	/**
+	 * Delegates to the current UnitState how
+	 * to move towards the current Player's target.
+	 */
 	public void moveTowardsTarget(final long dt) {
 		position = state.moveTowards(position, player.getTarget(), player.getAttributes().getUnitMoveSpeed(), dt);
 	}
@@ -79,10 +93,17 @@ public class PlayerUnit implements ColoredCircle {
 		
 	}
 
+	/**
+	 * Might be firing at at Tower or another PlayerUnit.
+	 * Delegate to the UnitState how to proceed.
+	 */
 	public void fireAtTarget(final long dt) {
 		state.fireAtTarget(player, player.getTargetTower(), targetUnit, dt);
 	}
 	
+	/**
+	 * The lower the health, the darker the PlayerUnit appears.
+	 */
 	private Color blendOnHealth(final Color renderColor) {
 		final float healthRatio = health / player.getAttributes().getBaseUnitHealth();
 		final Color healthBlack = new Color(0f, 0f, 0f, 1 - healthRatio);

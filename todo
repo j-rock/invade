@@ -4,9 +4,7 @@ BoundingCircle2D
 GamePlayScene
   ++++++++++Figure out how to spend human achievement points
 
-AI
-  ++++++Units get stuck on non-adjacent towers
-  
+
 WhiteAI
   ++++decideTarget
   

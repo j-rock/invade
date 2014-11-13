@@ -5,6 +5,8 @@ import com.fourthrock.invade.game.physics.ColoredCircleCollider;
 
 /**
  * A class to represent a human player.
+ * Since a human interacts through the screen,
+ * the Player methods are empty.
  * 
  * @author Joseph
  *

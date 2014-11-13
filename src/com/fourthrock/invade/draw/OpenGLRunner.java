@@ -28,7 +28,7 @@ import com.fourthrock.invade.game.physics.Position2D;
  * Class for rendering the GameState.
  * 
  * Since the game loop is inextricably tied
- * to OpenGL's vsync, we also use the GameRenderer
+ * to OpenGL's vsync, we also use the OpenGLRunner
  * to step the GameState in onDrawFrame.
  * 
  * @author Joseph

@@ -8,7 +8,10 @@ import com.fourthrock.invade.game.GameState;
 import com.fourthrock.invade.game.scene.GamePlayScene;
 
 /**
- * A class to handle the basic control flow logic of the OpenGL bits
+ * A class to handle the basic control flow logic of the OpenGL bits.
+ * 
+ * This is the main entry point into the program.
+ * 
  * @author Joseph
  *
  */

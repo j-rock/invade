@@ -3,7 +3,7 @@ package com.fourthrock.invade.draw.objects;
 import android.opengl.GLES20;
 
 /**
- * A two-dimensional triangle for use as a drawn object in OpenGL ES 2.0.
+ * A two-dimensional triangle for use as a draw object in OpenGL ES 2.0.
  */
 public class Triangle extends DrawObject {
 

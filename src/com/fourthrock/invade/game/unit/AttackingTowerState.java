@@ -5,6 +5,13 @@ import com.fourthrock.invade.game.physics.Position2D;
 import com.fourthrock.invade.game.player.Player;
 import com.fourthrock.invade.game.tower.Tower;
 
+/**
+ * The PlayerUnit must have collided with an enemy Tower.
+ * Gotta destroy that edifice.
+ * 
+ * @author Joseph
+ *
+ */
 public class AttackingTowerState extends UnitState {
 
 	@Override
