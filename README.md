@@ -17,9 +17,6 @@ download the project and:
 $ File > Import > Existing Project From Workspace
 ```
 
-## Todo
-Right now, the app just opens up a scene with some spinning polygons.
-I'm fabricating the actual gameplay, so hold on tight.
 
 
 [ICE gameplay]:https://www.youtube.com/watch?v=WQyWHS7iQTk
