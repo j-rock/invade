@@ -18,4 +18,8 @@ public class ScaleVec {
 		this.sz = z;
 	}
 	
+	public ScaleVec scale(final float k) {
+		return new ScaleVec(k*sx, k*sy, k*sz);
+	}
+	
 }

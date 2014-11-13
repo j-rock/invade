@@ -19,12 +19,6 @@ public class AttackingUnitState extends UnitState {
 	}
 
 	@Override
-	public Position2D moveOffTower(final Position2D startPos, final Tower t, final Tower targetTower) {
-		// we would be in the AttackingTowerState by the time this is called.
-		return startPos;
-	}
-
-	@Override
 	public void fireAtTarget(final Player player, final Tower targetTower, final PlayerUnit targetUnit, final long dt) {
 		// do not attack the targetTower, we're attacking the PlayerUnit this round.
 		

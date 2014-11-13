@@ -14,14 +14,8 @@ public class AttackingTowerState extends UnitState {
 
 	@Override
 	public Position2D moveTowards(final Position2D startPos, final Position2D target, final float speed, final long dt) {
-		// attackers don't move
+		// TODO - slide around Tower.
 		return startPos;
-	}
-
-	@Override
-	public Position2D moveOffTower(final Position2D startPos, final Tower t, final Tower targetTower) {
-		// we're gonna attack this tower, so get some distance.
-		return (!t.equals(targetTower)) ? startPos : t.positionForAttackingUnit(startPos);
 	}
 
 	@Override

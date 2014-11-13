@@ -35,8 +35,8 @@ public class PlayerUnit implements ColoredCircle {
 	}
 	
 	@Override
-	public float getRadius() {
-		return RADIUS;
+	public float getCollideRadius() {
+		return player.getAttributes().getUnitAttackRadius();
 	}
 	
 	public Color getRenderColor() {
@@ -75,7 +75,8 @@ public class PlayerUnit implements ColoredCircle {
 	}
 	
 	public void moveOffTower(final Tower t) {
-		position = state.moveOffTower(position, t, player.getTargetTower());
+		position = t.positionForAttackingUnit(position);
+		
 	}
 
 	public void fireAtTarget(final long dt) {

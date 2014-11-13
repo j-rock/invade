@@ -4,13 +4,15 @@ import static com.fourthrock.invade.draw.DrawEnum.CIRCLE;
 import static com.fourthrock.invade.draw.DrawEnum.SQUARE;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
-import android.util.Log;
 import android.util.Pair;
 
 import com.fourthrock.invade.draw.CanvasRenderer;
 import com.fourthrock.invade.draw.Color;
+import com.fourthrock.invade.draw.ScaleVec;
 import com.fourthrock.invade.draw.Screen2D;
 import com.fourthrock.invade.game.maps.DefaultMap;
 import com.fourthrock.invade.game.maps.Map;
@@ -18,11 +20,14 @@ import com.fourthrock.invade.game.physics.ColoredCircleCollider;
 import com.fourthrock.invade.game.physics.Position2D;
 import com.fourthrock.invade.game.physics.TowerCollision;
 import com.fourthrock.invade.game.physics.UnitCollision;
+import com.fourthrock.invade.game.physics.Vector2D;
 import com.fourthrock.invade.game.player.AI;
 import com.fourthrock.invade.game.player.Human;
 import com.fourthrock.invade.game.player.Player;
+import com.fourthrock.invade.game.player.WhiteAI;
 import com.fourthrock.invade.game.tower.Tower;
 import com.fourthrock.invade.game.unit.PlayerUnit;
+import com.fourthrock.invade.util.Index2D;
 
 /**
  * Main scene for actual Invade gameplay.
@@ -32,32 +37,22 @@ import com.fourthrock.invade.game.unit.PlayerUnit;
  *
  */
 public class GamePlayScene extends ZoomAndPanScene {
-	private static final float MIN_ZOOM = 1f;
-	private static final float MAX_ZOOM = 6f;
-	
-	private final Human human;
-	private final List<Player> players;
-	private final List<Tower> towers;
 	private final ColoredCircleCollider collider;
+	private final List<Tower> towers;
+	private final List<Index2D> towerEdges;
+	private final List<Player> players;
+	private final Human human;
 	
 	public GamePlayScene(final Map map, final Color humanColor) {
-		super(MIN_ZOOM, MAX_ZOOM, map.getBounds());
+		super(map.getMinZoom(), map.getMaxZoom(), map.getBounds());
 		
 		this.collider = new ColoredCircleCollider(map.getBounds());
 		this.towers = map.getTowers();
-		
+		this.towerEdges = getAdjSet(towers);
 		this.players = new ArrayList<>();
-		final Color[] colors = {Color.GREEN, Color.ORANGE, Color.PURPLE, Color.RED, Color.BLUE};
-		for(final Color c : colors) {
-			if(!c.equals(humanColor)) {
-				players.add(new AI(c, collider));
-			}
-		}
-		human = new Human(humanColor, collider);
-		final Player white = new AI(Color.WHITE, collider);
-		players.add(human);
-		map.assignPlayers(players, white);
-		players.add(white);
+		this.human = new Human(humanColor, collider);
+		
+		setupPlayersFromMap(map);
 	}
 
 	public GamePlayScene() {
@@ -66,9 +61,10 @@ public class GamePlayScene extends ZoomAndPanScene {
 
 	@Override
 	public void handleTap(final Screen2D screenCoords) {
+		super.handleTap(screenCoords);
 		final Position2D tapPos = getPositionFromScreen(screenCoords);
-		Log.e("GPS", "" + tapPos.x + "," + tapPos.y);
-		human.updateTarget(tapPos);
+		final Tower t = ColoredCircleCollider.findTower(human.getColor(), tapPos, towers);
+		human.updateTarget(tapPos, t);
 		
 		// TODO - add some graphical response
 	}
@@ -93,13 +89,8 @@ public class GamePlayScene extends ZoomAndPanScene {
 			for(final Player p : players) {
 				p.fireUnits(dt);
 			}
-			for(int i=players.size()-1; i>=0; i--) {
-				final Player p = players.get(i);
-				if(!p.isAlive()) {
-					players.remove(i);
-				} else {
-					p.removeDeadUnits();
-				}
+			for(final Player p : players) {
+				p.removeDeadUnits();
 			}
 			return this;
 		}
@@ -107,7 +98,9 @@ public class GamePlayScene extends ZoomAndPanScene {
 
 	private void processCollisions(final List<TowerCollision> towerColls, final List<UnitCollision> unitColls) {
 		for(final TowerCollision tc : towerColls) {
-			tc.u.setAttackingTower(tc.t);
+			if(!tc.t.getColor().equals(tc.u.getColor())) {
+				tc.u.setAttackingTower(tc.t);
+			}
 			tc.u.moveOffTower(tc.t);
 		}
 		for(final UnitCollision uc : unitColls) {
@@ -117,21 +110,90 @@ public class GamePlayScene extends ZoomAndPanScene {
 		// TODO - add graphical triggers
 	}
 
-	private boolean moreThanOnePlayerAlive() {
-		return players.size() > 1;
-	}
-
 	@Override
 	public void render(final CanvasRenderer renderer) {
 		for(final Tower t : towers) {
 			renderer.draw(SQUARE, t.getPosition(), Tower.SCALE, t.getRenderColor());
+		}
+		for(final Index2D adjIndex : towerEdges) {
+			final Tower tI = towers.get(adjIndex.x);
+			final Tower tJ = towers.get(adjIndex.y);
+			drawTowerLine(renderer, tI, tJ);
 		}
 		for(final Player p : players) {
 			for(final PlayerUnit u : p.getUnits()) {
 				renderer.draw(CIRCLE, u.getPosition(), PlayerUnit.SCALE, u.getRenderColor());
 			}
 		}
+		super.render(renderer);
+		
+		
 		//TODO - more rendering
+	}
+
+	/**
+	 * Draws a thin line from Tower ts to Tower tt with Color c
+	 */
+	private static void drawTowerLine(final CanvasRenderer renderer, final Tower ts, final Tower tt) {
+		final Position2D s = ts.getPosition();
+		final Position2D t = tt.getPosition();
+		final Position2D midpoint = s.add(t).scale(0.5f).asPosition();
+		final Vector2D displacement = t.minus(s);
+		final float length = displacement.magnitude() - 2 * Tower.RADIUS;
+		final float height = PlayerUnit.RADIUS / 2;
+		final float angle = displacement.theta();
+		renderer.draw(SQUARE, midpoint, new ScaleVec(length, height, 1f), angle, new Color(0.9f, 0.9f, 0.9f, 1f));
+	}
+
+	private void setupPlayersFromMap(final Map map) {
+		final Player white = new WhiteAI(collider);
+		players.add(white);
+		players.add(human);
+		
+		final Color[] colors = {Color.GREEN, Color.ORANGE, Color.PURPLE, Color.RED, Color.BLUE};
+		for(int i=0; players.size() < map.getNumberOfPlayers() && i < colors.length; i++) {
+			final Color c = colors[i];
+			if(!c.equals(human.getColor())) {
+				players.add(new AI(c, collider));
+			}
+		}
+
+		map.assignPlayers(players, white);
+	}
+	
+
+	private boolean moreThanOnePlayerAlive() {
+		return players.size() > 1;
+	}
+	
+
+	/**
+	 * Computes list of pairs of indices (i, j) such
+	 * that the ith Tower is adjacent to the jth Tower.
+	 */
+	private static List<Index2D> getAdjSet(final List<Tower> towers) {
+		
+		// Get a mapping from Tower to its Index
+		final HashMap<Tower, Integer> towerToIndex = new HashMap<>();
+		for(int i=0; i<towers.size(); i++) {
+			towerToIndex.put(towers.get(i), i);
+		}
+		
+		// Over each tower_i in towers
+		//    Over each tower_j adjacent to tower_i
+		//         if i < j, add it to the list
+		final List<Index2D> adjIndices = new ArrayList<>();
+		for(int i=0; i<towers.size(); i++) {
+			final Set<Tower> iAdjs = towers.get(i).getAdjacents();
+			for(final Tower tJ : iAdjs) {
+				final int j = towerToIndex.get(tJ).intValue();
+				if(i < j) {
+					adjIndices.add(new Index2D(i, j));
+				}
+			}
+		}
+		
+		return adjIndices;
 	}
 
 }

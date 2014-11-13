@@ -21,12 +21,6 @@ public class MovingState extends UnitState {
 	}
 
 	@Override
-	public Position2D moveOffTower(final Position2D startPos, final Tower t, final Tower targetTower) {
-		// if we were colliding with our targetTower, we wouldn't be in the moving state. IGNORE!
-		return startPos;
-	}
-
-	@Override
 	public void fireAtTarget(final Player player, final Tower targetTower, final PlayerUnit targetUnit, final long dt) {
 		// don't fire, you're only moving this turn.
 	}

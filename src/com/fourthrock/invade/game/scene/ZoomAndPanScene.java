@@ -1,10 +1,21 @@
 package com.fourthrock.invade.game.scene;
 
+import static com.fourthrock.invade.draw.DrawEnum.SQUARE;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.util.Pair;
+
+import com.fourthrock.invade.draw.CanvasRenderer;
+import com.fourthrock.invade.draw.Color;
+import com.fourthrock.invade.draw.ScaleVec;
 import com.fourthrock.invade.draw.Screen2D;
 import com.fourthrock.invade.game.physics.BoundingBox2D;
 import com.fourthrock.invade.game.physics.BoundingCircle2D;
 import com.fourthrock.invade.game.physics.Position2D;
 import com.fourthrock.invade.game.physics.Vector2D;
+
 
 /**
  * Scene starter-kit to have zooming (scaling) with pinch gestures
@@ -24,6 +35,7 @@ public abstract class ZoomAndPanScene implements Scene {
 	private Position2D eye;
 	
 	private final Picker2D picker;
+	private final List<Pair<Position2D, Long>> dots;
 	
 
 	public ZoomAndPanScene(final float minZoom, final float maxZoom, final BoundingBox2D cameraBounds) {
@@ -35,20 +47,24 @@ public abstract class ZoomAndPanScene implements Scene {
 		eye = new Position2D(0f, 0f);
 		
 		this.picker = new Picker2D(this);
-	}
-
-	public ZoomAndPanScene(final BoundingBox2D cameraBounds) {
-		this(1e-13f, Float.MAX_VALUE, cameraBounds);
+		this.dots = new ArrayList<>();
 	}
 	
-	public ZoomAndPanScene(final float minZoom, final float maxZoom) {
-		this(minZoom, maxZoom, BoundingBox2D.UNBOUNDED);
+	@Override
+	public void handleTap(final Screen2D screenCoords) {
+		final Position2D p = getPositionFromScreen(screenCoords);
+		if (p != null) {
+			dots.add(new Pair<>(p, 400L));
+		}
 	}
 	
 	@Override
 	public void handlePan(final Screen2D start, final Screen2D end) {
-		final Vector2D d = getPositionFromScreen(end).minus(getPositionFromScreen(start));
+		final Position2D worldStart = getPositionFromScreen(start);
+		final Position2D worldEnd = getPositionFromScreen(end);
+		final Vector2D d = worldEnd.minus(worldStart);
 		final Position2D p = new Position2D(eye.x - d.x, eye.y + d.y);
+	
 		eye = cameraBounds.getClosestInBounds(p);
 	}
 
@@ -59,15 +75,33 @@ public abstract class ZoomAndPanScene implements Scene {
 
 	@Override
 	public float[] getEye() {
-		return new float[] { eye.x, eye.y, -3 };
+		return new float[] { eye.x, eye.y, -3};
 	}
 
 	@Override
 	public float getZoom() {
 		return zoom;
 	}
+
+	@Override
+	public void render(final CanvasRenderer renderer) {
+		for(int i=dots.size()-1; i>=0; i--) {
+			final Pair<Position2D, Long> dot = dots.get(i);
+			if(dot.second <= 0L) {
+				dots.remove(i);
+			} else {
+				dots.set(i, new Pair<Position2D, Long>(dot.first, dot.second - 17));
+				renderer.draw(SQUARE, dot.first, scale(dot.second), Color.RED);
+			}
+		}
+	}
 	
 	protected Position2D getPositionFromScreen(final Screen2D screenCoords) {
 		return picker.convertScreenToWorld(screenCoords);
+	}
+	
+	private static ScaleVec scale(final long l) {
+		final float rad = l/(2f * 400);
+		return new ScaleVec(rad, rad, rad);
 	}
 }

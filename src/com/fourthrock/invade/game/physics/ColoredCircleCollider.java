@@ -8,6 +8,7 @@ import android.util.Pair;
 import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.game.tower.Tower;
 import com.fourthrock.invade.game.unit.PlayerUnit;
+import com.fourthrock.invade.util.Index2D;
 
 /**
  * This class will determine physics collisions between ColoredCircles
@@ -45,17 +46,24 @@ public class ColoredCircleCollider {
 	}
 
 	/**
-	 * Assuming that Towers have been placed into the Collider,
-	 * this method tries to find any Tower that does not have
-	 * color playerColor and is within range of target
+	 * Since the number of towers is small and so are
+	 * the queries to findTower (only on user taps), we do
+	 * an O(n) scan and leave it at that.
+	 * 
+	 * I would use the more optimal findCollisions method,
+	 * but this method is called in a different thread
+	 * and would otherwise generate ConcurrentModificationExceptions
+	 * left, right, and center.
 	 */
-	public synchronized Tower findTower(final Color playerColor, final Position2D target) {
-		final Index2D b = getBucketIndexFor(target);
-		final List<Index2D> neighbors = getBucketNeighbors(b.x, b.y);
-		
-		final ColoredCircle c = new ColoredPoint(playerColor, target);
-		final List<TowerCollision> towerColls = findCollisions(c, neighbors).first;
-		return towerColls.isEmpty() ? null : towerColls.get(0).t;
+	public static Tower findTower(final Color playerColor, final Position2D target, final List<Tower> towers) {
+		for(final Tower t : towers) {
+			if(!t.getColor().equals(playerColor)) {
+				if(circlesCollide(t, new ColoredPoint(playerColor, target))) {
+					return t;
+				}
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -99,7 +107,7 @@ public class ColoredCircleCollider {
 				if(maybeColl != null) {
 					if(maybeColl.first != null) {
 						colls.first.add(maybeColl.first);
-					} else {
+					} else if(maybeColl.second != null) {
 						colls.second.add(maybeColl.second);
 					}
 				}
@@ -148,25 +156,6 @@ public class ColoredCircleCollider {
 	}
 
 	/**
-	 * Checks that the centers of each circle
-	 * are closer than the sum of radii, as well
-	 * as the circles having different colors.
-	 */
-	private boolean circlesCollide(final ColoredCircle c0, final ColoredCircle c1) {
-		if(c0.getColor().equals(c1.getColor())) return false;
-		
-		final Position2D p0 = c0.getPosition();
-		final Position2D p1 = c1.getPosition();
-		
-		final float dx = p0.x - p1.x;
-		final float dy = p0.y - p1.y;
-		final float sqrDist = dx*dx + dy*dy;
-		final float dR = c0.getRadius() + c1.getRadius();
-		
-		return sqrDist <= (dR * dR);
-	}
-
-	/**
 	 * Converts a world space Position2D
 	 * into the bucket that keeps track of those positions.
 	 */
@@ -202,7 +191,7 @@ public class ColoredCircleCollider {
 		return x >= 0 && x < buckets.length && y >= 0 && y < buckets[x].length;
 	}
 	
-	private synchronized void clear() {
+	private void clear() {
 		for(int x=0; x<buckets.length; x++) {
 			for(int y=0; y<buckets[x].length; y++) {
 				buckets[x][y].clear();
@@ -210,15 +199,29 @@ public class ColoredCircleCollider {
 		}
 	}
 	
-	/*
-	 * A class to represent an index into the buckets array.
+	/**
+	 * Checks that the centers of each circle
+	 * are closer than the sum of radii, as well
+	 * as the circles having different colors.
+	 * 
+	 * Retroactively only care about colors
+	 * if both circles are units.
 	 */
-	private static class Index2D {
-		public final int x,y;
-		
-		public Index2D(final int x, final int y) {
-			this.x = x;
-			this.y = y;
+	private static boolean circlesCollide(final ColoredCircle c0, final ColoredCircle c1) {
+		if(!(c0 instanceof Tower || c1 instanceof Tower)) {
+			if(c0.getColor().equals(c1.getColor())) {
+				return false;
+			}
 		}
+		
+		final Position2D p0 = c0.getPosition();
+		final Position2D p1 = c1.getPosition();
+		
+		final float dx = p0.x - p1.x;
+		final float dy = p0.y - p1.y;
+		final float sqrDist = dx*dx + dy*dy;
+		final float dR = c0.getCollideRadius() + c1.getCollideRadius();
+		
+		return sqrDist < (dR * dR);
 	}
 }

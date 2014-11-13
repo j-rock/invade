@@ -22,4 +22,11 @@ public class Clock {
 									 //it's not gonna happen for 290 million years.
 		return dt;
 	}
+	
+	/**
+	 * For resuming the clock if the app is {@code onPause()}
+	 */
+	public void resume() {
+		lastCheckedTimeMillis = System.currentTimeMillis() - 1;
+	}
 }

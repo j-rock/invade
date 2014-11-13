@@ -70,22 +70,22 @@ public abstract class Player {
 	 * the target Tower as well so PlayerUnits know to fire
 	 * when they get close.
 	 */
-	public void updateTarget(final Position2D target) {
+	public void updateTarget(final Position2D target, final Tower maybeTower) {
 		this.target = target;
-		setTargetTower(collider.findTower(color, target));
+		setTargetTower(maybeTower);
 	}
 	
 	public void setTargetTower(final Tower targetTower) {
 		this.targetTower = targetTower;
+		if(targetTower != null) {
+			target = targetTower.getPosition();
+		}
 	}
 
 	/**
 	 * Shifts all units in their respective directions.
 	 */
 	public void moveUnits(final long dt) {
-		if (target == null) {
-			target = towers.get(0).getPosition();
-		}
 		for(final PlayerUnit u : units) {
 			u.moveTowardsTarget(dt);
 			u.setMoving(); // we go to the Move state after moving so that collisions can determine the next state.
@@ -99,15 +99,16 @@ public abstract class Player {
 	 */
 	public void tryGenerateUnit(final long dt) {
 		unitGenTime += dt;
-		if(   units.size() < attrs.getMaxUnitCount()
-		      && unitGenTime >= attrs.getUnitCreationWaitTime()) {
+		if(    towers.size()  > 0
+		   &&   units.size()  < attrs.getMaxUnitCount()
+		   &&    unitGenTime >= attrs.getUnitCreationWaitTime()) {
 			
 			unitGenTime -= attrs.getUnitCreationWaitTime();
 			
 			final int randIndex = (int)(Math.random() * towers.size());
 			final Tower tower = towers.get(randIndex);
 			final Position2D towerPos = tower.getPosition();
-			final Position2D unitPos = towerPos.randomPositionOnCircle(tower.getRadius());
+			final Position2D unitPos = towerPos.randomPositionOnCircle(tower.getCollideRadius());
 			final PlayerUnit unit = new PlayerUnit(this, unitPos);
 			units.add(unit);
 		}
@@ -129,6 +130,9 @@ public abstract class Player {
 	
 	public void addTower(final Tower t) {
 		towers.add(t);
+		if (target == null) {
+			setTargetTower(t);
+		}
 	}
 	
 	public void removeTower(final Tower t) {

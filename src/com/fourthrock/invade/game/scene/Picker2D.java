@@ -1,68 +1,72 @@
 package com.fourthrock.invade.game.scene;
 
-import android.opengl.GLES20;
-import android.opengl.GLU;
 import android.opengl.Matrix;
 
+import com.fourthrock.invade.draw.OpenGLRunner;
 import com.fourthrock.invade.draw.Screen2D;
 import com.fourthrock.invade.game.physics.Position2D;
 
 public class Picker2D {
 	private static final float NEAR = 3f;
 	private static final float FAR = 7f;
-	private final int[] viewport;
-	private final float[] proj;
-	private final float[] modelView;
+	private final float[] projMat;
+	private final float[] viewMat;
+	private final float[] mvpMat;
+	private final float[] invTrans;
 	private final Scene scene;
 	
 	public Picker2D(final Scene scene) {
 		this.scene = scene;
 		
-		viewport = new int[4];
-		//GLES20.glGetIntegerv(GLES20.GL_VIEWPORT, viewport, 0);
-		// TODO - Broken, for now, hard code:
-		viewport[2] = 1920;
-		viewport[3] = 1005;
-		
-	    float ratio = (float) viewport[2] / viewport[3];
-		proj = new float[16];
-	    Matrix.frustumM(proj, 0, -ratio, ratio, -1, 1, NEAR, FAR);
-	    
-	    modelView = new float[16];
+		this.projMat  = new float[16];
+		this.viewMat  = new float[16];
+		this.mvpMat   = new float[16];
+		this.invTrans = new float[16];
 	}
 	
 	/*
-	 * Uses an OpenGL Utility function called UnProject to
-	 * convert from Screen2D coordinations to world coordinates.
+	 * May the writer of http://magicscrollsofcode.blogspot.com/2010/10/3d-picking-in-android.html
+	 * be forever blessed. Lifetime supply of toilet paper for this code.
 	 */
 	public Position2D convertScreenToWorld(final Screen2D screenCoords) {
-		setUpModelView();
-		float[] near = new float[4];
-		final int nearSuccess = GLU.gluUnProject(screenCoords.x, screenCoords.y, 0f,
-												 modelView, 0, proj, 0, viewport, 0, near, 0);
+		setUpInverseTransform();
 
-		float[] far = new float[4];
-		final int farSuccess = GLU.gluUnProject(screenCoords.x, screenCoords.y, 1f,
-												 modelView, 0, proj, 0, viewport, 0, far, 0);
+		float[] point = new float[4];
+		point[0] = screenCoords.x * 2f / screenWidth()  - 1f;
+		point[1] = (screenHeight() - screenCoords.y) * 2f / screenHeight() - 1f;
+		point[2] = -1f;
+		point[3] = 1f;
 		
 		
-		if(  nearSuccess == GLES20.GL_TRUE
-		   && farSuccess == GLES20.GL_TRUE) {
-			// must scale the results to account for perspective.
-			final float k = near[2] / (FAR - NEAR);
-			final float x = (near[0] + k * (far[0] - near[0])) / -near[3];
-			final float y = (2f * scene.getEye()[1]) + (near[1] + k * (far[1] - near[1])) / -near[3];
-			
-			return (new Position2D(x, y)).asPosition();
+		float[] out = new float[4];
+		Matrix.multiplyMV(out, 0, invTrans, 0, point, 0);
+		
+		if(out[3] == 0f) {
+			return null;
+		} else {
+			return new Position2D(-out[0]/out[3], out[1]/out[3]);
 		}
-		return null;
 	}
-	
-	private void setUpModelView() {
+
+	private void setUpInverseTransform() {
+	    final float ratio = ((float)screenWidth()) / screenHeight();
+	    Matrix.frustumM(projMat, 0, -ratio, ratio, -1, 1, NEAR, FAR);
+		
     	final float[] eye = scene.getEye();
-        Matrix.setLookAtM(modelView, 0, eye[0], eye[1], eye[2], eye[0], eye[1], 0f, 0f, 1.0f, 0.0f);
+        Matrix.setLookAtM(viewMat, 0, eye[0], eye[1], eye[2], eye[0], eye[1], 0f, 0f, 1.0f, 0.0f);
+        Matrix.multiplyMM(mvpMat, 0, projMat, 0, viewMat, 0);
         
         final float scale = scene.getZoom();
-        Matrix.scaleM(modelView, 0, scale, scale, scale);
+        Matrix.scaleM(mvpMat, 0, scale, scale, scale);
+        
+        Matrix.invertM(invTrans, 0, mvpMat, 0);
+	}
+	
+	private int screenWidth() {
+		return OpenGLRunner.SCREEN_WIDTH;
+	}
+	
+	private int screenHeight() {
+		return OpenGLRunner.SCREEN_HEIGHT;
 	}
 }

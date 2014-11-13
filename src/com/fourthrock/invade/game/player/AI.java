@@ -1,7 +1,7 @@
 package com.fourthrock.invade.game.player;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.game.physics.ColoredCircleCollider;
@@ -22,15 +22,21 @@ public class AI extends Player {
 
 	@Override
 	public void decideTarget() {
-		final Set<Tower> allAdjacentTowers = new HashSet<>();
-		for(final Tower t : getTowers()) {
-			allAdjacentTowers.addAll(t.getAdjacents());
-		}
-		for(final Tower adjT : allAdjacentTowers) {
-			if(!adjT.getColor().equals(getColor())) {
-				this.target = adjT.getPosition();
-				setTargetTower(adjT);
-				return;
+		
+		if(getTargetTower() == null || getTargetTower().getColor().equals(getColor())) {
+			// already captured the current target, time to move on.
+		
+			final List<Tower> allAdjacentTowers = new ArrayList<>();
+			for(final Tower t : getTowers()) {
+				allAdjacentTowers.addAll(t.getAdjacents());
+			}
+			
+			while(!allAdjacentTowers.isEmpty()) {
+				final int randIdx = (int) (Math.random() * allAdjacentTowers.size());
+				final Tower randTower = allAdjacentTowers.remove(randIdx);
+				if (!randTower.getColor().equals(getColor())) {
+					setTargetTower(randTower);
+				}
 			}
 		}
 	}

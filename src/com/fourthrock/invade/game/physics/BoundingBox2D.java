@@ -53,15 +53,15 @@ public class BoundingBox2D {
 		return bottomLeft.y;
 	}
 	
-	public BoundingBox2D expandWith(final Position2D p) {
+	public BoundingBox2D expandWith(final Position2D p, final float radius) {
 		final Position2D nextBot = new Position2D(
-				Math.min(bottomLeft.x, p.x),
-				Math.min(bottomLeft.y, p.y)
+				Math.min(bottomLeft.x, p.x-radius),
+				Math.min(bottomLeft.y, p.y-radius)
 		);
 		
 		final Position2D nextTop = new Position2D(
-				Math.max(topRight.x, p.x),
-				Math.max(topRight.y, p.y)
+				Math.max(topRight.x, p.x+radius),
+				Math.max(topRight.y, p.y+radius)
 		);
 		
 		return new BoundingBox2D(nextBot, nextTop);

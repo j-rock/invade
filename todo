@@ -1,18 +1,23 @@
-Picker2D
-  +++++++ Fix bad object picking
-  
 BoundingCircle2D
   ++++++ Fix bounding circle
 
 GamePlayScene
   ++++++++++Figure out how to spend human achievement points
-  ++++++++++And how to decide target
 
-EndGameScene
-  ++++++++++Everything
-
+AI
+  ++++++Units get stuck on non-adjacent towers
+  
+WhiteAI
+  ++++decideTarget
+  
 PlayerAttributes
   -? determine parameters???
+  
+EndGameScene
+  ++++++++++Everything
+  
+AttackingTowerState
+  +++++ moveTowardsTarget
 
 GamePlayScene
   - Up the graphics

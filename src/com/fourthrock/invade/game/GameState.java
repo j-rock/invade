@@ -97,6 +97,6 @@ public class GameState {
 		// we would hope on the next step() call that
 		// the state would only advance a single frame.
 		// so let's reset that clock.
-		clock.reset();
+		clock.resume();
 	}
 }

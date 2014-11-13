@@ -39,8 +39,22 @@ public class Vector2D {
 	public float sqrMagnitude() {
 		return (x*x) + (y*y);
 	}
+	
+	public float magnitude() {
+		return (float)Math.sqrt(sqrMagnitude());
+	}
 
 	public Screen2D asScreen2D() {
 		return new Screen2D(x, y);
+	}
+
+	/**
+	 * Returns the number of degrees between this Vector2D
+	 * and the positive x-axis, assuming the Vector2D
+	 * was rotated counter-clockwise.
+	 */
+	public float theta() {
+		final float radAngle = (float) Math.atan(y / x);
+		return (float) ((-180f / Math.PI) * radAngle);
 	}
 }

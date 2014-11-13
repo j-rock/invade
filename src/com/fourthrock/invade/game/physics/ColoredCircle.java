@@ -14,7 +14,7 @@ public interface ColoredCircle {
 	
 	public Position2D getPosition();
 	
-	public float getRadius();
+	public float getCollideRadius();
 	
 	public Color getColor();
 	

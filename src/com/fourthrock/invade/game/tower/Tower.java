@@ -9,6 +9,7 @@ import com.fourthrock.invade.draw.ScaleVec;
 import com.fourthrock.invade.game.physics.ColoredCircle;
 import com.fourthrock.invade.game.physics.Position2D;
 import com.fourthrock.invade.game.player.Player;
+import com.fourthrock.invade.game.unit.PlayerUnit;
 
 /**
  * Represents a tower that can be captured by a PlayerUnit.
@@ -38,8 +39,8 @@ public class Tower implements ColoredCircle {
 	}
 	
 	@Override
-	public float getRadius() {
-		return RADIUS;
+	public float getCollideRadius() {
+		return RADIUS + PlayerUnit.RADIUS/3;
 	}
 
 	@Override
@@ -60,8 +61,8 @@ public class Tower implements ColoredCircle {
 		health = Math.max(0f, health - attackPower);
 	}
 
-	public void regainHealth(final float dt) {
-		health += REGEN_RATE * dt;
+	public void regainHealth(final long dt) {
+		health = Math.min(BASE_HEALTH, health + REGEN_RATE * dt);
 	}
 	
 	public void resetHealth() {
@@ -83,7 +84,12 @@ public class Tower implements ColoredCircle {
 	 * This method returns the Position2D to put the unit at.
 	 */
 	public Position2D positionForAttackingUnit(final Position2D unitPos) {
-		return position.nearestOnCircle(getRadius(), unitPos);
+		final Position2D onCircle = position.nearestOnCircle(RADIUS, unitPos);
+		if(unitPos.minus(position).sqrMagnitude() > onCircle.minus(position).sqrMagnitude()) {
+			return unitPos;
+		} else {
+			return onCircle;
+		}
 	}
 
 	public boolean adjacentTo(final List<Tower> towers) {
@@ -97,6 +103,7 @@ public class Tower implements ColoredCircle {
 
 	public void setAdjacentTo(final Tower tower) {
 		adjacents.add(tower);
+		tower.adjacents.add(this);
 	}
 
 	public Set<Tower> getAdjacents() {

@@ -1,7 +1,13 @@
 package com.fourthrock.invade.draw;
 
+import static com.fourthrock.invade.draw.DrawEnum.CIRCLE;
+import static com.fourthrock.invade.draw.DrawEnum.SQUARE;
+import static com.fourthrock.invade.draw.DrawEnum.TRIANGLE;
 import static com.fourthrock.invade.draw.resource.FragmentShader.USE_VERTEX_COLOR;
 import static com.fourthrock.invade.draw.resource.VertexShader.APPLY_MODEL_VIEW_PROJECTION;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -28,22 +34,23 @@ import com.fourthrock.invade.game.physics.Position2D;
  * @author Joseph
  */
 public class OpenGLRunner extends CanvasRenderer implements GLSurfaceView.Renderer {
-	private final GameState gameState;
+	public static int SCREEN_WIDTH;
+	public static int SCREEN_HEIGHT;
 	
+	private final GameState gameState;
     private final float[] mvpMat;
     private final float[] projMat;
     private final float[] viewMat;
-    protected DrawObject[] drawObjects;
+    protected Map<DrawEnum, DrawObject> drawObjects;
     protected ShaderProgramManager sprgmManager;
     
     
     public OpenGLRunner(final GameState gameState) {
 		this.gameState = gameState;
-		
 		this.mvpMat  = new float[16];
 		this.projMat = new float[16];
 		this.viewMat = new float[16];
-		this.drawObjects = null;
+		this.drawObjects = new HashMap<>();
 		this.sprgmManager = new ShaderProgramManager(); 
 	}
 
@@ -55,6 +62,8 @@ public class OpenGLRunner extends CanvasRenderer implements GLSurfaceView.Render
 	
     @Override
     public void onSurfaceChanged(GL10 unused, int width, int height) {
+    	SCREEN_WIDTH = width;
+    	SCREEN_HEIGHT = height;
         GLES20.glViewport(0, 0, width, height);
         final float ratio = (float) width / height;
         Matrix.frustumM(projMat, 0, -ratio, ratio, -1, 1, 3, 7);
@@ -78,14 +87,13 @@ public class OpenGLRunner extends CanvasRenderer implements GLSurfaceView.Render
        					APPLY_MODEL_VIEW_PROJECTION,
        					USE_VERTEX_COLOR);
        	
-    	// To ensure correctness, this array must be
-    	// instantiated in the same order
-    	// as the DrawEnum states are listed.
-    	drawObjects = new DrawObject[]{
-    		new Square(standardProgram),
-    		new Triangle(standardProgram),
-    		new Circle(standardProgram)
-    	};
+    	drawObjects.put(SQUARE, new Square(standardProgram));
+    	drawObjects.put(TRIANGLE, new Triangle(standardProgram));
+    	drawObjects.put(CIRCLE, new Circle(standardProgram));
+    	
+    	if(drawObjects.size() != DrawEnum.values().length) {
+    		throw new IllegalStateException("OpenGLRunner drawObjects map must support all DrawEnum types.");
+    	}
 	}
     
     /*
@@ -114,7 +122,7 @@ public class OpenGLRunner extends CanvasRenderer implements GLSurfaceView.Render
 		Matrix.translateM(updatedMVP, 0, mvpMat, 0, -p.x, p.y, 0);
 		Matrix.rotateM(updatedMVP, 0, angle, 0f, 0f, 1f);
 		Matrix.scaleM(updatedMVP, 0, s.sx, s.sy, s.sz);
-		final DrawObject d = drawObjects[drawEnum.ordinal()];
+		final DrawObject d = drawObjects.get(drawEnum);
 		d.draw(updatedMVP, color.toFloatArray());
 	}
 }

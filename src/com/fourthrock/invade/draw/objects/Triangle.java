@@ -8,9 +8,9 @@ import android.opengl.GLES20;
 public class Triangle extends DrawObject {
 
     private static final float[] triangleCoords = {
-		0f,  0.622008459f, 0f,
-	 -0.5f, -0.311004243f, 0f,
-	  0.5f, -0.311004243f, 0f
+    		0f,  0.622008459f, 0f,
+    	 -0.5f, -0.311004243f, 0f,
+    	  0.5f, -0.311004243f, 0f
     };
     
     public Triangle(final int program) {

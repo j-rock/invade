@@ -17,7 +17,7 @@ public class ColoredPoint implements ColoredCircle {
 	}
 
 	@Override
-	public float getRadius() {
+	public float getCollideRadius() {
 		return 1e-5f;
 	}
 

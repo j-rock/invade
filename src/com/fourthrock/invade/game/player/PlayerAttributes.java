@@ -1,5 +1,7 @@
 package com.fourthrock.invade.game.player;
 
+import com.fourthrock.invade.game.unit.PlayerUnit;
+
 
 /*
  * Represents the stats a Player has throughout the course of the game.
@@ -12,6 +14,7 @@ public class PlayerAttributes {
 	private float unitMoveSpeed;
 	private float unitBaseHealth;
 	private float unitAttackSpeed;
+	private float unitAttackRadius;
 	
 	private int level;
 	private int progress;
@@ -27,7 +30,8 @@ public class PlayerAttributes {
 		
 		this.unitMoveSpeed = 0.03f / ONE_SEC;
 		this.unitBaseHealth = 50f;
-		this.unitAttackSpeed = unitBaseHealth / (2 * ONE_SEC);
+		this.unitAttackSpeed = unitBaseHealth / ONE_SEC;
+		this.unitAttackRadius = 2 * PlayerUnit.RADIUS;
 		
 		this.level = 1;
 		this.progress = 0;
@@ -48,6 +52,10 @@ public class PlayerAttributes {
 	
 	public float getUnitAttackSpeed() {
 		return unitAttackSpeed;
+	}
+	
+	public float getUnitAttackRadius() {
+		return unitAttackRadius;
 	}
 	
 	public float getBaseUnitHealth() {

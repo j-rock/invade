@@ -26,12 +26,6 @@ public abstract class UnitState {
 	public abstract Position2D moveTowards(final Position2D startPos, final Position2D target, final float speed, final long dt);
 	
 	/**
-	 * Units attacking a tower can't get too close to it. If you've
-	 * collided with Tower t and its your targetTower, what do you do?!
-	 */
-	public abstract Position2D moveOffTower(final Position2D startPos, final Tower t, final Tower targetTower);
-
-	/**
 	 * Over time dt, attack the given target.
 	 */
 	public abstract void fireAtTarget(final Player player, final Tower targetTower, final PlayerUnit targetUnit, final long dt);

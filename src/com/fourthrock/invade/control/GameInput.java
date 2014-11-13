@@ -2,7 +2,7 @@ package com.fourthrock.invade.control;
 
 import android.content.Context;
 import android.support.v4.view.GestureDetectorCompat;
-import android.view.GestureDetector.OnGestureListener;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 
@@ -45,33 +45,13 @@ public class GameInput {
 		}
 	}
 	
-	private class GestureListener implements OnGestureListener {
-
-		@Override
-		public boolean onDown(final MotionEvent e) {
-			return false;
-		}
-
-		@Override
-		public boolean onFling(final MotionEvent e1, final MotionEvent e2,
-				final float velocityX, final float velocityY) {
-			return false;
-		}
-
-		@Override
-		public void onLongPress(final MotionEvent e) {
-		}
-
+	private class GestureListener extends GestureDetector.SimpleOnGestureListener {
 		@Override
 		public boolean onScroll(final MotionEvent e1, final MotionEvent e2, final float dx, final float dy) {
 			final Screen2D end = new Screen2D(e2.getX(),  e2.getY());
 			final Screen2D start = end.minus(new Vector2D(dx, dy)).asScreen2D();
 			gameState.handlePan(start, end);
 			return true;
-		}
-
-		@Override
-		public void onShowPress(final MotionEvent e) {
 		}
 
 		@Override
