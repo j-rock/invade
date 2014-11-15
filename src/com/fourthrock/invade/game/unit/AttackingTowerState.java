@@ -16,13 +16,12 @@ public class AttackingTowerState extends UnitState {
 
 	@Override
 	public Color getRenderColor(final Color original) {
-		return original.blend(new Color(0f, 0.4f, 0.4f, 0.2f));
+		return original.blend(new Color(0f, 0.4f, 0.4f, 0.5f));
 	}
 
 	@Override
 	public Position2D moveTowards(final Position2D startPos, final Position2D target, final float speed, final long dt) {
-		// TODO - slide around Tower.
-		return startPos;
+		return UnitState.MOVING.moveTowards(startPos, target, speed*0.5f, dt);
 	}
 
 	@Override
@@ -38,7 +37,7 @@ public class AttackingTowerState extends UnitState {
 			
 		if(targetTower.getHealth() <= 0f && targetTower.adjacentTo(player.getTowers())) {
 			player.getAttributes().registerTowerCapture();
-			player.setTargetTower(null);
+			player.updateTarget(null);
 			targetTower.resetHealth();
 			targetTower.adoptNewPlayer(player);
 		}

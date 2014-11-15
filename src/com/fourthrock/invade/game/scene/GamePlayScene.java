@@ -1,12 +1,9 @@
 package com.fourthrock.invade.game.scene;
 
-import static com.fourthrock.invade.draw.DrawEnum.CIRCLE;
 import static com.fourthrock.invade.draw.DrawEnum.SQUARE;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import android.util.Pair;
 
 import com.fourthrock.invade.draw.CanvasRenderer;
 import com.fourthrock.invade.draw.Color;
@@ -14,16 +11,19 @@ import com.fourthrock.invade.draw.ScaleVec;
 import com.fourthrock.invade.draw.Screen2D;
 import com.fourthrock.invade.game.maps.DefaultMap;
 import com.fourthrock.invade.game.maps.Map;
-import com.fourthrock.invade.game.physics.ColoredCircleCollider;
 import com.fourthrock.invade.game.physics.Position2D;
-import com.fourthrock.invade.game.physics.TowerCollision;
-import com.fourthrock.invade.game.physics.UnitCollision;
 import com.fourthrock.invade.game.physics.Vector2D;
+import com.fourthrock.invade.game.physics.collision.AttackTowerCollision;
+import com.fourthrock.invade.game.physics.collision.AttackUnitCollision;
+import com.fourthrock.invade.game.physics.collision.CollisionCollection;
+import com.fourthrock.invade.game.physics.collision.ColoredCircleCollider;
+import com.fourthrock.invade.game.physics.collision.MoveBackCollision;
 import com.fourthrock.invade.game.player.AI;
 import com.fourthrock.invade.game.player.Human;
 import com.fourthrock.invade.game.player.Player;
 import com.fourthrock.invade.game.tower.Tower;
 import com.fourthrock.invade.game.unit.PlayerUnit;
+import com.fourthrock.invade.game.unit.UnitState;
 import com.fourthrock.invade.util.Index2D;
 
 /**
@@ -60,8 +60,7 @@ public class GamePlayScene extends WorldEyeScene {
 	public void handleTap(final Screen2D screenCoords) {
 		super.handleTap(screenCoords);
 		final Position2D tapPos = getPositionFromScreen(screenCoords);
-		final Tower t = ColoredCircleCollider.findTower(human.getColor(), tapPos, towers);
-		human.updateTarget(tapPos, t);
+		human.updateTarget(tapPos);
 		
 		// TODO - add some graphical response
 	}
@@ -84,8 +83,7 @@ public class GamePlayScene extends WorldEyeScene {
 				p.decideTarget();
 				p.moveUnits(dt);
 			}
-			final Pair<List<TowerCollision>, List<UnitCollision>> colls = collider.withdrawCollisions();
-			processCollisions(colls.first, colls.second);
+			processCollisions(collider.withdrawCollisions());
 			for(final Player p : players) {
 				p.fireUnits(dt);
 			}
@@ -96,16 +94,19 @@ public class GamePlayScene extends WorldEyeScene {
 		}
 	}
 
-	private void processCollisions(final List<TowerCollision> towerColls, final List<UnitCollision> unitColls) {
-		for(final TowerCollision tc : towerColls) {
-			if(!tc.t.getColor().equals(tc.u.getColor())) {
-				tc.u.setAttackingTower(tc.t);
-			}
-			tc.u.moveOffTower(tc.t);
+	private void processCollisions(final CollisionCollection colls) {
+		for(final MoveBackCollision mbc : colls.getMoveBackCollisions()) {
+			mbc.unit.moveOff(mbc.c.getPosition(), mbc.c.getPhysicalRadius());
 		}
-		for(final UnitCollision uc : unitColls) {
-			// TODO - stop brushing shoulders with brothers/sister units, come on guys.
-			uc.u.setAttackingUnit(uc.u2);
+		for(final AttackTowerCollision atc : colls.getAttackTowerCollisions()) {
+			atc.attacker.setAttackingTower(atc.victim);
+		}
+		for(final AttackUnitCollision auc : colls.getAttackUnitCollisions()) {
+			// choose the first colliding Unit to attack
+			// so we can deterministically draw attack graphics.
+			if(auc.attacker.getState() != UnitState.ATTACKING_UNIT) {
+				auc.attacker.setAttackingUnit(auc.victim);
+			}
 		}
 
 		// TODO - add graphical triggers
@@ -123,7 +124,7 @@ public class GamePlayScene extends WorldEyeScene {
 		}
 		for(final Player p : players) {
 			for(final PlayerUnit u : p.getUnits()) {
-				renderer.draw(CIRCLE, u.getPosition(), PlayerUnit.SCALE, u.getRenderColor());
+				renderer.draw(SQUARE, u.getPosition(), PlayerUnit.SCALE, u.getOrientation(), u.getRenderColor());
 			}
 		}
 		super.render(renderer);
@@ -140,8 +141,8 @@ public class GamePlayScene extends WorldEyeScene {
 		final Position2D t = tt.getPosition();
 		final Position2D midpoint = s.add(t).scale(0.5f).asPosition();
 		final Vector2D displacement = t.minus(s);
-		final float length = displacement.magnitude() - 2 * Tower.RADIUS;
-		final float height = PlayerUnit.RADIUS / 2;
+		final float length = displacement.magnitude() - 2 * Tower.SPAWN_RADIUS;
+		final float height = PlayerUnit.BORDER_RADIUS / 2;
 		final float angle = displacement.theta();
 		renderer.draw(SQUARE, midpoint, new ScaleVec(length, height, 1f), angle, new Color(0.9f, 0.9f, 0.9f, 1f));
 	}

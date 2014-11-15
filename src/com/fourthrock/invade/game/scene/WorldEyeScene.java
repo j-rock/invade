@@ -80,7 +80,7 @@ public abstract class WorldEyeScene implements Scene {
 		final Screen2D oneMillisFromStart = start.add(screenVelocityMillis).asScreen2D();
 		final Vector2D worldDisplacement = getWorldDisplacementFromScreen(start, oneMillisFromStart);
 		final Vector2D eyeVelocity = new Vector2D(worldDisplacement.x, -worldDisplacement.y);
-		eye.setMoving(eyeVelocity);
+		eye.setMoving(eyeVelocity.scale(0.125f)); // Android recommends using 1/8th the actual fling velocity.
 	}
 
 	@Override
@@ -101,7 +101,7 @@ public abstract class WorldEyeScene implements Scene {
 			if(tap.radius <= 0f) {
 				userTaps.remove(i);
 			} else {
-				tap.radius -= 17f / 800;
+				tap.radius -= 17f / 400; // magic number that looks pretty.
 				renderer.draw(SQUARE, tap.pos, tap.getScale(), Tap.COLOR);
 			}
 		}
@@ -128,7 +128,7 @@ public abstract class WorldEyeScene implements Scene {
 		}
 		
 		public ScaleVec getScale() {
-			return new ScaleVec(radius, radius, radius);
+			return new ScaleVec(radius);
 		}
 	}
 }

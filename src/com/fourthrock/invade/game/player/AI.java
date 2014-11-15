@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fourthrock.invade.draw.Color;
-import com.fourthrock.invade.game.physics.ColoredCircleCollider;
+import com.fourthrock.invade.game.physics.collision.ColoredCircleCollider;
 import com.fourthrock.invade.game.tower.Tower;
 
 /**
@@ -18,10 +18,12 @@ import com.fourthrock.invade.game.tower.Tower;
  *
  */
 public class AI extends Player {
+	private Tower targetTower;
 	private int achievementChoice;
 	
 	public AI(final Color color, final ColoredCircleCollider collider) {
 		super(color, collider);
+		this.targetTower = null;
 		this.achievementChoice = 0;
 	}
 
@@ -32,16 +34,16 @@ public class AI extends Player {
 			allAdjacentTowers.addAll(t.getAdjacents());
 		}
 		
-		final Tower target = getTargetTower();
-		if(   target == null							// if we have no target
-		   || target.getColor().equals(getColor())      // or we're targeting a Tower we own
-		   || !allAdjacentTowers.contains(target)) {    // or the target isn't adjacent to our current towers
-														// it's time to look for a new target
+		if(   targetTower == null				  	  	   // if we have no target
+		   || targetTower.getColor().equals(getColor())    // or we're targeting a Tower we own
+		   || !allAdjacentTowers.contains(targetTower)) {  // or the target isn't adjacent to our current towers
+														   // it's time to look for a new target
 			while(!allAdjacentTowers.isEmpty()) {
 				final int randIdx = (int) (Math.random() * allAdjacentTowers.size());
 				final Tower randTower = allAdjacentTowers.remove(randIdx);
 				if (!randTower.getColor().equals(getColor())) {
-					setTargetTower(randTower);
+					targetTower = randTower;
+					updateTarget(targetTower.getPosition());
 				}
 			}
 		}

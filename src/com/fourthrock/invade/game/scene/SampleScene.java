@@ -64,7 +64,7 @@ public class SampleScene extends WorldEyeScene {
 	}
 
 	private static void renderSqrTri(final CanvasRenderer r, final Position2D pos, final float angle, final Color sqrC, final Color triC) {
-		final ScaleVec s = new ScaleVec(0.1f, 0.1f, 0.1f);
+		final ScaleVec s = new ScaleVec(0.1f);
 		r.draw(SQUARE,  pos, s, angle, sqrC);
 		r.draw(TRIANGLE, pos, s, -angle, triC);
 	}

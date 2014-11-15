@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.fourthrock.invade.game.physics.BoundingBox2D;
-import com.fourthrock.invade.game.physics.ColoredCircleCollider;
 import com.fourthrock.invade.game.physics.Position2D;
+import com.fourthrock.invade.game.physics.collision.ColoredCircleCollider;
 import com.fourthrock.invade.game.player.Player;
 import com.fourthrock.invade.game.player.WhiteAI;
 import com.fourthrock.invade.game.tower.Tower;
@@ -31,20 +31,19 @@ import com.fourthrock.invade.util.Index2D;
  *
  */
 public abstract class Map {
-	private final float minZoom, maxZoom;
+	private static final float MIN_ZOOM = 2.4f; // magic constant determined experimentally
+	private static final float MAX_ZOOM = 10f;  // magic constant determined experimentally
 	private BoundingBox2D bounds;
 	protected final List<Tower> towers;
 
 	
-	private Map(final List<Tower> towers, final BoundingBox2D bounds, final float minZoom, final float maxZoom) {
+	private Map(final List<Tower> towers, final BoundingBox2D bounds) {
 		this.towers = towers;
 		this.bounds = bounds;
-		this.minZoom = minZoom;
-		this.maxZoom = maxZoom;
 	}
 
-	protected Map(final float minZoom, final float maxZoom) {
-		this(new ArrayList<Tower>(), BoundingBox2D.ORIGIN_POINT, minZoom, maxZoom);
+	protected Map() {
+		this(new ArrayList<Tower>(), BoundingBox2D.ORIGIN_POINT);
 	}
 
 	public BoundingBox2D getBounds() {
@@ -60,11 +59,11 @@ public abstract class Map {
 	}
 	
 	public float getMinZoom() {
-		return minZoom;
+		return MIN_ZOOM;
 	}
 	
 	public float getMaxZoom() {
-		return maxZoom;
+		return MAX_ZOOM;
 	}
 	
 	/**
@@ -104,20 +103,20 @@ public abstract class Map {
 	 */
 	public void assignPlayers(final List<Player> players, final ColoredCircleCollider collider) {
 		for(int i=0; i<players.size() && i<towers.size(); i++) {
-			towers.get(i).setPlayer(players.get(i));
+			towers.get(i).adoptNewPlayer(players.get(i));
 		}
 		
 		//If there are any spots left over, fill them with the White AI
 		for(int i=players.size(); i<towers.size(); i++) {
 			final Player white = new WhiteAI(collider);
 			players.add(white);
-			towers.get(i).setPlayer(white);
+			towers.get(i).adoptNewPlayer(white);
 		}
 	}
 	
 	protected Tower addNewTower(final float x, final float y) {
 		final Position2D p = new Position2D(x, y);
-		bounds = bounds.expandWith(p, Tower.RADIUS);
+		bounds = bounds.expandWith(p);
 		final Tower t = new Tower(p);
 		towers.add(t);
 		return t;

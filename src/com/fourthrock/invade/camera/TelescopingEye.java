@@ -54,10 +54,12 @@ public class TelescopingEye {
 		setPosition(position.add(velocity.scale(dt)).asPosition());
 		
 		// v = v0 - a*dt
-		velocity = velocity.minus(acceleration.scale(dt));
-		
-		if(velocity.sqrMagnitude() <= 0.00001) {
+		final Vector2D nextVelocity = velocity.minus(acceleration.scale(dt));
+		if(   nextVelocity.sqrMagnitude() <= 1e-14f  // velocity has diminished to epsilon
+		   || velocity.antiparallel(nextVelocity)) { // we decelerated to the point of going in the opposite direction.
 			stopMoving();
+		} else {
+			velocity = nextVelocity;
 		}
 	}
 
@@ -67,6 +69,9 @@ public class TelescopingEye {
 	 */
 	public void setPosition(final Position2D position) {
 		this.position = bounds.getClosestInBounds(position);
+		if(!this.position.equals(position)) { // we hit the edge of the bounds, stop moving so much
+			acceleration = acceleration.scale(300);
+		}
 	}
 
 	public void zoomTo(final float scaleFactor) {
@@ -75,6 +80,6 @@ public class TelescopingEye {
 
 	public void setMoving(final Vector2D eyeVelocity) {
 		velocity = eyeVelocity;
-		acceleration = velocity.scale(1/3000f);
+		acceleration = velocity.scale(1/2000f); // two seconds for moving eye on fling.
 	}
 }

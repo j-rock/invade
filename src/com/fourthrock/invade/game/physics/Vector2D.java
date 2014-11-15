@@ -71,4 +71,12 @@ public class Vector2D {
 	private static boolean floatEquals(final float d1, final float d2) {
 		return Math.abs(d1 - d2) <= 1e-12f;
 	}
+
+	public boolean antiparallel(final Vector2D that) {
+		return this.dot(that) < 0f;
+	}
+
+	private float dot(final Vector2D that) {
+		return x*that.x + y*that.y;
+	}
 }

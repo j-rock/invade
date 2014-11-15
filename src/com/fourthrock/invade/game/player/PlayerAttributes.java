@@ -1,5 +1,6 @@
 package com.fourthrock.invade.game.player;
 
+import com.fourthrock.invade.game.tower.Tower;
 import com.fourthrock.invade.game.unit.PlayerUnit;
 
 
@@ -8,7 +9,7 @@ import com.fourthrock.invade.game.unit.PlayerUnit;
  * Handles upgrading logic.
  */
 public class PlayerAttributes {
-	private int maxUnitCount;
+	private int maxUnitsPerTowerCount;
 	private long unitCreationWaitTime;
 	
 	private float unitMoveSpeed;
@@ -25,21 +26,21 @@ public class PlayerAttributes {
 		
 		final long ONE_SEC = 1000L;
 		
-		this.maxUnitCount = 10;
+		this.maxUnitsPerTowerCount = 10;
 		this.unitCreationWaitTime = ONE_SEC;
 		
-		this.unitMoveSpeed = 0.03f / ONE_SEC;
-		this.unitBaseHealth = 50f;
-		this.unitAttackSpeed = unitBaseHealth / ONE_SEC;
-		this.unitAttackRadius = 2 * PlayerUnit.RADIUS;
+		this.unitMoveSpeed    = Tower.BORDER_RADIUS / (3 * ONE_SEC);
+		this.unitBaseHealth   = Tower.BASE_HEALTH / 100f;
+		this.unitAttackSpeed  = Tower.REGEN_RATE / 2f;
+		this.unitAttackRadius = PlayerUnit.BORDER_RADIUS * 3;
 		
 		this.level = 1;
 		this.progress = 0;
 		this.achievementPoints = 0;
 	}
 	
-	public int getMaxUnitCount() {
-		return maxUnitCount;
+	public int getMaxUnitsPerTowerCount() {
+		return maxUnitsPerTowerCount;
 	}
 
 	public long getUnitCreationWaitTime() {

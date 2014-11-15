@@ -1,4 +1,4 @@
-package com.fourthrock.invade.game.physics;
+package com.fourthrock.invade.game.physics.collision;
 
 import java.util.ArrayList;
 import java.util.Iterator;

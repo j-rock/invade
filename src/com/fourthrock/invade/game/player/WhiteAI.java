@@ -1,7 +1,7 @@
 package com.fourthrock.invade.game.player;
 
 import com.fourthrock.invade.draw.Color;
-import com.fourthrock.invade.game.physics.ColoredCircleCollider;
+import com.fourthrock.invade.game.physics.collision.ColoredCircleCollider;
 
 /**
  * Unlike regular AI, the WhiteAI never go to capture a Tower.

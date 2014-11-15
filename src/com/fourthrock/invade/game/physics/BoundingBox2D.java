@@ -54,19 +54,18 @@ public class BoundingBox2D {
 	}
 	
 	/**
-	 * Tries to create the smallest BoundingBox2D that contains the circle
-	 * centered at Position2D with radius radius and also contains this
-	 * BoundingBox2D
+	 * Tries to create the smallest BoundingBox2D that contains the point
+	 * centered at Position2D and also contains this BoundingBox2D.
 	 */
-	public BoundingBox2D expandWith(final Position2D p, final float radius) {
+	public BoundingBox2D expandWith(final Position2D p) {
 		final Position2D nextBot = new Position2D(
-				Math.min(bottomLeft.x, p.x-radius),
-				Math.min(bottomLeft.y, p.y-radius)
+				Math.min(bottomLeft.x, p.x),
+				Math.min(bottomLeft.y, p.y)
 		);
 		
 		final Position2D nextTop = new Position2D(
-				Math.max(topRight.x, p.x+radius),
-				Math.max(topRight.y, p.y+radius)
+				Math.max(topRight.x, p.x),
+				Math.max(topRight.y, p.y)
 		);
 		
 		return new BoundingBox2D(nextBot, nextTop);

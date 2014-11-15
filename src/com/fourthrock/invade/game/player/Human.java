@@ -1,7 +1,7 @@
 package com.fourthrock.invade.game.player;
 
 import com.fourthrock.invade.draw.Color;
-import com.fourthrock.invade.game.physics.ColoredCircleCollider;
+import com.fourthrock.invade.game.physics.collision.ColoredCircleCollider;
 
 /**
  * A class to represent a human player.

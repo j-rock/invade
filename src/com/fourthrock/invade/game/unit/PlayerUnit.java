@@ -2,8 +2,8 @@ package com.fourthrock.invade.game.unit;
 
 import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.draw.ScaleVec;
-import com.fourthrock.invade.game.physics.ColoredCircle;
 import com.fourthrock.invade.game.physics.Position2D;
+import com.fourthrock.invade.game.physics.collision.ColoredCircle;
 import com.fourthrock.invade.game.player.Player;
 import com.fourthrock.invade.game.tower.Tower;
 
@@ -15,18 +15,21 @@ import com.fourthrock.invade.game.tower.Tower;
  *
  */
 public class PlayerUnit implements ColoredCircle {
-	public static final float RADIUS = 0.0035f;
-	public static ScaleVec SCALE = new ScaleVec(RADIUS, RADIUS, RADIUS);
+	public static final float BORDER_RADIUS = 0.0035f;
+	public static ScaleVec SCALE = new ScaleVec(BORDER_RADIUS / (float)Math.sqrt(2));
 
 	private final Player player;
 	private Position2D position;
+	private float orientation;
 	private float health;
 	private UnitState state;
 	private PlayerUnit targetUnit;
+	private Tower targetTower;
 	
 	public PlayerUnit(final Player player, final Position2D position) {
 		this.player = player;
 		this.position = position;
+		this.orientation = (float) (Math.random() * 360);
 		this.health = player.getAttributes().getBaseUnitHealth();
 		this.state = UnitState.MOVING;
 	}
@@ -42,7 +45,12 @@ public class PlayerUnit implements ColoredCircle {
 	}
 	
 	@Override
-	public float getCollideRadius() {
+	public float getPhysicalRadius() {
+		return BORDER_RADIUS;
+	}
+	
+	@Override
+	public float getActiveRadius() {
 		return player.getAttributes().getUnitAttackRadius();
 	}
 	
@@ -52,13 +60,21 @@ public class PlayerUnit implements ColoredCircle {
 	public Color getRenderColor() {
 		return blendOnHealth(state.getRenderColor(getColor()));
 	}
-
-	public boolean alive() {
-		return health > 0f;
-	}
 	
+	public float getOrientation() {
+		return orientation;
+	}
+
 	public float getHealth() {
 		return health;
+	}
+	
+	public UnitState getState() {
+		return state;
+	}
+	
+	public boolean alive() {
+		return health > 0f;
 	}
 	
 	public void takeDamage(final float damage) {
@@ -67,21 +83,18 @@ public class PlayerUnit implements ColoredCircle {
 	
 	public void setMoving() {
 		state = UnitState.MOVING;
-		targetUnit = null;
 	}
 	
 	public void setAttackingUnit(final PlayerUnit u) {
 		this.targetUnit = u;
+		setOrientation(u.getPosition());
 		state = UnitState.ATTACKING_UNIT;
 	}
 	
 	public void setAttackingTower(final Tower t) {
-		// Only attack Tower t
-		// if commanded to attack it
-		
-		if(t.equals(player.getTargetTower())) {
-			state = UnitState.ATTACKING_TOWER;
-		}
+		targetTower = t;
+		setOrientation(t.getPosition());
+		state = UnitState.ATTACKING_TOWER;
 	}
 	
 	/**
@@ -89,12 +102,27 @@ public class PlayerUnit implements ColoredCircle {
 	 * to move towards the current Player's target.
 	 */
 	public void moveTowardsTarget(final long dt) {
-		position = state.moveTowards(position, player.getTarget(), player.getAttributes().getUnitMoveSpeed(), dt);
+		final Position2D nextPosition = state.moveTowards(position, player.getTarget(), player.getAttributes().getUnitMoveSpeed(), dt);
+		setOrientation(nextPosition);
+		position = nextPosition;
 	}
 	
-	public void moveOffTower(final Tower t) {
-		position = t.positionForAttackingUnit(position);
+	/**
+	 * Instructs this PlayerUnit to back off Position2D pos,
+	 * maintaining a minimum separation of minSep.
+	 * 
+	 * We introduce a slight buffer so that MoveBackCollisions
+	 * don't glue entities together.
+	 */
+	public void moveOff(final Position2D backOffPos, final float minSep) {
+		//TODO - make circular movement here.
+		final Position2D onCircle = backOffPos.nearestOnCircle(minSep + getPhysicalRadius()/3, position);
+		final float currSqrDistFromBackOff = position.minus(backOffPos).sqrMagnitude();
+		final float onCircleSqrDistFromBackOff = onCircle.minus(backOffPos).sqrMagnitude();
 		
+		if(currSqrDistFromBackOff < onCircleSqrDistFromBackOff) {
+			position = onCircle;
+		}
 	}
 
 	/**
@@ -102,7 +130,7 @@ public class PlayerUnit implements ColoredCircle {
 	 * Delegate to the UnitState how to proceed.
 	 */
 	public void fireAtTarget(final long dt) {
-		state.fireAtTarget(player, player.getTargetTower(), targetUnit, dt);
+		state.fireAtTarget(player, targetTower, targetUnit, dt);
 	}
 	
 	/**
@@ -112,5 +140,9 @@ public class PlayerUnit implements ColoredCircle {
 		final float healthRatio = health / player.getAttributes().getBaseUnitHealth();
 		final Color healthBlack = new Color(0f, 0f, 0f, 1 - healthRatio);
 		return healthBlack.blend(renderColor);
+	}
+	
+	private void setOrientation(final Position2D target) {
+		orientation = target.minus(position).theta();
 	}
 }

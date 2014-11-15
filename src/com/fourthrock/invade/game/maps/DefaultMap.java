@@ -21,14 +21,12 @@ package com.fourthrock.invade.game.maps;
  *  @author Joseph
  */
 public class DefaultMap extends Map {
-	private static final float MIN_ZOOM = 1.4f;
-	private static final float MAX_ZOOM = 3.32f;
 	
 	public DefaultMap() {
-		super(MIN_ZOOM, MAX_ZOOM);
+		super();
 
 		// k is a scaling factor designed to make Towers appear on the screen nicely.
-		final float k = 180f;
+		final float k = 360f;
 
 		//{ADD_NEW_TOWER(x,y)       // logical pos  //index in towers list
 		

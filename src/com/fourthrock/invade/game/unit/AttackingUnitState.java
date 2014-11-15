@@ -16,13 +16,12 @@ public class AttackingUnitState extends UnitState {
 
 	@Override
 	public Color getRenderColor(final Color original) {
-		return original.blend(new Color(1f, 0f, 0f, 0.3f));
+		return original.blend(new Color(1f, 0f, 0f, 0.5f));
 	}
 
 	@Override
 	public Position2D moveTowards(final Position2D startPos, final Position2D target, final float speed, final long dt) {
-		// attackers don't move.
-		return startPos;
+		return UnitState.MOVING.moveTowards(startPos, target, speed*0.8f, dt);
 	}
 
 	@Override

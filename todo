@@ -1,6 +1,12 @@
 GamePlayScene
   ++++++++++Figure out how to spend human achievement points
 
+PlayerUnit
+ +++++ Move circularly in "move Off"
+ 
+Tower
+ ++++++ Figure out sizes properly.
+
 WhiteAI
   ++++decideTarget
   
@@ -9,9 +15,6 @@ PlayerAttributes
   
 EndGameScene
   ++++++++++Everything
-  
-AttackingTowerState
-  +++++ moveTowardsTarget
 
 GamePlayScene
   - Up the graphics
@@ -19,4 +22,3 @@ GamePlayScene
 
 ColoredCircleCollider
   - parallelize
-  ++++++++ for colored circles, have "active" and "passive" radii

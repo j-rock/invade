@@ -9,7 +9,7 @@ package com.fourthrock.invade.draw;
  *
  */
 public class ScaleVec {
-	public static final ScaleVec UNIT = new ScaleVec(1f, 1f, 1f);
+	public static final ScaleVec UNIT = new ScaleVec(1f);
 	
 	public final float sx, sy, sz;
 	
@@ -19,6 +19,10 @@ public class ScaleVec {
 		this.sz = z;
 	}
 	
+	public ScaleVec(final float s) {
+		this(s, s, s);
+	}
+
 	public ScaleVec scale(final float k) {
 		return new ScaleVec(k*sx, k*sy, k*sz);
 	}
