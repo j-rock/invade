@@ -1,9 +1,5 @@
-BoundingCircle2D
-  ++++++ Fix bounding circle
-
 GamePlayScene
   ++++++++++Figure out how to spend human achievement points
-
 
 WhiteAI
   ++++decideTarget
@@ -23,3 +19,4 @@ GamePlayScene
 
 ColoredCircleCollider
   - parallelize
+  ++++++++ for colored circles, have "active" and "passive" radii

@@ -45,6 +45,17 @@ public interface Scene {
 	public void handleScaling(final float scaleFactor);
 	
 	/**
+	 * The user made a fling motion.
+	 * Take the velocity of the fling (in pixels per second)
+	 * and the last touched point on the screen
+	 * to determine what to do.
+	 * 
+	 * @param start, the last touched point on the screen
+	 * @param velocity, the velocity in screen coordinates
+	 */
+	public void handleFling(final Screen2D start, Screen2D velocity);
+	
+	/**
 	 * Return the {x,y,z} coordinates for the current camera
 	 */
 	public float[] getEye();
@@ -62,5 +73,6 @@ public interface Scene {
 	 * 			to do thy bidding.
 	 */
 	public void render(final CanvasRenderer renderer);
+
 
 }

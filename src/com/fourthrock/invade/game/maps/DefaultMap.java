@@ -21,8 +21,8 @@ package com.fourthrock.invade.game.maps;
  *  @author Joseph
  */
 public class DefaultMap extends Map {
-	private static final float MIN_ZOOM = 1.2f;
-	private static final float MAX_ZOOM = 4f;
+	private static final float MIN_ZOOM = 1.4f;
+	private static final float MAX_ZOOM = 3.32f;
 	
 	public DefaultMap() {
 		super(MIN_ZOOM, MAX_ZOOM);
@@ -55,7 +55,7 @@ public class DefaultMap extends Map {
 			// pentagon magic numbers... not really that important to understand
 			final int innerI = i;
 			final int innerJ = ((i+1) % 5);
-			final int outer = innerI + 6;
+			final int outer = innerI + 5;
 			
 			// center is adjacent to all inner pentagon vertices
 			// ignoring innerJ because it'll get hit in another iteration

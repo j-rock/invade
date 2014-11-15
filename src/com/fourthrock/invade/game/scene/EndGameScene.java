@@ -54,4 +54,10 @@ public class EndGameScene implements Scene {
 
 	}
 
+	@Override
+	public void handleFling(Screen2D start, Screen2D velocity) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

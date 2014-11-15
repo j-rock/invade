@@ -33,7 +33,7 @@ import com.fourthrock.invade.util.Index2D;
  * @author Joseph
  *
  */
-public class GamePlayScene extends ZoomAndPanScene {
+public class GamePlayScene extends WorldEyeScene {
 	private final ColoredCircleCollider collider;
 	private final List<Tower> towers;
 	private final List<Index2D> towerEdges;
@@ -41,7 +41,7 @@ public class GamePlayScene extends ZoomAndPanScene {
 	private final Human human;
 	
 	public GamePlayScene(final Map map, final Color humanColor) {
-		super(map.getMinZoom(), map.getMaxZoom(), map.getBounds());
+		super(map.getMinZoom(), map.getMaxZoom(), map.getTowers().get(0).getPosition(), map.getBounds());
 		
 		this.collider = new ColoredCircleCollider(map.getBounds());
 		this.towers = map.getTowers();
@@ -68,7 +68,10 @@ public class GamePlayScene extends ZoomAndPanScene {
 
 	@Override
 	public Scene step(final long dt) {
+		super.step(dt);
+		
 		if(!moreThanOnePlayerAlive()){
+			// TODO - fix bad logic.
 			final Player p = players.get(0);
 			return new EndGameScene(p, p == human);
 		} else {
@@ -101,6 +104,7 @@ public class GamePlayScene extends ZoomAndPanScene {
 			tc.u.moveOffTower(tc.t);
 		}
 		for(final UnitCollision uc : unitColls) {
+			// TODO - stop brushing shoulders with brothers/sister units, come on guys.
 			uc.u.setAttackingUnit(uc.u2);
 		}
 

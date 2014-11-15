@@ -19,13 +19,13 @@ import com.fourthrock.invade.game.physics.Position2D;
  * @author Joseph
  *
  */
-public class SampleScene extends ZoomAndPanScene {
+public class SampleScene extends WorldEyeScene {
 	private static final float MIN_ZOOM = 1.2f;
 	private static final float MAX_ZOOM = 2f;
 	private float t;
 
 	public SampleScene() {
-		super(MIN_ZOOM, MAX_ZOOM,
+		super(MIN_ZOOM, MAX_ZOOM, new Position2D(0f, 0f),
 				new BoundingBox2D(new Position2D(-0.4f, -0.4f),
 								  new Position2D(0.4f, 0.4f)));
 		t = 0f;

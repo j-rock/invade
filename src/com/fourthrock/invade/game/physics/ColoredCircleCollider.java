@@ -216,9 +216,7 @@ public class ColoredCircleCollider {
 		final Position2D p0 = c0.getPosition();
 		final Position2D p1 = c1.getPosition();
 		
-		final float dx = p0.x - p1.x;
-		final float dy = p0.y - p1.y;
-		final float sqrDist = dx*dx + dy*dy;
+		final float sqrDist = p0.minus(p1).sqrMagnitude();
 		final float dR = c0.getCollideRadius() + c1.getCollideRadius();
 		
 		return sqrDist < (dR * dR);

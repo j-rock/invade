@@ -77,7 +77,7 @@ public class BoundingBox2D {
 	 */
 	public BoundingCircle2D toCircleBounds() {
 		final Position2D center = (bottomLeft.add(topRight)).scale(0.5f).asPosition();
-		final float radius = Math.max(getWidth(), getHeight());
+		final float radius = Math.max(getWidth(), getHeight())/2;
 		return new BoundingCircle2D(center, radius);
 	}
 }

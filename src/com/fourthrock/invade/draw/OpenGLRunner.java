@@ -36,6 +36,8 @@ import com.fourthrock.invade.game.physics.Position2D;
 public class OpenGLRunner extends CanvasRenderer implements GLSurfaceView.Renderer {
 	public static int SCREEN_WIDTH;
 	public static int SCREEN_HEIGHT;
+	public static final float NEAR = 3f;
+	public static final float FAR = 7f;
 	
 	private final GameState gameState;
     private final float[] mvpMat;
@@ -66,7 +68,8 @@ public class OpenGLRunner extends CanvasRenderer implements GLSurfaceView.Render
     	SCREEN_HEIGHT = height;
         GLES20.glViewport(0, 0, width, height);
         final float ratio = (float) width / height;
-        Matrix.frustumM(projMat, 0, -ratio, ratio, -1, 1, 3, 7);
+        final float zoom = gameState.getZoom();
+        Matrix.frustumM(projMat, 0, -ratio/zoom, ratio/zoom, -1/zoom, 1/zoom, 3, 7);
     }
 
     @Override
@@ -100,12 +103,13 @@ public class OpenGLRunner extends CanvasRenderer implements GLSurfaceView.Render
      * From the game's eye position and zoom factor, we set up our mvpMat
      */
     private void generateModelViewProjectionMatrix() {
+        final float ratio = (float) SCREEN_WIDTH / SCREEN_HEIGHT;
+        final float zoom = gameState.getZoom();
+        Matrix.frustumM(projMat, 0, -ratio/zoom, ratio/zoom, -1/zoom, 1/zoom, 3, 7);
+        
     	final float[] eye = gameState.getEye();
         Matrix.setLookAtM(viewMat, 0, eye[0], eye[1], eye[2], eye[0], eye[1], 0f, 0f, 1.0f, 0.0f);
         Matrix.multiplyMM(mvpMat, 0, projMat, 0, viewMat, 0);
-        
-        final float scale = gameState.getZoom();
-        Matrix.scaleM(mvpMat, 0, scale, scale, scale);
     }
     
     /**

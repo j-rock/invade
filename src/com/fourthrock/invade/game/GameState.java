@@ -70,6 +70,18 @@ public class GameState {
 	}
 	
 	/**
+	 * The user made a fling gesture.
+	 * Use the point of finger lifting and the screen velocity
+	 * to determine what to do.
+	 * 
+	 * @param start, the place on the screen where the user lifted their finger
+	 * @param velocity, the velocity of the fling in pixels per second
+	 */
+	public void handleFling(final Screen2D start, final Screen2D velocity) {
+		scene.handleFling(start, velocity);
+	}
+	
+	/**
 	 * Returns the {x,y,z} coordinates of the camera.
 	 */
 	public float[] getEye() {
@@ -99,4 +111,5 @@ public class GameState {
 		// so let's reset that clock.
 		clock.resume();
 	}
+
 }

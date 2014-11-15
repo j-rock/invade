@@ -32,7 +32,7 @@ public class Position2D extends Vector2D {
 	 * If this Position2D represents the center of a circle,
 	 * this method takes another Position2D p and a radius
 	 * and computes the point closest to p on the circumference
-	 * of this circle.
+	 * of the circle specified by the radius.
 	 */
 	public Position2D nearestOnCircle(final float radius, final Position2D p) {
 		final Vector2D dir = p.minus(this).unitize();

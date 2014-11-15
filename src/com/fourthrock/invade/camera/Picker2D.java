@@ -1,10 +1,11 @@
-package com.fourthrock.invade.game.scene;
+package com.fourthrock.invade.camera;
 
 import android.opengl.Matrix;
 
 import com.fourthrock.invade.draw.OpenGLRunner;
 import com.fourthrock.invade.draw.Screen2D;
 import com.fourthrock.invade.game.physics.Position2D;
+import com.fourthrock.invade.game.scene.Scene;
 
 /**
  * Picker2D performs the object picking operations needed
@@ -18,8 +19,6 @@ import com.fourthrock.invade.game.physics.Position2D;
  *
  */
 public class Picker2D {
-	private static final float NEAR = 3f;
-	private static final float FAR = 7f;
 	private final float[] projMat;
 	private final float[] viewMat;
 	private final float[] mvpMat;
@@ -64,16 +63,13 @@ public class Picker2D {
 	}
 
 	private void setUpInverseTransform() {
-	    final float ratio = ((float)screenWidth()) / screenHeight();
-	    Matrix.frustumM(projMat, 0, -ratio, ratio, -1, 1, NEAR, FAR);
-		
+        final float ratio = (float) screenWidth() / screenHeight();
+        final float zoom = scene.getZoom();
+        Matrix.frustumM(projMat, 0, -ratio/zoom, ratio/zoom, -1/zoom, 1/zoom, OpenGLRunner.NEAR, OpenGLRunner.FAR);
+        
     	final float[] eye = scene.getEye();
         Matrix.setLookAtM(viewMat, 0, eye[0], eye[1], eye[2], eye[0], eye[1], 0f, 0f, 1.0f, 0.0f);
         Matrix.multiplyMM(mvpMat, 0, projMat, 0, viewMat, 0);
-        
-        final float scale = scene.getZoom();
-        Matrix.scaleM(mvpMat, 0, scale, scale, scale);
-        
         Matrix.invertM(invTrans, 0, mvpMat, 0);
 	}
 	

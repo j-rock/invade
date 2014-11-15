@@ -27,24 +27,22 @@ public class AI extends Player {
 
 	@Override
 	public void decideTarget() {
-		if(getTargetTower() == null) {
-			
-			final List<Tower> allAdjacentTowers = new ArrayList<>();
-			for(final Tower t : getTowers()) {
-				allAdjacentTowers.addAll(t.getAdjacents());
-			}
-			
-			final boolean targetIsEnemy = !getTargetTower().getColor().equals(getColor());
-			final boolean targetIsAdjacent = allAdjacentTowers.contains(getTargetTower());
-			
-			if (!(targetIsEnemy && targetIsAdjacent)) {
-				while(!allAdjacentTowers.isEmpty()) {
-					final int randIdx = (int) (Math.random() * allAdjacentTowers.size());
-					final Tower randTower = allAdjacentTowers.remove(randIdx);
-					if (!randTower.getColor().equals(getColor())) {
-						setTargetTower(randTower);
-					}
-				}	
+		final List<Tower> allAdjacentTowers = new ArrayList<>();
+		for(final Tower t : getTowers()) {
+			allAdjacentTowers.addAll(t.getAdjacents());
+		}
+		
+		final Tower target = getTargetTower();
+		if(   target == null							// if we have no target
+		   || target.getColor().equals(getColor())      // or we're targeting a Tower we own
+		   || !allAdjacentTowers.contains(target)) {    // or the target isn't adjacent to our current towers
+														// it's time to look for a new target
+			while(!allAdjacentTowers.isEmpty()) {
+				final int randIdx = (int) (Math.random() * allAdjacentTowers.size());
+				final Tower randTower = allAdjacentTowers.remove(randIdx);
+				if (!randTower.getColor().equals(getColor())) {
+					setTargetTower(randTower);
+				}
 			}
 		}
 	}

@@ -60,5 +60,13 @@ public class GameInput {
 			return true;
 		}
 		
+		@Override
+		public boolean onFling(final MotionEvent e1, final MotionEvent e2, final float velocityX, final float velocityY) {
+			final Screen2D start = new Screen2D(e2.getX(), e2.getY());
+			final Screen2D velocity = new Screen2D(velocityX, velocityY);
+			gameState.handleFling(start, velocity);
+			return true;
+		}
+		
 	}
 }

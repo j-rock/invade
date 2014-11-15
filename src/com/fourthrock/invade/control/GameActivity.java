@@ -20,7 +20,7 @@ public class GameActivity extends Activity {
     private GLSurfaceView view;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(gameState == null) {
         	gameState = new GameState(new GamePlayScene());
