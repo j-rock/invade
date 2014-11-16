@@ -16,7 +16,7 @@ public class AttackingTowerState extends UnitState {
 
 	@Override
 	public Color getRenderColor(final Color original) {
-		return original.blend(new Color(0f, 0.4f, 0.4f, 0.5f));
+		return new Color(0f, 0.4f, 0.8f, 0.3f).blend(original);
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class AttackingTowerState extends UnitState {
 			
 		if(targetTower.getHealth() <= 0f && targetTower.adjacentTo(player.getTowers())) {
 			player.getAttributes().registerTowerCapture();
-			player.updateTarget(null);
+			player.cancelTarget();
 			targetTower.resetHealth();
 			targetTower.adoptNewPlayer(player);
 		}

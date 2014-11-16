@@ -3,9 +3,6 @@ GamePlayScene
 
 PlayerUnit
  +++++ Move circularly in "move Off"
- 
-Tower
- ++++++ Figure out sizes properly.
 
 WhiteAI
   ++++decideTarget

@@ -69,17 +69,20 @@ public class TelescopingEye {
 	 */
 	public void setPosition(final Position2D position) {
 		this.position = bounds.getClosestInBounds(position);
-		if(!this.position.equals(position)) { // we hit the edge of the bounds, stop moving so much
-			acceleration = acceleration.scale(300);
-		}
 	}
 
 	public void zoomTo(final float scaleFactor) {
-		zoom = Math.max(minZoom, Math.min(maxZoom, zoom * scaleFactor));
+		zoom = Math.max(minZoom, Math.min(maxZoom, zoom * scaleFactor * scaleFactor));
 	}
 
+	/**
+	 * Sets the camera velocity and acceleration
+	 * such that the camera can move for 
+	 * @param eyeVelocity
+	 */
 	public void setMoving(final Vector2D eyeVelocity) {
 		velocity = eyeVelocity;
-		acceleration = velocity.scale(1/2000f); // two seconds for moving eye on fling.
+		final float timeMovingMillis = 750f;
+		acceleration = velocity.scale(1/timeMovingMillis);
 	}
 }

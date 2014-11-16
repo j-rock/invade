@@ -16,7 +16,7 @@ public class AttackingUnitState extends UnitState {
 
 	@Override
 	public Color getRenderColor(final Color original) {
-		return original.blend(new Color(1f, 0f, 0f, 0.5f));
+		return new Color(1f, 0f, 0f, 0.3f).blend(original);
 	}
 
 	@Override

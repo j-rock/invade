@@ -55,8 +55,12 @@ public class Vector2D {
 	 * was rotated counter-clockwise.
 	 */
 	public float theta() {
-		final float radAngle = (float) Math.atan(y / x);
-		return (float) ((-180f / Math.PI) * radAngle);
+		if (floatEquals(x,  0f)) {
+			return Math.signum(y) * 90f;
+		} else {
+			final float radAngle = (float) Math.atan(y / x);
+			return (float) ((-180f / Math.PI) * radAngle);
+		}
 	}
 	
 	@Override

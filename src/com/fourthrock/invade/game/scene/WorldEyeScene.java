@@ -56,7 +56,7 @@ public abstract class WorldEyeScene implements Scene {
 	
 	@Override
 	public void handlePan(final Screen2D start, final Screen2D end) {
-		final Vector2D d = getWorldDisplacementFromScreen(start, end);
+		final Vector2D d = getWorldDisplacementFromScreen(start, end).scale(0.85f);
 		final Position2D eyeP = eye.getPosition();
 		final Position2D p = new Position2D(eyeP.x - d.x, eyeP.y + d.y);
 		eye.setPosition(p);
@@ -80,7 +80,7 @@ public abstract class WorldEyeScene implements Scene {
 		final Screen2D oneMillisFromStart = start.add(screenVelocityMillis).asScreen2D();
 		final Vector2D worldDisplacement = getWorldDisplacementFromScreen(start, oneMillisFromStart);
 		final Vector2D eyeVelocity = new Vector2D(worldDisplacement.x, -worldDisplacement.y);
-		eye.setMoving(eyeVelocity.scale(0.125f)); // Android recommends using 1/8th the actual fling velocity.
+		eye.setMoving(eyeVelocity.scale(0.85f)); // Community recommends using a fraction of the actual fling velocity.
 	}
 
 	@Override

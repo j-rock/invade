@@ -26,6 +26,12 @@ public class AI extends Player {
 		this.targetTower = null;
 		this.achievementChoice = 0;
 	}
+	
+	@Override
+	public void cancelTarget() {
+		super.cancelTarget();
+		targetTower = null;
+	}
 
 	@Override
 	public void decideTarget() {

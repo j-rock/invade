@@ -15,7 +15,7 @@ import com.fourthrock.invade.game.tower.Tower;
  *
  */
 public class PlayerUnit implements ColoredCircle {
-	public static final float BORDER_RADIUS = 0.0035f;
+	public static final float BORDER_RADIUS = 0.0095f;
 	public static ScaleVec SCALE = new ScaleVec(BORDER_RADIUS / (float)Math.sqrt(2));
 
 	private final Player player;
@@ -29,9 +29,8 @@ public class PlayerUnit implements ColoredCircle {
 	public PlayerUnit(final Player player, final Position2D position) {
 		this.player = player;
 		this.position = position;
-		this.orientation = (float) (Math.random() * 360);
 		this.health = player.getAttributes().getBaseUnitHealth();
-		this.state = UnitState.MOVING;
+		setMoving();
 	}
 
 	@Override
@@ -116,7 +115,7 @@ public class PlayerUnit implements ColoredCircle {
 	 */
 	public void moveOff(final Position2D backOffPos, final float minSep) {
 		//TODO - make circular movement here.
-		final Position2D onCircle = backOffPos.nearestOnCircle(minSep + getPhysicalRadius()/3, position);
+		final Position2D onCircle = backOffPos.nearestOnCircle(minSep, position);
 		final float currSqrDistFromBackOff = position.minus(backOffPos).sqrMagnitude();
 		final float onCircleSqrDistFromBackOff = onCircle.minus(backOffPos).sqrMagnitude();
 		

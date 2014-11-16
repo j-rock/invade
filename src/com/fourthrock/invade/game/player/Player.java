@@ -66,6 +66,13 @@ public abstract class Player {
 	public void updateTarget(final Position2D target) {
 		this.target = target;
 	}
+	
+	/**
+	 * Unsets the target position for the Player's units.
+	 */
+	public void cancelTarget() {
+		updateTarget(null);
+	}
 
 	/**
 	 * Shifts all units in their respective directions.
