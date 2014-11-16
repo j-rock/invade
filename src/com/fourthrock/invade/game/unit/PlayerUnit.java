@@ -29,6 +29,7 @@ public class PlayerUnit implements ColoredCircle {
 	public PlayerUnit(final Player player, final Position2D position) {
 		this.player = player;
 		this.position = position;
+		this.orientation = (float)(Math.random() * 360);
 		this.health = player.getAttributes().getBaseUnitHealth();
 		setMoving();
 	}
@@ -142,6 +143,8 @@ public class PlayerUnit implements ColoredCircle {
 	}
 	
 	private void setOrientation(final Position2D target) {
-		orientation = target.minus(position).theta();
+		if(!target.equals(position)) {
+			orientation = target.minus(position).theta();
+		}
 	}
 }
