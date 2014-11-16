@@ -23,7 +23,6 @@ import com.fourthrock.invade.game.player.Human;
 import com.fourthrock.invade.game.player.Player;
 import com.fourthrock.invade.game.tower.Tower;
 import com.fourthrock.invade.game.unit.PlayerUnit;
-import com.fourthrock.invade.game.unit.UnitState;
 import com.fourthrock.invade.util.Index2D;
 
 /**
@@ -83,7 +82,7 @@ public class GamePlayScene extends WorldEyeScene {
 				p.decideTarget();
 				p.moveUnits(dt);
 			}
-			processCollisions(collider.withdrawCollisions());
+			processCollisions(collider.withdrawCollisions(), dt);
 			for(final Player p : players) {
 				p.fireUnits(dt);
 			}
@@ -94,19 +93,15 @@ public class GamePlayScene extends WorldEyeScene {
 		}
 	}
 
-	private void processCollisions(final CollisionCollection colls) {
+	private void processCollisions(final CollisionCollection colls, final long dt) {
 		for(final MoveBackCollision mbc : colls.getMoveBackCollisions()) {
-			mbc.unit.moveOff(mbc.c.getPosition(), mbc.c.getPhysicalRadius());
+			mbc.process(dt);
 		}
 		for(final AttackTowerCollision atc : colls.getAttackTowerCollisions()) {
-			atc.attacker.setAttackingTower(atc.victim);
+			atc.process(dt);
 		}
 		for(final AttackUnitCollision auc : colls.getAttackUnitCollisions()) {
-			// choose the first colliding Unit to attack
-			// so we can deterministically draw attack graphics.
-			if(auc.attacker.getState() != UnitState.ATTACKING_UNIT) {
-				auc.attacker.setAttackingUnit(auc.victim);
-			}
+			auc.process(dt);
 		}
 
 		// TODO - add graphical triggers
@@ -142,7 +137,7 @@ public class GamePlayScene extends WorldEyeScene {
 		final Position2D midpoint = s.add(t).scale(0.5f).asPosition();
 		final Vector2D displacement = t.minus(s);
 		final float length = displacement.magnitude() - 2 * Tower.SPAWN_RADIUS;
-		final float height = PlayerUnit.BORDER_RADIUS / 2;
+		final float height = PlayerUnit.BORDER_RADIUS / 4;
 		final float angle = displacement.theta();
 		renderer.draw(SQUARE, midpoint, new ScaleVec(length, height, 1f), angle, new Color(0.9f, 0.9f, 0.9f, 1f));
 	}

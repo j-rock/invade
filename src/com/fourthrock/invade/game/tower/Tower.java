@@ -16,8 +16,8 @@ import com.fourthrock.invade.game.player.Player;
  *
  */
 public class Tower implements ColoredCircle {
-	public static final float BORDER_RADIUS = 0.0425f;
-	public static final float SPAWN_RADIUS = 1.3f * BORDER_RADIUS;
+	public static final float BORDER_RADIUS = 2.825f;
+	public static final float SPAWN_RADIUS = 1.7f * BORDER_RADIUS;
 	public static final ScaleVec SCALE = new ScaleVec(BORDER_RADIUS * (float)Math.sqrt(2));
 	public static final float BASE_HEALTH = 1000f;
 	public static final float REGEN_RATE = BASE_HEALTH / (90 * 1000); // takes 90 seconds to fully heal

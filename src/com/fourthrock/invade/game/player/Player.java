@@ -100,7 +100,8 @@ public abstract class Player {
 			final Tower tower = towers.get(randIndex);
 			final Position2D towerPos = tower.getPosition();
 			final Position2D unitPos = towerPos.randomPositionOnCircle(Tower.SPAWN_RADIUS);
-			final PlayerUnit unit = new PlayerUnit(this, unitPos);
+			final float orientation = unitPos.minus(towerPos).theta();
+			final PlayerUnit unit = new PlayerUnit(this, unitPos, orientation);
 			units.add(unit);
 		}
 	}

@@ -21,12 +21,6 @@ public class CollisionCollection {
 		moveBacks	 = new ArrayList<>();
 	}
 	
-	public void clear() {
-		attackTowers.clear();
-		attackUnits.clear();
-		moveBacks.clear();
-	}
-	
 	public List<AttackTowerCollision> getAttackTowerCollisions() {
 		return attackTowers;
 	}

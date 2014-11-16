@@ -15,8 +15,8 @@ import com.fourthrock.invade.game.tower.Tower;
  *
  */
 public class PlayerUnit implements ColoredCircle {
-	public static final float BORDER_RADIUS = 0.0095f;
-	public static ScaleVec SCALE = new ScaleVec(BORDER_RADIUS / (float)Math.sqrt(2));
+	public static final float BORDER_RADIUS = 0.3f;
+	public static ScaleVec SCALE = new ScaleVec(BORDER_RADIUS * (float)Math.sqrt(2));
 
 	private final Player player;
 	private Position2D position;
@@ -26,12 +26,16 @@ public class PlayerUnit implements ColoredCircle {
 	private PlayerUnit targetUnit;
 	private Tower targetTower;
 	
-	public PlayerUnit(final Player player, final Position2D position) {
+	public PlayerUnit(final Player player, final Position2D position, final float orientation) {
 		this.player = player;
 		this.position = position;
-		this.orientation = (float)(Math.random() * 360);
+		this.orientation = orientation;
 		this.health = player.getAttributes().getBaseUnitHealth();
 		setMoving();
+	}
+	
+	public PlayerUnit(final Player player, final Position2D position) {
+		this(player, position, 0f);
 	}
 
 	@Override
@@ -69,6 +73,10 @@ public class PlayerUnit implements ColoredCircle {
 		return health;
 	}
 	
+	public float getSpeed() {
+		return player.getAttributes().getUnitMoveSpeed();
+	}
+	
 	public UnitState getState() {
 		return state;
 	}
@@ -104,25 +112,14 @@ public class PlayerUnit implements ColoredCircle {
 	public void moveTowardsTarget(final long dt) {
 		final Position2D nextPosition = state.moveTowards(position, player.getTarget(), player.getAttributes().getUnitMoveSpeed(), dt);
 		setOrientation(nextPosition);
-		position = nextPosition;
+		moveTo(nextPosition);
 	}
 	
 	/**
-	 * Instructs this PlayerUnit to back off Position2D pos,
-	 * maintaining a minimum separation of minSep.
-	 * 
-	 * We introduce a slight buffer so that MoveBackCollisions
-	 * don't glue entities together.
+	 * Instructs this PlayerUnit to move to target.
 	 */
-	public void moveOff(final Position2D backOffPos, final float minSep) {
-		//TODO - make circular movement here.
-		final Position2D onCircle = backOffPos.nearestOnCircle(minSep, position);
-		final float currSqrDistFromBackOff = position.minus(backOffPos).sqrMagnitude();
-		final float onCircleSqrDistFromBackOff = onCircle.minus(backOffPos).sqrMagnitude();
-		
-		if(currSqrDistFromBackOff < onCircleSqrDistFromBackOff) {
-			position = onCircle;
-		}
+	public void moveTo(final Position2D target) {
+		position = target;
 	}
 
 	/**

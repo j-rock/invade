@@ -93,7 +93,11 @@ public class ColoredCircleCollider {
 		final List<Collision> colls = new ArrayList<>();
 		if(c instanceof PlayerUnit) {
 			if(tooCloseTo(c, c2)) {
-				colls.add(new MoveBackCollision((PlayerUnit)c, c2));
+				if(c2 instanceof Tower) {
+					colls.add(new MoveBackCollision((PlayerUnit)c, (Tower)c2));
+				} else {
+					colls.add(new MoveBackCollision((PlayerUnit)c, (PlayerUnit)c2));
+				}
 			}
 			if(withinActiveRange(c, c2)) {
 				if(c2 instanceof Tower) {
@@ -173,10 +177,13 @@ public class ColoredCircleCollider {
 	}
 	
 	private static boolean distWithinLength(final ColoredCircle c0, final ColoredCircle c1, final float length) {
+		if(c0 == c1) {
+			return false;
+		}
 		final Position2D p0 = c0.getPosition();
 		final Position2D p1 = c1.getPosition();
 		
 		final float sqrDist = p0.minus(p1).sqrMagnitude();
-		return sqrDist < (length * length);
+		return sqrDist <= (length * length);
 	}
 }

@@ -72,7 +72,7 @@ public class TelescopingEye {
 	}
 
 	public void zoomTo(final float scaleFactor) {
-		zoom = Math.max(minZoom, Math.min(maxZoom, zoom * scaleFactor * scaleFactor));
+		zoom = Math.max(minZoom, Math.min(maxZoom, zoom * scaleFactor * scaleFactor * scaleFactor));
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class TelescopingEye {
 	 */
 	public void setMoving(final Vector2D eyeVelocity) {
 		velocity = eyeVelocity;
-		final float timeMovingMillis = 750f;
+		final float timeMovingMillis = 250f;
 		acceleration = velocity.scale(1/timeMovingMillis);
 	}
 }

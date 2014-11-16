@@ -1,21 +1,26 @@
-GamePlayScene
-  ++++++++++Figure out how to spend human achievement points
+Control flow:
+  MenuScene: Create it
+  EndGameScene: Create it
+  GamePlayScene: determine EndGameScene conditions
 
-PlayerUnit
- +++++ Move circularly in "move Off"
 
-WhiteAI
-  ++++decideTarget
+Actual game play stuff:
+  GamePlayScene: user taps to spend human achievement points
+  WhiteAI: decide target based on attacking units
+       AI: defend sometimes against attacking units
+
+
+Game experience:
+  PlayerAttributes: Fine tune parameters
+  GamePlayScene: Up the graphics
   
-PlayerAttributes
-  -? determine parameters???
   
-EndGameScene
-  ++++++++++Everything
+Logistics:
+  --LOW PRIORITY: Parallelize whenever possible
 
-GamePlayScene
-  - Up the graphics
-  - parallelize
+  
+Possible design ideas:
 
-ColoredCircleCollider
-  - parallelize
+  AI: different colors have different techniques
+  Human: command different legions with bounding box selection
+         Select all units button on screen

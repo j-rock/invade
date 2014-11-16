@@ -2,6 +2,7 @@ package com.fourthrock.invade.game.player;
 
 import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.game.physics.collision.ColoredCircleCollider;
+import com.fourthrock.invade.game.tower.Tower;
 
 /**
  * Unlike regular AI, the WhiteAI never go to capture a Tower.
@@ -20,6 +21,11 @@ public class WhiteAI extends AI {
 	@Override
 	public void decideTarget() {
 		// TODO - make WhiteAI passively defend base, no more, no less.
+		
+		if(getTowers().size() > 0) {
+			final Tower onlyTower = getTowers().get(0);
+			updateTarget(onlyTower.getPosition());
+		}
 	}
 	
 }

@@ -26,7 +26,7 @@ public class DefaultMap extends Map {
 		super();
 
 		// k is a scaling factor designed to make Towers spaced nicely
-		final float k = 270f;
+		final float k = 2.7f;
 
 		//{ADD_NEW_TOWER(x,y)       // logical pos  //index in towers list
 		

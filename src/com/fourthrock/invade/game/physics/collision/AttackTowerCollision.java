@@ -12,4 +12,9 @@ public class AttackTowerCollision extends Collision {
 		this.attacker = attacker;
 		this.victim = victim;
 	}
+
+	@Override
+	public void process(final long dt) {
+		attacker.setAttackingTower(victim);
+	}
 }

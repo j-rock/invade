@@ -29,7 +29,7 @@ public class PlayerAttributes {
 		this.maxUnitsPerTowerCount = 10;
 		this.unitCreationWaitTime = ONE_SEC;
 		
-		this.unitMoveSpeed    = Tower.BORDER_RADIUS / (3 * ONE_SEC);
+		this.unitMoveSpeed    = Tower.BORDER_RADIUS / (2 * ONE_SEC);
 		this.unitBaseHealth   = Tower.BASE_HEALTH / 100f;
 		this.unitAttackSpeed  = Tower.REGEN_RATE / 2f;
 		this.unitAttackRadius = PlayerUnit.BORDER_RADIUS * 3;

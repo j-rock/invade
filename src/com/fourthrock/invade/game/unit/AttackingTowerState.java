@@ -37,7 +37,6 @@ public class AttackingTowerState extends UnitState {
 			
 		if(targetTower.getHealth() <= 0f && targetTower.adjacentTo(player.getTowers())) {
 			player.getAttributes().registerTowerCapture();
-			player.cancelTarget();
 			targetTower.resetHealth();
 			targetTower.adoptNewPlayer(player);
 		}

@@ -8,7 +8,7 @@ package com.fourthrock.invade.game.physics.collision;
  * @author Joseph
  *
  */
-public class Collision {
+public abstract class Collision {
 	public static enum Type {
 		ATTACK_TOWER, ATTACK_UNIT, MOVE_BACK;
 	}
@@ -18,4 +18,6 @@ public class Collision {
 	public Collision(final Type type) {
 		this.type = type;
 	}
+	
+	public abstract void process(final long dt);
 }

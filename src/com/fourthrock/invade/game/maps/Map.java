@@ -31,8 +31,8 @@ import com.fourthrock.invade.util.Index2D;
  *
  */
 public abstract class Map {
-	private static final float MIN_ZOOM = 2.4f; // magic constant determined experimentally
-	private static final float MAX_ZOOM = 10f;  // magic constant determined experimentally
+	private static final float MIN_ZOOM = 0.024f; // magic constant determined experimentally
+	private static final float MAX_ZOOM = 0.1f;  // magic constant determined experimentally
 	private BoundingBox2D bounds;
 	protected final List<Tower> towers;
 
