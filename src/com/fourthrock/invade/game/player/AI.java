@@ -21,12 +21,18 @@ public class AI extends Player {
 	private Tower targetTower;
 	private int achievementChoice;
 	
+	public AI(final Color color, final ColoredCircleCollider collider, final PlayerAttributes playerAttributes) {
+		super(color, collider, playerAttributes);
+		this.targetTower = null;
+		this.achievementChoice = 0;
+	}
+	
 	public AI(final Color color, final ColoredCircleCollider collider) {
 		super(color, collider);
 		this.targetTower = null;
 		this.achievementChoice = 0;
 	}
-	
+
 	@Override
 	public void cancelTarget() {
 		super.cancelTarget();

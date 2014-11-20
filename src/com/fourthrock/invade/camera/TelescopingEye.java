@@ -26,7 +26,7 @@ public class TelescopingEye {
 		this.zoom = maxZoom;
 		
 		this.bounds = bounds;
-		setPosition(startPos);
+		adjustPosition(startPos);
 		stopMoving();
 	}
 
@@ -50,8 +50,9 @@ public class TelescopingEye {
 	 * Moves the eye by dt milliseconds.
 	 */
 	public void step(final long dt) {
+		
 		// p_t = p_0 + v*dt
-		setPosition(position.add(velocity.scale(dt)).asPosition());
+		adjustPosition(position.add(velocity.scale(dt)).asPosition());
 		
 		// v = v0 - a*dt
 		final Vector2D nextVelocity = velocity.minus(acceleration.scale(dt));
@@ -67,8 +68,8 @@ public class TelescopingEye {
 	 * Tries to move the camera to the passed in position,
 	 * getting as close to within bounds as possible.
 	 */
-	public void setPosition(final Position2D position) {
-		this.position = bounds.getClosestInBounds(position);
+	public void adjustPosition(final Position2D target) {
+		position = bounds.getClosestInBounds(target);
 	}
 
 	public void zoomTo(final float scaleFactor) {
@@ -77,12 +78,15 @@ public class TelescopingEye {
 
 	/**
 	 * Sets the camera velocity and acceleration
-	 * such that the camera can move for 
-	 * @param eyeVelocity
+	 * such that the camera can move for a quarter second.
 	 */
 	public void setMoving(final Vector2D eyeVelocity) {
 		velocity = eyeVelocity;
 		final float timeMovingMillis = 250f;
 		acceleration = velocity.scale(1/timeMovingMillis);
+	}
+
+	public void displace(final Vector2D d) {
+		adjustPosition(position.minus(d).asPosition());
 	}
 }

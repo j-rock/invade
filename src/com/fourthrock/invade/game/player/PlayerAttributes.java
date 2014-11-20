@@ -21,16 +21,16 @@ public class PlayerAttributes {
 	private int progress;
 	private int achievementPoints;
 	
-	public PlayerAttributes() {
+	public PlayerAttributes(final float healthPercentage) {
 		 // TODO - determine properly
 		
 		final long ONE_SEC = 1000L;
 		
-		this.maxUnitsPerTowerCount = 10;
+		this.maxUnitsPerTowerCount = 15;
 		this.unitCreationWaitTime = ONE_SEC;
 		
-		this.unitMoveSpeed    = Tower.BORDER_RADIUS / (2 * ONE_SEC);
-		this.unitBaseHealth   = Tower.BASE_HEALTH / 100f;
+		this.unitMoveSpeed    = Tower.BORDER_RADIUS / (1.8f * ONE_SEC);
+		this.unitBaseHealth   = healthPercentage * Tower.BASE_HEALTH / 100f;
 		this.unitAttackSpeed  = Tower.REGEN_RATE / 2f;
 		this.unitAttackRadius = PlayerUnit.BORDER_RADIUS * 3;
 		
@@ -39,6 +39,11 @@ public class PlayerAttributes {
 		this.achievementPoints = 0;
 	}
 	
+	public PlayerAttributes() {
+		this(1f);
+	}
+	
+
 	public int getMaxUnitsPerTowerCount() {
 		return maxUnitsPerTowerCount;
 	}
@@ -109,7 +114,9 @@ public class PlayerAttributes {
 	 */
 	private void registerPoints(final int points) {
 		progress += points;
-		if(remainingPointsUntilNextLevel() <= 0) {
+		final int remPoints = remainingPointsUntilNextLevel();
+		if(remPoints <= 0) {
+			progress = -remPoints;
 			level++;
 			achievementPoints++;
 		}

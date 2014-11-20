@@ -6,7 +6,7 @@ import static com.fourthrock.invade.draw.DrawEnum.TRIANGLE;
 import com.fourthrock.invade.draw.CanvasRenderer;
 import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.draw.ScaleVec;
-import com.fourthrock.invade.draw.Screen2D;
+import com.fourthrock.invade.draw.PixelScreen2D;
 import com.fourthrock.invade.game.physics.BoundingBox2D;
 import com.fourthrock.invade.game.physics.Position2D;
 
@@ -39,7 +39,7 @@ public class SampleScene extends WorldEyeScene {
 	}
 	
 	@Override
-	public void handleTap(final Screen2D screenCoords) {
+	public void handleTap(final PixelScreen2D screenCoords) {
 		super.handleTap(screenCoords);
 	}
 
@@ -61,6 +61,11 @@ public class SampleScene extends WorldEyeScene {
 		renderSqrTri(renderer, bot, -t*4, Color.RED, Color.ORANGE);
 		
 		super.render(renderer);
+	}
+	
+	@Override
+	public void renderScreen(final CanvasRenderer renderer) {
+		// do nothing
 	}
 
 	private static void renderSqrTri(final CanvasRenderer r, final Position2D pos, final float angle, final Color sqrC, final Color triC) {

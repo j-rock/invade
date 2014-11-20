@@ -7,8 +7,8 @@ import java.util.List;
 
 import com.fourthrock.invade.draw.CanvasRenderer;
 import com.fourthrock.invade.draw.Color;
+import com.fourthrock.invade.draw.PixelScreen2D;
 import com.fourthrock.invade.draw.ScaleVec;
-import com.fourthrock.invade.draw.Screen2D;
 import com.fourthrock.invade.game.maps.DefaultMap;
 import com.fourthrock.invade.game.maps.Map;
 import com.fourthrock.invade.game.physics.Position2D;
@@ -34,10 +34,12 @@ import com.fourthrock.invade.util.Index2D;
  */
 public class GamePlayScene extends WorldEyeScene {
 	private final ColoredCircleCollider collider;
+	private final PlayerUI playerUI;
 	private final List<Tower> towers;
 	private final List<Index2D> towerEdges;
 	private final List<Player> players;
 	private final Human human;
+
 	
 	public GamePlayScene(final Map map, final Color humanColor) {
 		super(map.getMinZoom(), map.getMaxZoom(), map.getTowers().get(0).getPosition(), map.getBounds());
@@ -47,6 +49,7 @@ public class GamePlayScene extends WorldEyeScene {
 		this.towerEdges = map.getAdjSet();
 		this.players = new ArrayList<>();
 		this.human = new Human(humanColor, collider);
+		this.playerUI = new PlayerUI(human);
 		
 		setupPlayersFromMap(map);
 	}
@@ -56,12 +59,12 @@ public class GamePlayScene extends WorldEyeScene {
 	}
 
 	@Override
-	public void handleTap(final Screen2D screenCoords) {
-		super.handleTap(screenCoords);
-		final Position2D tapPos = getPositionFromScreen(screenCoords);
-		human.updateTarget(tapPos);
-		
-		// TODO - add some graphical response
+	public void handleTap(final PixelScreen2D screenCoords) {
+		if(!playerUI.handleTap(screenCoords)) {
+			final Position2D tapPos = getPositionFromScreen(screenCoords);
+			super.handleTap(screenCoords);
+			human.updateTarget(tapPos);
+		}
 	}
 
 	@Override
@@ -69,9 +72,9 @@ public class GamePlayScene extends WorldEyeScene {
 		super.step(dt);
 		
 		if(!moreThanOnePlayerAlive()){
-			// TODO - fix bad logic.
-			final Player p = players.get(0);
-			return new EndGameScene(p, p == human);
+			final Player p = findLivingPlayer();
+			final Scene endGameScene = new EndGameScene(p.getColor(), human.getColor());
+			return new FadeToBlackScene(this, endGameScene);
 		} else {
 			for(final Tower t : towers) {
 				collider.placeCircle(t);
@@ -123,9 +126,12 @@ public class GamePlayScene extends WorldEyeScene {
 			}
 		}
 		super.render(renderer);
-		
-		
-		//TODO - more rendering
+	}
+	
+
+	@Override
+	public void renderScreen(CanvasRenderer renderer) {
+		playerUI.render(renderer);
 	}
 
 	/**
@@ -157,6 +163,24 @@ public class GamePlayScene extends WorldEyeScene {
 	}
 
 	private boolean moreThanOnePlayerAlive() {
-		return players.size() > 1;
+		int count = 0;
+		for(final Player p : players) {
+			if(p.isAlive()) {
+				count++;
+				if(count > 1) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	private Player findLivingPlayer() {
+		for(final Player p : players) {
+			if(p.isAlive()) {
+				return p;
+			}
+		}
+		return null;
 	}
 }

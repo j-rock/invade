@@ -36,6 +36,7 @@ import com.fourthrock.invade.game.physics.Position2D;
 public class OpenGLRunner extends CanvasRenderer implements GLSurfaceView.Renderer {
 	public static int SCREEN_WIDTH;
 	public static int SCREEN_HEIGHT;
+	public static float SCREEN_RATIO;
 	public static final float NEAR = 3f;
 	public static final float FAR = 7f;
 	
@@ -43,6 +44,7 @@ public class OpenGLRunner extends CanvasRenderer implements GLSurfaceView.Render
     private final float[] mvpMat;
     private final float[] projMat;
     private final float[] viewMat;
+    private final float[] screenMat;
     protected Map<DrawEnum, DrawObject> drawObjects;
     protected ShaderProgramManager sprgmManager;
     
@@ -52,28 +54,28 @@ public class OpenGLRunner extends CanvasRenderer implements GLSurfaceView.Render
 		this.mvpMat  = new float[16];
 		this.projMat = new float[16];
 		this.viewMat = new float[16];
+		this.screenMat = new float[16];
 		this.drawObjects = new HashMap<>();
 		this.sprgmManager = new ShaderProgramManager(); 
 	}
 
 	@Override
-    public void onSurfaceCreated(GL10 unused, EGLConfig config) {
+    public void onSurfaceCreated(final GL10 unused, final EGLConfig config) {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         allocateDrawObjects();
     }
 	
     @Override
-    public void onSurfaceChanged(GL10 unused, int width, int height) {
+    public void onSurfaceChanged(final GL10 unused, final int width, final int height) {
     	SCREEN_WIDTH = width;
     	SCREEN_HEIGHT = height;
+    	SCREEN_RATIO = (float)width / height;
         GLES20.glViewport(0, 0, width, height);
-        final float ratio = (float) width / height;
-        final float zoom = gameState.getZoom();
-        Matrix.frustumM(projMat, 0, -ratio/zoom, ratio/zoom, -1/zoom, 1/zoom, 3, 7);
+        Matrix.orthoM(screenMat, 0, -SCREEN_RATIO, SCREEN_RATIO, -1, 1, -1, 1);
     }
 
     @Override
-    public void onDrawFrame(GL10 unused) {
+    public void onDrawFrame(final GL10 unused) {
     	gameState.step();
         generateModelViewProjectionMatrix();
         display();
@@ -117,16 +119,30 @@ public class OpenGLRunner extends CanvasRenderer implements GLSurfaceView.Render
      */
     private void display() {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+		GLES20.glEnable(GLES20.GL_BLEND);
+		GLES20.glBlendFunc(GLES20.GL_ONE, GLES20.GL_ONE_MINUS_SRC_ALPHA);
         gameState.render(this);
+        gameState.renderScreen(this);
     }
 
 	@Override
 	public void draw(final DrawEnum drawEnum, final Position2D p, final ScaleVec s, final float angle, final Color color) {
 		final float[] updatedMVP = new float[16];
 		Matrix.translateM(updatedMVP, 0, mvpMat, 0, -p.x, p.y, 0);
-		Matrix.rotateM(updatedMVP, 0, angle, 0f, 0f, 1f);
-		Matrix.scaleM(updatedMVP, 0, s.sx, s.sy, s.sz);
+		finishDrawPipeline(drawEnum, updatedMVP, s, angle, color);
+	}
+	
+	@Override
+	public void drawScreen(final DrawEnum drawEnum, final RenderScreen2D p, final ScaleVec s, final float angle, final Color color) {
+		final float[] updatedMVP = new float[16];
+		Matrix.translateM(updatedMVP, 0, screenMat, 0, p.x, -p.y, 0);
+		finishDrawPipeline(drawEnum, updatedMVP, s, angle, color);
+	}
+	
+	private void finishDrawPipeline(final DrawEnum drawEnum, final float[] mvp, final ScaleVec s, final float angle, final Color color) {
+		Matrix.rotateM(mvp, 0, angle, 0f, 0f, 1f);
+		Matrix.scaleM(mvp, 0, s.sx, s.sy, s.sz);
 		final DrawObject d = drawObjects.get(drawEnum);
-		d.draw(updatedMVP, color.toFloatArray());
+		d.draw(mvp, color.toFloatArray());
 	}
 }

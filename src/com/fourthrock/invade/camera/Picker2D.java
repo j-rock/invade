@@ -1,9 +1,13 @@
 package com.fourthrock.invade.camera;
 
+import static com.fourthrock.invade.draw.OpenGLRunner.FAR;
+import static com.fourthrock.invade.draw.OpenGLRunner.NEAR;
+import static com.fourthrock.invade.draw.OpenGLRunner.SCREEN_HEIGHT;
+import static com.fourthrock.invade.draw.OpenGLRunner.SCREEN_RATIO;
+import static com.fourthrock.invade.draw.OpenGLRunner.SCREEN_WIDTH;
 import android.opengl.Matrix;
 
-import com.fourthrock.invade.draw.OpenGLRunner;
-import com.fourthrock.invade.draw.Screen2D;
+import com.fourthrock.invade.draw.PixelScreen2D;
 import com.fourthrock.invade.game.physics.Position2D;
 import com.fourthrock.invade.game.scene.Scene;
 
@@ -42,12 +46,12 @@ public class Picker2D {
 	 * May the writer of http://magicscrollsofcode.blogspot.com/2010/10/3d-picking-in-android.html
 	 * be forever blessed. Lifetime supply of toilet paper for this code.
 	 */
-	public Position2D convertScreenToWorld(final Screen2D screenCoords) {
+	public Position2D convertScreenToWorld(final PixelScreen2D screenCoords) {
 		setUpInverseTransform();
 
 		final float[] point = new float[4];
-		point[0] = screenCoords.x * 2f / screenWidth()  - 1f;
-		point[1] = (screenHeight() - screenCoords.y) * 2f / screenHeight() - 1f;
+		point[0] = screenCoords.x * 2f / SCREEN_WIDTH  - 1f;
+		point[1] = (SCREEN_HEIGHT - screenCoords.y) * 2f / SCREEN_HEIGHT - 1f;
 		point[2] = -1f;
 		point[3] = 1f;
 		
@@ -63,21 +67,12 @@ public class Picker2D {
 	}
 
 	private void setUpInverseTransform() {
-        final float ratio = (float) screenWidth() / screenHeight();
         final float zoom = scene.getZoom();
-        Matrix.frustumM(projMat, 0, -ratio/zoom, ratio/zoom, -1/zoom, 1/zoom, OpenGLRunner.NEAR, OpenGLRunner.FAR);
+        Matrix.frustumM(projMat, 0, -SCREEN_RATIO/zoom, SCREEN_RATIO/zoom, -1/zoom, 1/zoom, NEAR, FAR);
         
     	final float[] eye = scene.getEye();
         Matrix.setLookAtM(viewMat, 0, eye[0], eye[1], eye[2], eye[0], eye[1], 0f, 0f, 1.0f, 0.0f);
         Matrix.multiplyMM(mvpMat, 0, projMat, 0, viewMat, 0);
         Matrix.invertM(invTrans, 0, mvpMat, 0);
-	}
-	
-	private int screenWidth() {
-		return OpenGLRunner.SCREEN_WIDTH;
-	}
-	
-	private int screenHeight() {
-		return OpenGLRunner.SCREEN_HEIGHT;
 	}
 }

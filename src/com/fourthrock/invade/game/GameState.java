@@ -1,7 +1,7 @@
 package com.fourthrock.invade.game;
 
 import com.fourthrock.invade.draw.CanvasRenderer;
-import com.fourthrock.invade.draw.Screen2D;
+import com.fourthrock.invade.draw.PixelScreen2D;
 import com.fourthrock.invade.game.scene.Scene;
 import com.fourthrock.invade.util.Clock;
 
@@ -45,7 +45,7 @@ public class GameState {
 	 * positions in screen coordinates, and figure out
 	 * what to do.
 	 */
-	public void handlePan(final Screen2D start, final Screen2D end) {
+	public void handlePan(final PixelScreen2D start, final PixelScreen2D end) {
 		scene.handlePan(start, end);
 	}
 
@@ -56,7 +56,7 @@ public class GameState {
 	 * @param y, the y coordinate
 	 */
 	public void handleTap(final float x, final float y) {
-		scene.handleTap(new Screen2D(x, y));
+		scene.handleTap(new PixelScreen2D(x, y));
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class GameState {
 	 * @param start, the place on the screen where the user lifted their finger
 	 * @param velocity, the velocity of the fling in pixels per second
 	 */
-	public void handleFling(final Screen2D start, final Screen2D velocity) {
+	public void handleFling(final PixelScreen2D start, final PixelScreen2D velocity) {
 		scene.handleFling(start, velocity);
 	}
 	
@@ -97,11 +97,16 @@ public class GameState {
 
 	/**
 	 * Draws out all contents of the current scene.
-	 * 
-	 * @param renderer
 	 */
 	public void render(final CanvasRenderer renderer) {
 		scene.render(renderer);
+	}
+	
+	/**
+	 * Draw all of the heads up display components.
+	 */
+	public void renderScreen(final CanvasRenderer renderer) {
+		scene.renderScreen(renderer);
 	}
 
 	public void onResume() {
@@ -111,5 +116,6 @@ public class GameState {
 		// so let's reset that clock.
 		clock.resume();
 	}
+
 
 }

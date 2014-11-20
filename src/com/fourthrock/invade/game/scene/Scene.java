@@ -1,7 +1,7 @@
 package com.fourthrock.invade.game.scene;
 
 import com.fourthrock.invade.draw.CanvasRenderer;
-import com.fourthrock.invade.draw.Screen2D;
+import com.fourthrock.invade.draw.PixelScreen2D;
 
 /**
  * Represents a logical state or "scene" in the GameState
@@ -25,7 +25,7 @@ public interface Scene {
 	 * of the beginning of the motion and the end, and
 	 * figure it out from there.
 	 */
-	public void handlePan(final Screen2D start, final Screen2D end);
+	public void handlePan(final PixelScreen2D start, final PixelScreen2D end);
 
 	/**
 	 * The user made a quick, single tap. Take the tap's
@@ -34,7 +34,7 @@ public interface Scene {
 	 * @param x, the x coordinate
 	 * @param y, the y coordinate
 	 */
-	public void handleTap(final Screen2D screenCoords);
+	public void handleTap(final PixelScreen2D screenCoords);
 
 	/**
 	 * The user made a scaling gesture (pinching, zooming).
@@ -53,7 +53,7 @@ public interface Scene {
 	 * @param start, the last touched point on the screen
 	 * @param velocity, the velocity in screen coordinates
 	 */
-	public void handleFling(final Screen2D start, Screen2D velocity);
+	public void handleFling(final PixelScreen2D start, PixelScreen2D velocity);
 	
 	/**
 	 * Return the {x,y,z} coordinates for the current camera
@@ -73,6 +73,12 @@ public interface Scene {
 	 * 			to do thy bidding.
 	 */
 	public void render(final CanvasRenderer renderer);
+
+	/**
+	 * Draw out all of the necessary heads up display
+	 * components.
+	 */
+	public void renderScreen(final CanvasRenderer renderer);
 
 
 }

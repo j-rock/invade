@@ -40,4 +40,14 @@ public abstract class CanvasRenderer {
 	public void draw(final DrawEnum drawEnum, final Position2D p, final Color c) {
 		draw(drawEnum, p, 0f, c);
 	}
+
+	/**
+	 * Draws the shape specified by the DrawEnum at the specified (x,y) coordinates
+	 * with the given color. (The coordinates are in render screen space.)
+	 */
+	public abstract void drawScreen(final DrawEnum drawEnum, final RenderScreen2D p, final ScaleVec s, final float angle, final Color color);
+	
+	public void drawScreen(final DrawEnum drawEnum, final RenderScreen2D p, final ScaleVec s, final Color c) {
+		drawScreen(drawEnum, p, s, 0f, c);
+	}
 }

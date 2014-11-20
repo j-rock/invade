@@ -1,5 +1,7 @@
 package com.fourthrock.invade.game.physics;
 
+import com.fourthrock.invade.game.tower.Tower;
+
 
 /**
  * A class to represent a 2D bounding box in world space.
@@ -58,14 +60,15 @@ public class BoundingBox2D {
 	 * centered at Position2D and also contains this BoundingBox2D.
 	 */
 	public BoundingBox2D expandWith(final Position2D p) {
+		final float minRad = Tower.SPAWN_RADIUS;
 		final Position2D nextBot = new Position2D(
-				Math.min(bottomLeft.x, p.x),
-				Math.min(bottomLeft.y, p.y)
+				Math.min(bottomLeft.x, p.x - minRad),
+				Math.min(bottomLeft.y, p.y - minRad)
 		);
 		
 		final Position2D nextTop = new Position2D(
-				Math.max(topRight.x, p.x),
-				Math.max(topRight.y, p.y)
+				Math.max(topRight.x, p.x + minRad),
+				Math.max(topRight.y, p.y + minRad)
 		);
 		
 		return new BoundingBox2D(nextBot, nextTop);

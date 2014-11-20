@@ -15,7 +15,7 @@ import com.fourthrock.invade.game.tower.Tower;
 public class WhiteAI extends AI {
 
 	public WhiteAI(final ColoredCircleCollider collider) {
-		super(Color.WHITE, collider);
+		super(Color.WHITE, collider, new PlayerAttributes(0.3f));
 	}
 
 	@Override

@@ -6,7 +6,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 
-import com.fourthrock.invade.draw.Screen2D;
+import com.fourthrock.invade.draw.PixelScreen2D;
 import com.fourthrock.invade.game.GameState;
 import com.fourthrock.invade.game.physics.Vector2D;
 
@@ -48,8 +48,8 @@ public class GameInput {
 	private class GestureListener extends GestureDetector.SimpleOnGestureListener {
 		@Override
 		public boolean onScroll(final MotionEvent e1, final MotionEvent e2, final float dx, final float dy) {
-			final Screen2D end = new Screen2D(e2.getX(),  e2.getY());
-			final Screen2D start = end.minus(new Vector2D(dx, dy)).asScreen2D();
+			final PixelScreen2D end = new PixelScreen2D(e2.getX(),  e2.getY());
+			final PixelScreen2D start = end.minus(new Vector2D(dx, dy)).asPixelScreen2D();
 			gameState.handlePan(start, end);
 			return true;
 		}
@@ -62,8 +62,8 @@ public class GameInput {
 		
 		@Override
 		public boolean onFling(final MotionEvent e1, final MotionEvent e2, final float velocityX, final float velocityY) {
-			final Screen2D start = new Screen2D(e2.getX(), e2.getY());
-			final Screen2D velocity = new Screen2D(velocityX, velocityY);
+			final PixelScreen2D start = new PixelScreen2D(e2.getX(), e2.getY());
+			final PixelScreen2D velocity = new PixelScreen2D(velocityX, velocityY);
 			gameState.handleFling(start, velocity);
 			return true;
 		}

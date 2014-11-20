@@ -24,14 +24,18 @@ public abstract class Player {
 	protected Position2D target;
 	private long unitGenTime;
 
-	protected Player(final Color color, final ColoredCircleCollider collider) {
+	protected Player(final Color color, final ColoredCircleCollider collider, final PlayerAttributes playerAttributes) {
 		this.color = color;
 		this.collider = collider;
 		units = new ArrayList<>();
 		towers = new ArrayList<>();
-		attrs = new PlayerAttributes();
+		attrs = playerAttributes;
 	}
 
+	protected Player(final Color color, final ColoredCircleCollider collider) {
+		this(color, collider, new PlayerAttributes());
+	}
+	
 	public Color getColor() {
 		return color;
 	}
@@ -90,19 +94,23 @@ public abstract class Player {
 	 * can generate a new PlayerUnit at a random tower.
 	 */
 	public void tryGenerateUnit(final long dt) {
-		unitGenTime += dt;
-		if(   units.size()  < Math.min(5, towers.size()) * attrs.getMaxUnitsPerTowerCount()
-		   &&  unitGenTime >= attrs.getUnitCreationWaitTime()) {
+		final int maxUnitCount = Math.min(6, towers.size()) * attrs.getMaxUnitsPerTowerCount();
+		if (units.size() == maxUnitCount) {
+			unitGenTime = 0;
+		} else if (towers.size() > 0) {
+			unitGenTime += dt;
+	
+			if(unitGenTime >= attrs.getUnitCreationWaitTime()) {
+				unitGenTime -= attrs.getUnitCreationWaitTime();
 			
-			unitGenTime -= attrs.getUnitCreationWaitTime();
-			
-			final int randIndex = (int)(Math.random() * towers.size());
-			final Tower tower = towers.get(randIndex);
-			final Position2D towerPos = tower.getPosition();
-			final Position2D unitPos = towerPos.randomPositionOnCircle(Tower.SPAWN_RADIUS);
-			final float orientation = unitPos.minus(towerPos).theta();
-			final PlayerUnit unit = new PlayerUnit(this, unitPos, orientation);
-			units.add(unit);
+				final int randIndex = (int)(Math.random() * towers.size());
+				final Tower tower = towers.get(randIndex);
+				final Position2D towerPos = tower.getPosition();
+				final Position2D unitPos = towerPos.randomPositionOnCircle(Tower.SPAWN_RADIUS);
+				final float radialOrientation = unitPos.minus(towerPos).theta();
+				final PlayerUnit unit = new PlayerUnit(this, unitPos, radialOrientation);
+				units.add(unit);
+			}
 		}
 	}
 

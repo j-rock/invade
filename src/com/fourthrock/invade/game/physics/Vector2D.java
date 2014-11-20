@@ -1,6 +1,6 @@
 package com.fourthrock.invade.game.physics;
 
-import com.fourthrock.invade.draw.Screen2D;
+import com.fourthrock.invade.draw.PixelScreen2D;
 
 /**
  * Simple 2D vector class.
@@ -9,7 +9,7 @@ import com.fourthrock.invade.draw.Screen2D;
  */
 public class Vector2D {
 	public static final Vector2D ZERO = new Vector2D(0f, 0f);
-	public final float x, y;
+	public float x, y;
 	
 	public Vector2D(final float x, final float y) {
 		this.x = floatEquals(0f, x) ? 0f : x;
@@ -93,8 +93,8 @@ public class Vector2D {
 		return this.dot(that) < 0f;
 	}
 
-	public Screen2D asScreen2D() {
-		return new Screen2D(x, y);
+	public PixelScreen2D asPixelScreen2D() {
+		return new PixelScreen2D(x, y);
 	}
 	
 	public Position2D asPosition() {

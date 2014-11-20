@@ -1,8 +1,12 @@
 package com.fourthrock.invade.game.scene;
 
+import static com.fourthrock.invade.draw.DrawEnum.TRIANGLE;
+
 import com.fourthrock.invade.draw.CanvasRenderer;
-import com.fourthrock.invade.draw.Screen2D;
-import com.fourthrock.invade.game.player.Player;
+import com.fourthrock.invade.draw.Color;
+import com.fourthrock.invade.draw.PixelScreen2D;
+import com.fourthrock.invade.draw.RenderScreen2D;
+import com.fourthrock.invade.draw.ScaleVec;
 
 /**
  * After a Player has won the game,
@@ -11,53 +15,42 @@ import com.fourthrock.invade.game.player.Player;
  * @author Joseph
  *
  */
-public class EndGameScene implements Scene {
+public class EndGameScene extends FixedEyeScene {
+	private final Color winnerColor;
+	private final Color humanColor;
+	private boolean playAgain;
 
-	public EndGameScene(final Player winner, final boolean wasWinnerHuman) {
-		// TODO
+	public EndGameScene(final Color winnerColor, final Color humanColor) {
+		this.winnerColor = winnerColor;
+		this.humanColor = humanColor;
+		this.playAgain = false;
 	}
 
 	@Override
 	public Scene step(final long dt) {
+		if(playAgain) {
+			return new FadeToBlackScene(this, new MenuScene());
+		} else {
+			return this;
+		}
+	}
+
+	@Override
+	public void handleTap(final PixelScreen2D screenCoords) {
 		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void handleTap(final Screen2D screenCoords) {
-		// TODO - handle input
-	}
-
-	@Override
-	public void handlePan(final Screen2D start, final Screen2D end) {
-		// do nothing
-	}
-
-	@Override
-	public void handleScaling(final float scaleFactor) {
-		// do nothing
-	}
-
-	@Override
-	public float[] getEye() {
-		return new float[]{0f, 0f, -3f};
-	}
-
-	@Override
-	public float getZoom() {
-		return 1f;
 	}
 
 	@Override
 	public void render(final CanvasRenderer renderer) {
-		// TODO Auto-generated method stub
-
+		// no 3D drawing yet. do nothing.
 	}
 
 	@Override
-	public void handleFling(Screen2D start, Screen2D velocity) {
-		// TODO Auto-generated method stub
-		
+	public void renderScreen(final CanvasRenderer renderer) {
+		final RenderScreen2D p = new RenderScreen2D(0f, 0f);
+		final ScaleVec s = new ScaleVec(0.1f);
+		renderer.drawScreen(TRIANGLE, p, s, winnerColor);
 	}
+
 
 }

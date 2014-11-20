@@ -25,7 +25,7 @@ public class ColoredCircleCollider {
 	
 	public ColoredCircleCollider(final BoundingBox2D worldBounds) {
 		this.bounds = worldBounds;
-		this.bucketSize = Math.max(bounds.getWidth(), bounds.getHeight()) / 20; // make about 20*20 buckets
+		this.bucketSize = Tower.SPAWN_RADIUS;
 		final int xBuckets = (int) Math.ceil(bounds.getWidth() / bucketSize);
 		final int yBuckets = (int) Math.ceil(bounds.getHeight() / bucketSize);
 		buckets = new ColoredCircleBucket[xBuckets][yBuckets];

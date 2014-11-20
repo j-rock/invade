@@ -6,10 +6,10 @@ package com.fourthrock.invade.util;
  *
  */
 public class Clock {
-	private long lastCheckedTimeMillis;
+	private long lastCheckedTimeNanos;
 	
 	public Clock() {
-		lastCheckedTimeMillis = System.currentTimeMillis();
+		lastCheckedTimeNanos = System.nanoTime();
 	}
 	
 	/**
@@ -17,16 +17,16 @@ public class Clock {
 	 * since the clock was created or since the last reset.
 	 */
 	public long reset() {
-		final long dt = System.currentTimeMillis() - lastCheckedTimeMillis;
-		lastCheckedTimeMillis += dt; //don't worry about overflow.
-									 //it's not gonna happen for 290 million years.
-		return dt;
+		final long dt = System.nanoTime() - lastCheckedTimeNanos;
+		lastCheckedTimeNanos += dt; //don't worry about overflow.
+									 //it's not gonna happen for a long time.
+		return dt / 1000000;
 	}
 	
 	/**
 	 * For resuming the clock if the app is {@code onPause()}
 	 */
 	public void resume() {
-		lastCheckedTimeMillis = System.currentTimeMillis() - 1;
+		lastCheckedTimeNanos = System.nanoTime() - 1;
 	}
 }

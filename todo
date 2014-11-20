@@ -1,26 +1,27 @@
 Control flow:
+  TitleScene: Create it
   MenuScene: Create it
-  EndGameScene: Create it
-  GamePlayScene: determine EndGameScene conditions
+  EndGameScene: Have fonts and tie back to MenuScene
 
 
 Actual game play stuff:
-  GamePlayScene: user taps to spend human achievement points
   WhiteAI: decide target based on attacking units
        AI: defend sometimes against attacking units
 
 
 Game experience:
   PlayerAttributes: Fine tune parameters
-  GamePlayScene: Up the graphics
+  GamePlayScene: See things at certain zooms
+                 
   
   
 Logistics:
-  --LOW PRIORITY: Parallelize whenever possible
+  --Reduce reallocation: Create UnitFactory
+  						 Optimize ColoredCircleCollider
+  --Parallelize where possible
 
   
 Possible design ideas:
-
   AI: different colors have different techniques
   Human: command different legions with bounding box selection
          Select all units button on screen

@@ -10,7 +10,7 @@ import com.fourthrock.invade.camera.TelescopingEye;
 import com.fourthrock.invade.draw.CanvasRenderer;
 import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.draw.ScaleVec;
-import com.fourthrock.invade.draw.Screen2D;
+import com.fourthrock.invade.draw.PixelScreen2D;
 import com.fourthrock.invade.game.physics.BoundingBox2D;
 import com.fourthrock.invade.game.physics.Position2D;
 import com.fourthrock.invade.game.physics.Vector2D;
@@ -47,7 +47,7 @@ public abstract class WorldEyeScene implements Scene {
 	}
 	
 	@Override
-	public void handleTap(final Screen2D screenCoords) {
+	public void handleTap(final PixelScreen2D screenCoords) {
 		final Position2D p = getPositionFromScreen(screenCoords);
 		if (p != null) {
 			userTaps.add(new Tap(p));
@@ -55,11 +55,9 @@ public abstract class WorldEyeScene implements Scene {
 	}
 	
 	@Override
-	public void handlePan(final Screen2D start, final Screen2D end) {
+	public void handlePan(final PixelScreen2D start, final PixelScreen2D end) {
 		final Vector2D d = getWorldDisplacementFromScreen(start, end).scale(0.85f);
-		final Position2D eyeP = eye.getPosition();
-		final Position2D p = new Position2D(eyeP.x - d.x, eyeP.y + d.y);
-		eye.setPosition(p);
+		eye.displace(d);
 		eye.stopMoving();
 	}
 
@@ -70,16 +68,15 @@ public abstract class WorldEyeScene implements Scene {
 	}
 	
 	@Override
-	public void handleFling(final Screen2D start, final Screen2D screenVelocity) {
+	public void handleFling(final PixelScreen2D start, final PixelScreen2D screenVelocity) {
 		// using 'screenVelocity' we move one millisecond in time from 'start'
 		// we compute the displacement in world coordinates
 		// and implicitly divide this displacement by one millisecond
 		// to compute the world velocity.
 		
-		final Screen2D screenVelocityMillis = screenVelocity.scale(1 / 1000f).asScreen2D();
-		final Screen2D oneMillisFromStart = start.add(screenVelocityMillis).asScreen2D();
-		final Vector2D worldDisplacement = getWorldDisplacementFromScreen(start, oneMillisFromStart);
-		final Vector2D eyeVelocity = new Vector2D(worldDisplacement.x, -worldDisplacement.y);
+		final PixelScreen2D screenVelocityMillis = screenVelocity.scale(1 / 1000f).asPixelScreen2D();
+		final PixelScreen2D oneMillisFromStart = start.add(screenVelocityMillis).asPixelScreen2D();
+		final Vector2D eyeVelocity = getWorldDisplacementFromScreen(start, oneMillisFromStart);
 		eye.setMoving(eyeVelocity.scale(0.85f)); // Community recommends using a fraction of the actual fling velocity.
 	}
 
@@ -107,14 +104,15 @@ public abstract class WorldEyeScene implements Scene {
 		}
 	}
 	
-	protected Position2D getPositionFromScreen(final Screen2D screenCoords) {
+	protected Position2D getPositionFromScreen(final PixelScreen2D screenCoords) {
 		return picker.convertScreenToWorld(screenCoords);
 	}
 	
-	private Vector2D getWorldDisplacementFromScreen(final Screen2D start, final Screen2D end) {
+	private Vector2D getWorldDisplacementFromScreen(final PixelScreen2D start, final PixelScreen2D end) {
 		final Position2D worldStart = getPositionFromScreen(start);
 		final Position2D worldEnd = getPositionFromScreen(end);
-		return worldEnd.minus(worldStart);
+		final Vector2D d = worldEnd.minus(worldStart);
+		return new Vector2D(d.x, -d.y);
 	}
 	
 	private static class Tap {
@@ -124,7 +122,7 @@ public abstract class WorldEyeScene implements Scene {
 		
 		public Tap(final Position2D pos) {
 			this.pos = pos;
-			this.radius = 0.5f;
+			this.radius = 1f;
 		}
 		
 		public ScaleVec getScale() {
