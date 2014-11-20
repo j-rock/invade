@@ -36,7 +36,7 @@ public class FadeToBlackScene extends FixedEyeScene {
 	 * Default constructor fades for 3.5 seconds from fromScene to toScene.
 	 */
 	public FadeToBlackScene(final Scene fromScene, final Scene toScene) {
-		this(fromScene, toScene, 3500L);
+		this(fromScene, toScene, 2000L);
 	}
 
 	@Override
@@ -56,12 +56,12 @@ public class FadeToBlackScene extends FixedEyeScene {
 	
 	@Override
 	public float getZoom() {
-		return fromScene.getZoom();
+		return getCurrentSceneInTransition().getZoom();
 	}
 	
 	@Override
 	public float[] getEye() {
-		return fromScene.getEye();
+		return getCurrentSceneInTransition().getEye();
 	}
 
 	@Override

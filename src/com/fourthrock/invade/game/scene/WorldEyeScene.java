@@ -9,8 +9,8 @@ import com.fourthrock.invade.camera.Picker2D;
 import com.fourthrock.invade.camera.TelescopingEye;
 import com.fourthrock.invade.draw.CanvasRenderer;
 import com.fourthrock.invade.draw.Color;
-import com.fourthrock.invade.draw.ScaleVec;
 import com.fourthrock.invade.draw.PixelScreen2D;
+import com.fourthrock.invade.draw.ScaleVec;
 import com.fourthrock.invade.game.physics.BoundingBox2D;
 import com.fourthrock.invade.game.physics.Position2D;
 import com.fourthrock.invade.game.physics.Vector2D;
@@ -31,7 +31,6 @@ public abstract class WorldEyeScene implements Scene {
 	private final TelescopingEye eye;
 	private final Picker2D picker;
 	private final List<Tap> userTaps;
-	
 
 	public WorldEyeScene(final float minZoom, final float maxZoom, final Position2D startEye, final BoundingBox2D cameraBounds) {
 		eye = new TelescopingEye(minZoom, maxZoom, startEye, cameraBounds.toCircleBounds());

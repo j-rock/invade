@@ -1,6 +1,6 @@
 Control flow:
   TitleScene: Create it
-  MenuScene: Create it
+  MenuScene: Map choices
   EndGameScene: Have fonts and tie back to MenuScene
 
 
@@ -12,6 +12,7 @@ Actual game play stuff:
 Game experience:
   PlayerAttributes: Fine tune parameters
   GamePlayScene: See things at certain zooms
+  TextureObject: Finish loading textures, give it a shot.
                  
   
   

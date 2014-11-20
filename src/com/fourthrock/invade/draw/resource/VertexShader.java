@@ -17,6 +17,17 @@ public class VertexShader extends Shader {
 		  + "}"
 	);
 	
+	public static final VertexShader MODEL_VIEW_WITH_TEXTURE = new VertexShader(
+			"attribute vec2 a_TexCoordinate;"
+		  + "varying vec2 v_TexCoordinate;"
+		  + "uniform mat4 uMVPMatrix;"
+		  + "attribute vec4 vPosition;"
+		  + "void main() {"
+		  + "  gl_Position = vPosition * uMVPMatrix;"
+		  + "  v_TexCoordinate = a_TexCoordinate;"
+		  + "}"
+	);
+	
 	private VertexShader(final String code) {
 		super(code, GLES20.GL_VERTEX_SHADER);
 	}

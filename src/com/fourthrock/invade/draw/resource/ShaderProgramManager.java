@@ -64,6 +64,7 @@ public class ShaderProgramManager {
 		final int program = GLES20.glCreateProgram();
 		GLES20.glAttachShader(program, vShaderHandle);
 		GLES20.glAttachShader(program, fShaderHandle);
+		GLES20.glBindAttribLocation(program, 0, "a_TexCoordinate");
 		GLES20.glLinkProgram(program);
 		return program;
 	}

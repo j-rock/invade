@@ -1,6 +1,7 @@
 package com.fourthrock.invade.game.physics;
 
 import com.fourthrock.invade.draw.PixelScreen2D;
+import com.fourthrock.invade.draw.RenderScreen2D;
 
 /**
  * Simple 2D vector class.
@@ -99,6 +100,10 @@ public class Vector2D {
 	
 	public Position2D asPosition() {
 		return new Position2D(x, y);
+	}
+
+	public RenderScreen2D asRenderScreen2D() {
+		return new RenderScreen2D(x, y);
 	}
 
 	/**

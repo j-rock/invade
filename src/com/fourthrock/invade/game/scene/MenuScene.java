@@ -1,62 +1,92 @@
 package com.fourthrock.invade.game.scene;
 
+import static com.fourthrock.invade.draw.DrawEnum.CIRCLE;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fourthrock.invade.draw.CanvasRenderer;
+import com.fourthrock.invade.draw.Color;
+import com.fourthrock.invade.draw.OpenGLRunner;
 import com.fourthrock.invade.draw.PixelScreen2D;
+import com.fourthrock.invade.draw.RenderScreen2D;
+import com.fourthrock.invade.draw.ScaleVec;
+import com.fourthrock.invade.game.maps.DefaultMap;
 
-public class MenuScene implements Scene {
 
-	@Override
-	public Scene step(long dt) {
-		// TODO Auto-generated method stub
-		return null;
+/**
+ * Represents the pre-game menu where a User
+ * can select a Color.
+ * 
+ * @author Joseph
+ *
+ */
+public class MenuScene extends FixedEyeScene {
+	private final List<ColorPosition> choices;
+	private final float choiceRadius;
+	private Color choiceColor;
+	
+	public MenuScene() {
+		choices = new ArrayList<>();
+
+		choices.add(new ColorPosition(Color.GREEN, -2));
+		choices.add(new ColorPosition(Color.RED,   -1));
+		choices.add(new ColorPosition(Color.BLUE,   0));
+		choices.add(new ColorPosition(Color.PURPLE, 1));
+		choices.add(new ColorPosition(Color.ORANGE, 2));
+		
+		choiceRadius = 0.15f;
+		choiceColor = null;
 	}
 
 	@Override
-	public void handlePan(PixelScreen2D start, PixelScreen2D end) {
-		// TODO Auto-generated method stub
-
+	public Scene step(final long dt) {
+		if(choiceColor != null) {
+			final Scene game = new GamePlayScene(new DefaultMap(), choiceColor);
+			return new FadeToBlackScene(this, game);
+		} else {
+			return this;
+		}
 	}
 
 	@Override
-	public void handleTap(PixelScreen2D screenCoords) {
-		// TODO Auto-generated method stub
-
+	public void handleTap(final PixelScreen2D screenCoords) {
+		for(final ColorPosition choice : choices) {
+			if(withinSqrDist(choice.getPos(), screenCoords)) {
+				choiceColor = choice.color;
+				return;
+			}
+		}
 	}
 
 	@Override
-	public void handleScaling(float scaleFactor) {
-		// TODO Auto-generated method stub
-
+	public void render(final CanvasRenderer renderer) {
+		// do nothing yet!
 	}
 
 	@Override
-	public void handleFling(PixelScreen2D start, PixelScreen2D velocity) {
-		// TODO Auto-generated method stub
-
+	public void renderScreen(final CanvasRenderer renderer) {
+		for(final ColorPosition choice : choices) {
+			renderer.drawScreen(CIRCLE, choice.getPos(), new ScaleVec(choiceRadius), choice.color);
+		}
+	}
+	
+	private static class ColorPosition {
+		public final Color color;
+		public final float shift;
+		
+		public ColorPosition(final Color color, final float shift) {
+			this.color = color;
+			this.shift = shift;
+		}
+		
+		public RenderScreen2D getPos() {
+			return new RenderScreen2D(shift * 0.4f * OpenGLRunner.SCREEN_RATIO, 0f);
+		}
 	}
 
-	@Override
-	public float[] getEye() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public float getZoom() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void render(CanvasRenderer renderer) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void renderScreen(CanvasRenderer renderer) {
-		// TODO Auto-generated method stub
-
+	private boolean withinSqrDist(final RenderScreen2D buttonCenter, final PixelScreen2D tapPos) {
+		return buttonCenter.minus(tapPos.asRenderScreen2D()).sqrMagnitude() < choiceRadius * choiceRadius;
 	}
 
 }

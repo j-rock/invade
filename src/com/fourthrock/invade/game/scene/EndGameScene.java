@@ -37,7 +37,7 @@ public class EndGameScene extends FixedEyeScene {
 
 	@Override
 	public void handleTap(final PixelScreen2D screenCoords) {
-		// TODO Auto-generated method stub
+		playAgain = true;
 	}
 
 	@Override

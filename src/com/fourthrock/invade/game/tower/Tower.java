@@ -23,12 +23,14 @@ public class Tower implements ColoredCircle {
 	public static final float REGEN_RATE = BASE_HEALTH / (90 * 1000); // takes 90 seconds to fully heal
 	
 	private final Position2D position;
+	private final float orientation;
 	private final Set<Tower> adjacents;
 	private float health;
 	private Player player;
 	
 	public Tower(final Position2D position) {
 		this.position = position;
+		this.orientation = (float)(Math.random() * 360);
 		this.adjacents = new HashSet<>();
 		this.health = BASE_HEALTH;
 	}
@@ -56,6 +58,10 @@ public class Tower implements ColoredCircle {
 	public Color getRenderColor() {
 		final Color healthBlack = new Color(0f, 0f, 0f, 1 - health/BASE_HEALTH);
 		return healthBlack.blend(player.getColor());
+	}
+	
+	public float getOrientation() {
+		return orientation;
 	}
 
 	public float getHealth() {

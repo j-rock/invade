@@ -1,6 +1,7 @@
 package com.fourthrock.invade.game.scene;
 
 import static com.fourthrock.invade.draw.DrawEnum.SQUARE;
+import static com.fourthrock.invade.draw.DrawEnum.TRIANGLE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ public class GamePlayScene extends WorldEyeScene {
 	private final List<Index2D> towerEdges;
 	private final List<Player> players;
 	private final Human human;
+	private float angleOfTime;
 
 	
 	public GamePlayScene(final Map map, final Color humanColor) {
@@ -50,6 +52,7 @@ public class GamePlayScene extends WorldEyeScene {
 		this.players = new ArrayList<>();
 		this.human = new Human(humanColor, collider);
 		this.playerUI = new PlayerUI(human);
+		this.angleOfTime = 0f;
 		
 		setupPlayersFromMap(map);
 	}
@@ -70,11 +73,12 @@ public class GamePlayScene extends WorldEyeScene {
 	@Override
 	public Scene step(final long dt) {
 		super.step(dt);
+		angleOfTime = (angleOfTime + dt/16.7f) % 360f;
 		
 		if(!moreThanOnePlayerAlive()){
 			final Player p = findLivingPlayer();
 			final Scene endGameScene = new EndGameScene(p.getColor(), human.getColor());
-			return new FadeToBlackScene(this, endGameScene);
+			return new FadeToBlackScene(this, endGameScene, 4000L);
 		} else {
 			for(final Tower t : towers) {
 				collider.placeCircle(t);
@@ -113,7 +117,10 @@ public class GamePlayScene extends WorldEyeScene {
 	@Override
 	public void render(final CanvasRenderer renderer) {
 		for(final Tower t : towers) {
-			renderer.draw(SQUARE, t.getPosition(), Tower.SCALE, t.getRenderColor());
+			final float orientation = (t.getOrientation() + angleOfTime) % 360f;
+			final ScaleVec adjustedScale = Tower.SCALE.scale((float)Math.max(0.5f, Math.sin(Math.PI*orientation/180f)));
+			renderer.draw(SQUARE, t.getPosition(), adjustedScale, orientation, t.getRenderColor());
+			renderer.draw(SQUARE, t.getPosition(), adjustedScale.scale(0.5f), orientation, new Color(0f, 0f, 0f, 1f));
 		}
 		for(final Index2D adjIndex : towerEdges) {
 			final Tower tI = towers.get(adjIndex.x);
@@ -122,7 +129,7 @@ public class GamePlayScene extends WorldEyeScene {
 		}
 		for(final Player p : players) {
 			for(final PlayerUnit u : p.getUnits()) {
-				renderer.draw(SQUARE, u.getPosition(), PlayerUnit.SCALE, u.getOrientation(), u.getRenderColor());
+				renderer.draw(TRIANGLE, u.getPosition(), PlayerUnit.SCALE, u.getOrientation(), u.getRenderColor());
 			}
 		}
 		super.render(renderer);
@@ -137,15 +144,20 @@ public class GamePlayScene extends WorldEyeScene {
 	/**
 	 * Draws a thin line from Tower ts to Tower tt with Color c
 	 */
-	private static void drawTowerLine(final CanvasRenderer renderer, final Tower ts, final Tower tt) {
+	private void drawTowerLine(final CanvasRenderer renderer, final Tower ts, final Tower tt) {
 		final Position2D s = ts.getPosition();
 		final Position2D t = tt.getPosition();
-		final Position2D midpoint = s.add(t).scale(0.5f).asPosition();
 		final Vector2D displacement = t.minus(s);
+		final float phase = (float) ((ts.getOrientation() + tt.getOrientation() + angleOfTime) * Math.PI / 180f);
 		final float length = displacement.magnitude() - 2 * Tower.SPAWN_RADIUS;
-		final float height = PlayerUnit.BORDER_RADIUS / 4;
+		final float height = PlayerUnit.BORDER_RADIUS / 2f * (float)(Math.abs(Math.cos(phase)));
 		final float angle = displacement.theta();
-		renderer.draw(SQUARE, midpoint, new ScaleVec(length, height, 1f), angle, new Color(0.9f, 0.9f, 0.9f, 1f));
+		
+		final float alpha = (float)Math.abs(Math.sin(phase));
+		final Color color = (ts.getColor().equals(tt.getColor())) ? ts.getColor().withAlpha(alpha) : new Color(0.9f, 0.9f, 0.9f, alpha);
+		
+		final Position2D midpoint = s.add(t).scale(0.5f).asPosition();
+		renderer.draw(SQUARE, midpoint, new ScaleVec(length, height, 1f), angle, color);
 	}
 
 	private void setupPlayersFromMap(final Map map) {

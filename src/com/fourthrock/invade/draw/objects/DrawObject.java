@@ -12,12 +12,12 @@ import android.opengl.GLES20;
  *
  */
 public class DrawObject {
-	private static final int COORDS_PER_VERTEX = 3;
-	private static final int VERTEX_STRIDE = COORDS_PER_VERTEX * 4;
+	protected static final int COORDS_PER_VERTEX = 3;
+	protected static final int VERTEX_STRIDE = COORDS_PER_VERTEX * 4;
 	
-	private final int program;
-	private final FloatBuffer vertexBuffer;
-	private final DrawMethod method;
+	protected final int program;
+	protected final FloatBuffer vertexBuffer;
+	protected final DrawMethod method;
 
 	public DrawObject(final int program, final float[] vertexCoords, final DrawMethod method) {
 		this.program = program;
@@ -33,6 +33,14 @@ public class DrawObject {
      * @param color, the RGBA color with which to color this shape.
      */
 	public void draw(final float[] mvpMat, final float[] color) {
+		final int positionHandle = setup(mvpMat, color);
+		disablingDraw(positionHandle);
+	}
+	
+	/**
+	 * Returns a handle to the position resource so it may be cleaned up later.
+	 */
+	protected int setup(final float[] mvpMat, final float[] color) {
 		final HandleObject handles = loadHandlesFromProgram(program);
 		GLES20.glEnableVertexAttribArray(handles.position);
 		GLES20.glVertexAttribPointer(handles.position, COORDS_PER_VERTEX,
@@ -40,13 +48,19 @@ public class DrawObject {
 
 		GLES20.glUniform4fv(handles.color, 1, color, 0);
 		GLES20.glUniformMatrix4fv(handles.mvpMat, 1, false, mvpMat, 0);
-
+		return handles.position;
+	}
+	
+	/**
+	 * Draws the vertices and disables the position handle.
+	 */
+	protected void disablingDraw(final int positionHandle) {
 		if(method.drawsInOrder) {
 			GLES20.glDrawArrays(method.drawMode, 0, method.vertexCount);
 		} else {
 			GLES20.glDrawElements(method.drawMode, method.vertexCount, GLES20.GL_UNSIGNED_SHORT, method.drawList);
 		}
-		GLES20.glDisableVertexAttribArray(handles.position);
+		GLES20.glDisableVertexAttribArray(positionHandle);
 	}
 
 	private static HandleObject loadHandlesFromProgram(final int program) {
@@ -70,7 +84,7 @@ public class DrawObject {
 	/**
 	 * Creates a properly formatted FloatBuffer to hold vertices
 	 */
-	public static FloatBuffer floatBufferFromArray(final float[] coords) {
+	protected static FloatBuffer floatBufferFromArray(final float[] coords) {
 		final FloatBuffer vertexBuffer = ByteBuffer
 											.allocateDirect(coords.length * 4)
 											.order(ByteOrder.nativeOrder())

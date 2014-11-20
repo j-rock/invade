@@ -1,7 +1,9 @@
 package com.fourthrock.invade.game.scene;
 
+import static com.fourthrock.invade.draw.DrawEnum.BOLT;
 import static com.fourthrock.invade.draw.DrawEnum.CIRCLE;
 import static com.fourthrock.invade.draw.DrawEnum.SQUARE;
+import static com.fourthrock.invade.draw.DrawEnum.TRIANGLE;
 import static com.fourthrock.invade.draw.OpenGLRunner.SCREEN_RATIO;
 
 import com.fourthrock.invade.draw.CanvasRenderer;
@@ -61,11 +63,42 @@ public class PlayerUI {
 		final ScaleVec progressScale = new ScaleVec(progress*2*SCREEN_RATIO, 0.03f, 1f);
 		renderer.drawScreen(SQUARE, progressBarPosition, progressScale, player.getColor());
 		
-		final ScaleVec s = new ScaleVec(buttonRadius);
 		final float alpha = player.getAttributes().getAchievementPoints() > 0 ? 0f : 0.5f;
-		renderer.drawScreen(CIRCLE, attackPosition, s, darken(alpha, Color.RED));
-		renderer.drawScreen(CIRCLE, healthPosition, s, darken(alpha, Color.GREEN));
-		renderer.drawScreen(CIRCLE,  speedPosition, s, darken(alpha, Color.BLUE));
+		drawAttack(renderer, darken(alpha, Color.PURPLE));
+		drawHealth(renderer, darken(alpha, Color.RED));
+		drawSpeed(renderer,  darken(alpha, Color.ORANGE));
+	}
+	
+	private void drawAttack(final CanvasRenderer renderer, final Color color) {
+		renderer.drawScreen(CIRCLE, attackPosition, new ScaleVec(buttonRadius), color);
+		drawNail(renderer, attackPosition, lighten(color));
+	}
+	
+	private void drawNail(final CanvasRenderer renderer, final RenderScreen2D position, final Color color) {
+		final float bodyLength = 1.2f * buttonRadius;
+		final float bodyWidth = buttonRadius / 6;
+		final float headWidth = 1.5f * bodyWidth;
+		final float headHeight = buttonRadius / 8;
+		
+		final RenderScreen2D tipPos = position.add(new RenderScreen2D(0f, 0.002f + bodyLength / 2)).asRenderScreen2D();
+		final RenderScreen2D headPos = position.minus(new RenderScreen2D(0f, bodyLength / 2)).asRenderScreen2D();
+		
+		renderer.drawScreen(SQUARE, position, new ScaleVec(bodyWidth, bodyLength, 1f), color);
+		renderer.drawScreen(TRIANGLE, tipPos, new ScaleVec(bodyWidth), 60f, color);
+		renderer.drawScreen(CIRCLE, headPos, new ScaleVec(headWidth, headHeight, 1f), color);
+	}
+	
+	private void drawHealth(final CanvasRenderer renderer, final Color color) {
+		final float fat = 1.3f * buttonRadius;
+		final float skinny = buttonRadius / 3;
+		renderer.drawScreen(CIRCLE, healthPosition, new ScaleVec(buttonRadius), color);
+		renderer.drawScreen(SQUARE, healthPosition, new ScaleVec(fat, skinny, 1f), lighten(color));
+		renderer.drawScreen(SQUARE, healthPosition, new ScaleVec(skinny, fat, 1f), lighten(color));
+	}
+	
+	private void drawSpeed(final CanvasRenderer renderer, final Color color) {
+		renderer.drawScreen(CIRCLE, speedPosition, new ScaleVec(buttonRadius), color);
+		renderer.drawScreen(BOLT,   speedPosition, new ScaleVec(buttonRadius*0.6f), lighten(color));
 	}
 
 	private boolean withinSqrDist(final RenderScreen2D buttonCenter, final PixelScreen2D tapPos) {
@@ -85,5 +118,9 @@ public class PlayerUI {
 	
 	private static Color darken(final float alpha, final Color c) {
 		return new Color(0f, 0f, 0f, alpha).blend(c);
+	}
+	
+	private static Color lighten(final Color c) {
+		return new Color(1f, 1f, 1f, 0.9f).blend(c);
 	}
 }

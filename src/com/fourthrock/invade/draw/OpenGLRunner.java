@@ -1,5 +1,6 @@
 package com.fourthrock.invade.draw;
 
+import static com.fourthrock.invade.draw.DrawEnum.BOLT;
 import static com.fourthrock.invade.draw.DrawEnum.CIRCLE;
 import static com.fourthrock.invade.draw.DrawEnum.SQUARE;
 import static com.fourthrock.invade.draw.DrawEnum.TRIANGLE;
@@ -16,6 +17,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 
+import com.fourthrock.invade.draw.objects.Bolt;
 import com.fourthrock.invade.draw.objects.Circle;
 import com.fourthrock.invade.draw.objects.DrawObject;
 import com.fourthrock.invade.draw.objects.Square;
@@ -95,6 +97,7 @@ public class OpenGLRunner extends CanvasRenderer implements GLSurfaceView.Render
     	drawObjects.put(SQUARE, new Square(standardProgram));
     	drawObjects.put(TRIANGLE, new Triangle(standardProgram));
     	drawObjects.put(CIRCLE, new Circle(standardProgram));
+    	drawObjects.put(BOLT, new Bolt(standardProgram));
     	
     	if(drawObjects.size() != DrawEnum.values().length) {
     		throw new IllegalStateException("OpenGLRunner drawObjects map must support all DrawEnum types.");
