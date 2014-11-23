@@ -7,6 +7,7 @@ import com.fourthrock.invade.game.physics.BoundingBox2D;
 import com.fourthrock.invade.game.physics.Position2D;
 import com.fourthrock.invade.game.tower.Tower;
 import com.fourthrock.invade.game.unit.PlayerUnit;
+import com.fourthrock.invade.game.unit.PlayerUnitAllocator;
 import com.fourthrock.invade.util.Index2D;
 
 /**
@@ -51,7 +52,11 @@ public class ColoredCircleCollider {
 	 * (not necessarily added to the collection):
 	 * 		A on B and B on A.
 	 */
-	public CollisionCollection withdrawCollisions() {
+	public CollisionCollection withdrawCollisions(final PlayerUnitAllocator allUnits) {
+		for(final PlayerUnit u : allUnits) {
+			placeCircle(u);
+		}
+		
 		final CollisionCollection colls = new CollisionCollection();
 		for(int x=0; x<buckets.length; x++){
 			for(int y=0; y<buckets[x].length; y++) {

@@ -1,5 +1,6 @@
 package com.fourthrock.invade.game.scene;
 
+import static com.fourthrock.invade.draw.DrawEnum.CIRCLE;
 import static com.fourthrock.invade.draw.DrawEnum.SQUARE;
 import static com.fourthrock.invade.draw.DrawEnum.TRIANGLE;
 
@@ -24,6 +25,7 @@ import com.fourthrock.invade.game.player.Human;
 import com.fourthrock.invade.game.player.Player;
 import com.fourthrock.invade.game.tower.Tower;
 import com.fourthrock.invade.game.unit.PlayerUnit;
+import com.fourthrock.invade.game.unit.PlayerUnitAllocator;
 import com.fourthrock.invade.util.Index2D;
 
 /**
@@ -34,6 +36,7 @@ import com.fourthrock.invade.util.Index2D;
  *
  */
 public class GamePlayScene extends WorldEyeScene {
+	private final PlayerUnitAllocator unitAllocator;
 	private final ColoredCircleCollider collider;
 	private final PlayerUI playerUI;
 	private final List<Tower> towers;
@@ -46,11 +49,12 @@ public class GamePlayScene extends WorldEyeScene {
 	public GamePlayScene(final Map map, final Color humanColor) {
 		super(map.getMinZoom(), map.getMaxZoom(), map.getTowers().get(0).getPosition(), map.getBounds());
 		
+		this.unitAllocator = new PlayerUnitAllocator();
 		this.collider = new ColoredCircleCollider(map.getBounds());
 		this.towers = map.getTowers();
 		this.towerEdges = map.getAdjSet();
 		this.players = new ArrayList<>();
-		this.human = new Human(humanColor, collider);
+		this.human = new Human(humanColor);
 		this.playerUI = new PlayerUI(human);
 		this.angleOfTime = 0f;
 		
@@ -85,16 +89,16 @@ public class GamePlayScene extends WorldEyeScene {
 				t.regainHealth(dt);
 			}
 			for(final Player p : players) {
-				p.tryGenerateUnit(dt);
+				p.tryGenerateUnit(unitAllocator, dt);
 				p.decideTarget();
 				p.moveUnits(dt);
 			}
-			processCollisions(collider.withdrawCollisions(), dt);
+			processCollisions(collider.withdrawCollisions(unitAllocator), dt);
 			for(final Player p : players) {
 				p.fireUnits(dt);
 			}
 			for(final Player p : players) {
-				p.removeDeadUnits();
+				p.removeDeadUnits(unitAllocator);
 			}
 			return this;
 		}
@@ -119,7 +123,9 @@ public class GamePlayScene extends WorldEyeScene {
 		for(final Tower t : towers) {
 			final float orientation = (t.getOrientation() + angleOfTime) % 360f;
 			final ScaleVec adjustedScale = Tower.SCALE.scale((float)Math.max(0.5f, Math.sin(Math.PI*orientation/180f)));
-			renderer.draw(SQUARE, t.getPosition(), adjustedScale, orientation, t.getRenderColor());
+			renderer.draw(CIRCLE, t.getPosition(), new ScaleVec(Tower.SPAWN_RADIUS), t.getRenderColor().withAlpha(0.7f));
+			renderer.draw(CIRCLE, t.getPosition(), new ScaleVec(Tower.SPAWN_RADIUS*0.9f), new Color(0f, 0f, 0f, 1f));
+			renderer.draw(SQUARE, t.getPosition(), adjustedScale, orientation, t.getColor());
 			renderer.draw(SQUARE, t.getPosition(), adjustedScale.scale(0.5f), orientation, new Color(0f, 0f, 0f, 1f));
 		}
 		for(final Index2D adjIndex : towerEdges) {
@@ -127,10 +133,8 @@ public class GamePlayScene extends WorldEyeScene {
 			final Tower tJ = towers.get(adjIndex.y);
 			drawTowerLine(renderer, tI, tJ);
 		}
-		for(final Player p : players) {
-			for(final PlayerUnit u : p.getUnits()) {
-				renderer.draw(TRIANGLE, u.getPosition(), PlayerUnit.SCALE, u.getOrientation(), u.getRenderColor());
-			}
+		for(final PlayerUnit u : unitAllocator) {
+			renderer.draw(TRIANGLE, u.getPosition(), PlayerUnit.SCALE, u.getOrientation(), u.getRenderColor());
 		}
 		super.render(renderer);
 	}
@@ -150,7 +154,7 @@ public class GamePlayScene extends WorldEyeScene {
 		final Vector2D displacement = t.minus(s);
 		final float phase = (float) ((ts.getOrientation() + tt.getOrientation() + angleOfTime) * Math.PI / 180f);
 		final float length = displacement.magnitude() - 2 * Tower.SPAWN_RADIUS;
-		final float height = PlayerUnit.BORDER_RADIUS / 2f * (float)(Math.abs(Math.cos(phase)));
+		final float height = PlayerUnit.BORDER_RADIUS * (float)(Math.abs(Math.cos(phase)));
 		final float angle = displacement.theta();
 		
 		final float alpha = (float)Math.abs(Math.sin(phase));
@@ -167,11 +171,11 @@ public class GamePlayScene extends WorldEyeScene {
 		for(int i=0; players.size() < map.getNumberOfPlayers() && i < colors.length; i++) {
 			final Color c = colors[i];
 			if(!c.equals(human.getColor())) {
-				players.add(new AI(c, collider));
+				players.add(new AI(c));
 			}
 		}
 
-		map.assignPlayers(players, collider);
+		map.assignPlayers(players);
 	}
 
 	private boolean moreThanOnePlayerAlive() {

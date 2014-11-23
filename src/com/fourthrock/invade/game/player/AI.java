@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fourthrock.invade.draw.Color;
-import com.fourthrock.invade.game.physics.collision.ColoredCircleCollider;
 import com.fourthrock.invade.game.tower.Tower;
 
 /**
@@ -21,14 +20,14 @@ public class AI extends Player {
 	private Tower targetTower;
 	private int achievementChoice;
 	
-	public AI(final Color color, final ColoredCircleCollider collider, final PlayerAttributes playerAttributes) {
-		super(color, collider, playerAttributes);
+	public AI(final Color color, final PlayerAttributes playerAttributes) {
+		super(color, playerAttributes);
 		this.targetTower = null;
 		this.achievementChoice = 0;
 	}
 	
-	public AI(final Color color, final ColoredCircleCollider collider) {
-		super(color, collider);
+	public AI(final Color color) {
+		super(color);
 		this.targetTower = null;
 		this.achievementChoice = 0;
 	}

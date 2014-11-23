@@ -16,9 +16,10 @@ public class MovingStateTest {
 
 	@Test
 	public void movingStateDoesntHurtAFly() {
-		final Player p = new Human(Color.GREEN, null);
+		final Player p = new Human(Color.GREEN);
 		final Tower t = new Tower(new Position2D(0f, 0f));
-		final PlayerUnit u = new PlayerUnit(p, null);
+		final PlayerUnitAllocator allocator = new PlayerUnitAllocator();
+		final PlayerUnit u = allocator.allocateUnit(p, null, 0f);
 		
 		final float tHealthBefore = t.getHealth();
 		final float uHealthBefore = u.getHealth();

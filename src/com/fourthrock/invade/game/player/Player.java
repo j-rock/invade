@@ -5,9 +5,9 @@ import java.util.List;
 
 import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.game.physics.Position2D;
-import com.fourthrock.invade.game.physics.collision.ColoredCircleCollider;
 import com.fourthrock.invade.game.tower.Tower;
 import com.fourthrock.invade.game.unit.PlayerUnit;
+import com.fourthrock.invade.game.unit.PlayerUnitAllocator;
 
 /**
  * A class to represent one legion in the game.
@@ -17,23 +17,21 @@ import com.fourthrock.invade.game.unit.PlayerUnit;
  */
 public abstract class Player {
 	private final Color color;
-	private final ColoredCircleCollider collider;
 	private final List<PlayerUnit> units;
 	private final List<Tower> towers;
 	private final PlayerAttributes attrs;
 	protected Position2D target;
 	private long unitGenTime;
 
-	protected Player(final Color color, final ColoredCircleCollider collider, final PlayerAttributes playerAttributes) {
+	protected Player(final Color color, final PlayerAttributes playerAttributes) {
 		this.color = color;
-		this.collider = collider;
 		units = new ArrayList<>();
 		towers = new ArrayList<>();
 		attrs = playerAttributes;
 	}
 
-	protected Player(final Color color, final ColoredCircleCollider collider) {
-		this(color, collider, new PlayerAttributes());
+	protected Player(final Color color) {
+		this(color, new PlayerAttributes());
 	}
 	
 	public Color getColor() {
@@ -85,7 +83,6 @@ public abstract class Player {
 		for(final PlayerUnit u : units) {
 			u.moveTowardsTarget(dt);
 			u.setMoving(); // we go to the Move state after moving so that collisions can determine the next state.
-			collider.placeCircle(u);
 		}
 	}
 
@@ -93,7 +90,7 @@ public abstract class Player {
 	 * If enough time has passed, the Player
 	 * can generate a new PlayerUnit at a random tower.
 	 */
-	public void tryGenerateUnit(final long dt) {
+	public void tryGenerateUnit(final PlayerUnitAllocator unitAllocator, final long dt) {
 		final int maxUnitCount = Math.min(6, towers.size()) * attrs.getMaxUnitsPerTowerCount();
 		if (units.size() == maxUnitCount) {
 			unitGenTime = 0;
@@ -108,7 +105,7 @@ public abstract class Player {
 				final Position2D towerPos = tower.getPosition();
 				final Position2D unitPos = towerPos.randomPositionOnCircle(Tower.SPAWN_RADIUS);
 				final float radialOrientation = unitPos.minus(towerPos).theta();
-				final PlayerUnit unit = new PlayerUnit(this, unitPos, radialOrientation);
+				final PlayerUnit unit = unitAllocator.allocateUnit(this, unitPos, radialOrientation);
 				units.add(unit);
 			}
 		}
@@ -120,9 +117,11 @@ public abstract class Player {
 		}
 	}
 
-	public void removeDeadUnits() {
+	public void removeDeadUnits(final PlayerUnitAllocator allocator) {
 		for(int i=units.size()-1; i>=0; i--) {
-			if(!units.get(i).alive()) {
+			final PlayerUnit u = units.get(i);
+			if(!u.alive()) {
+				allocator.deallocateUnit(u);
 				units.remove(i);
 			}
 		}

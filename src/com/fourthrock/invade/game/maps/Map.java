@@ -7,7 +7,6 @@ import java.util.Set;
 
 import com.fourthrock.invade.game.physics.BoundingBox2D;
 import com.fourthrock.invade.game.physics.Position2D;
-import com.fourthrock.invade.game.physics.collision.ColoredCircleCollider;
 import com.fourthrock.invade.game.player.Player;
 import com.fourthrock.invade.game.player.WhiteAI;
 import com.fourthrock.invade.game.tower.Tower;
@@ -32,7 +31,7 @@ import com.fourthrock.invade.util.Index2D;
  */
 public abstract class Map {
 	private static final float MIN_ZOOM = 0.024f; // magic constant determined experimentally
-	private static final float MAX_ZOOM = 0.1f;  // magic constant determined experimentally
+	private static final float MAX_ZOOM = 0.16f;  // magic constant determined experimentally
 	private BoundingBox2D bounds;
 	protected final List<Tower> towers;
 
@@ -101,14 +100,14 @@ public abstract class Map {
 	 * The remainder get their own unique WhiteAI protector,
 	 * which is added to the list of Players.
 	 */
-	public void assignPlayers(final List<Player> players, final ColoredCircleCollider collider) {
+	public void assignPlayers(final List<Player> players) {
 		for(int i=0; i<players.size() && i<towers.size(); i++) {
 			towers.get(i).adoptNewPlayer(players.get(i));
 		}
 		
 		//If there are any spots left over, fill them with the White AI
 		for(int i=players.size(); i<towers.size(); i++) {
-			final Player white = new WhiteAI(collider);
+			final Player white = new WhiteAI();
 			players.add(white);
 			towers.get(i).adoptNewPlayer(white);
 		}

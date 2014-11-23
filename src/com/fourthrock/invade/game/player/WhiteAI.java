@@ -1,7 +1,6 @@
 package com.fourthrock.invade.game.player;
 
 import com.fourthrock.invade.draw.Color;
-import com.fourthrock.invade.game.physics.collision.ColoredCircleCollider;
 import com.fourthrock.invade.game.tower.Tower;
 
 /**
@@ -14,8 +13,8 @@ import com.fourthrock.invade.game.tower.Tower;
  */
 public class WhiteAI extends AI {
 
-	public WhiteAI(final ColoredCircleCollider collider) {
-		super(Color.WHITE, collider, new PlayerAttributes(0.3f));
+	public WhiteAI() {
+		super(Color.WHITE, new PlayerAttributes(0.3f));
 	}
 
 	@Override

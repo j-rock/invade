@@ -13,8 +13,10 @@ public class PlayerUnitTest {
 	
 	@Test
 	public void playerUnitTakesDamageAndDies() {
-		final Player p = new Human(Color.GREEN, null);
-		final PlayerUnit u = new PlayerUnit(p, null);
+		final PlayerUnitAllocator allocator = new PlayerUnitAllocator();
+		
+		final Player p = new Human(Color.GREEN);
+		final PlayerUnit u = allocator.allocateUnit(p, null, 0f);
 		final float health = p.getAttributes().getBaseUnitHealth();
 		
 		final float damage = health / 2.7f;

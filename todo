@@ -17,8 +17,7 @@ Game experience:
   
   
 Logistics:
-  --Reduce reallocation: Create UnitFactory
-  						 Optimize ColoredCircleCollider
+  --Reduce reallocation: Optimize ColoredCircleCollider
   --Parallelize where possible
 
   
