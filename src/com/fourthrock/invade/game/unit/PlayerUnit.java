@@ -25,18 +25,13 @@ public class PlayerUnit implements ColoredCircle {
 	private UnitState state;
 	private PlayerUnit targetUnit;
 	private Tower targetTower;
-	
-	protected PlayerUnit(final Player player, final Position2D position, final float orientation) {
-		reset(player, position, orientation);
-	}
-	
-	protected void reset(final Player player, final Position2D position, final float orientation) {
+
+	public void reset(final Player player, final Position2D position, final float orientation) {
 		this.player = player;
 		this.position = position;
 		this.orientation = orientation;
 		this.health = player.getAttributes().getBaseUnitHealth();
 		setMoving();
-		
 	}
 
 	@Override

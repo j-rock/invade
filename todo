@@ -1,6 +1,6 @@
 Control flow:
   TitleScene: Create it
-  MenuScene: Map choices
+  MenuScene: Levels
   EndGameScene: Have fonts and tie back to MenuScene
 
 
@@ -15,9 +15,8 @@ Game experience:
   TextureObject: Finish loading textures, give it a shot.
                  
   
-  
 Logistics:
-  --Reduce reallocation: Optimize ColoredCircleCollider
+  --Speed it up.
   --Parallelize where possible
 
   

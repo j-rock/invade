@@ -30,7 +30,7 @@ public class PlayerAttributes {
 		this.unitCreationWaitTime = ONE_SEC;
 		
 		this.unitMoveSpeed    = Tower.BORDER_RADIUS / (1.8f * ONE_SEC);
-		this.unitBaseHealth   = healthPercentage * Tower.BASE_HEALTH / 100f;
+		this.unitBaseHealth   = healthPercentage * Tower.BASE_HEALTH / 200f;
 		this.unitAttackSpeed  = Tower.REGEN_RATE / 2f;
 		this.unitAttackRadius = PlayerUnit.BORDER_RADIUS * 3;
 		

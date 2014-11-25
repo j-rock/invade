@@ -18,14 +18,15 @@ import com.fourthrock.invade.game.physics.Vector2D;
 import com.fourthrock.invade.game.physics.collision.AttackTowerCollision;
 import com.fourthrock.invade.game.physics.collision.AttackUnitCollision;
 import com.fourthrock.invade.game.physics.collision.CollisionCollection;
-import com.fourthrock.invade.game.physics.collision.ColoredCircleCollider;
 import com.fourthrock.invade.game.physics.collision.MoveBackCollision;
+import com.fourthrock.invade.game.physics.collision.TreeCollider;
 import com.fourthrock.invade.game.player.AI;
 import com.fourthrock.invade.game.player.Human;
 import com.fourthrock.invade.game.player.Player;
 import com.fourthrock.invade.game.tower.Tower;
 import com.fourthrock.invade.game.unit.PlayerUnit;
-import com.fourthrock.invade.game.unit.PlayerUnitAllocator;
+import com.fourthrock.invade.util.Allocateable;
+import com.fourthrock.invade.util.Allocator;
 import com.fourthrock.invade.util.Index2D;
 
 /**
@@ -36,8 +37,8 @@ import com.fourthrock.invade.util.Index2D;
  *
  */
 public class GamePlayScene extends WorldEyeScene {
-	private final PlayerUnitAllocator unitAllocator;
-	private final ColoredCircleCollider collider;
+	private final Allocator<PlayerUnit> units;
+	private final TreeCollider collider;
 	private final PlayerUI playerUI;
 	private final List<Tower> towers;
 	private final List<Index2D> towerEdges;
@@ -49,8 +50,12 @@ public class GamePlayScene extends WorldEyeScene {
 	public GamePlayScene(final Map map, final Color humanColor) {
 		super(map.getMinZoom(), map.getMaxZoom(), map.getTowers().get(0).getPosition(), map.getBounds());
 		
-		this.unitAllocator = new PlayerUnitAllocator();
-		this.collider = new ColoredCircleCollider(map.getBounds());
+		this.units = new Allocator<>(new Allocateable<PlayerUnit>(){
+			@Override public PlayerUnit allocate() {
+				return new PlayerUnit();
+			}
+		});
+		this.collider = new TreeCollider(map.getTowers());
 		this.towers = map.getTowers();
 		this.towerEdges = map.getAdjSet();
 		this.players = new ArrayList<>();
@@ -79,26 +84,30 @@ public class GamePlayScene extends WorldEyeScene {
 		super.step(dt);
 		angleOfTime = (angleOfTime + dt/16.7f) % 360f;
 		
-		if(!moreThanOnePlayerAlive()){
+		if(!human.isAlive()) {
+			// TODO - make an actual lose game scene.
+			final Scene loseGameScene = new MenuScene();
+			return new FadeToBlackScene(this, loseGameScene, 4000L);
+		}
+		else if(!moreThanOnePlayerAlive()){
 			final Player p = findLivingPlayer();
 			final Scene endGameScene = new EndGameScene(p.getColor(), human.getColor());
 			return new FadeToBlackScene(this, endGameScene, 4000L);
 		} else {
 			for(final Tower t : towers) {
-				collider.placeCircle(t);
 				t.regainHealth(dt);
 			}
 			for(final Player p : players) {
-				p.tryGenerateUnit(unitAllocator, dt);
+				p.tryGenerateUnit(units, dt);
 				p.decideTarget();
 				p.moveUnits(dt);
 			}
-			processCollisions(collider.withdrawCollisions(unitAllocator), dt);
+			processCollisions(collider.withdrawCollisions(units), dt);
 			for(final Player p : players) {
 				p.fireUnits(dt);
 			}
 			for(final Player p : players) {
-				p.removeDeadUnits(unitAllocator);
+				p.removeDeadUnits(units);
 			}
 			return this;
 		}
@@ -133,7 +142,7 @@ public class GamePlayScene extends WorldEyeScene {
 			final Tower tJ = towers.get(adjIndex.y);
 			drawTowerLine(renderer, tI, tJ);
 		}
-		for(final PlayerUnit u : unitAllocator) {
+		for(final PlayerUnit u : units) {
 			renderer.draw(TRIANGLE, u.getPosition(), PlayerUnit.SCALE, u.getOrientation(), u.getRenderColor());
 		}
 		super.render(renderer);

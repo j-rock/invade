@@ -5,19 +5,11 @@ import com.fourthrock.invade.game.physics.Vector2D;
 import com.fourthrock.invade.game.tower.Tower;
 import com.fourthrock.invade.game.unit.PlayerUnit;
 
-public class MoveBackCollision extends Collision {
+public class MoveBackCollision implements Collision {
 	public final PlayerUnit unit;
 	private final Position2D backOffPosition;
 	private final float separation;
 	private final boolean goPerpendicular;
-	
-	private MoveBackCollision(final PlayerUnit unit, final Position2D backOffPosition, final float separation, final boolean goPerpendicular) {
-		super(Collision.Type.MOVE_BACK);
-		this.unit = unit;
-		this.backOffPosition = backOffPosition;
-		this.separation = unit.getPhysicalRadius() + separation;
-		this.goPerpendicular = goPerpendicular;
-	}
 	
 	public MoveBackCollision(final PlayerUnit unit, final Tower tower) {
 		this(unit, tower.getPosition(), tower.getPhysicalRadius(), true);
@@ -25,6 +17,13 @@ public class MoveBackCollision extends Collision {
 	
 	public MoveBackCollision(final PlayerUnit unit, final PlayerUnit backOffUnit) {
 		this(unit, backOffUnit.getPosition(), backOffUnit.getPhysicalRadius(), false);
+	}
+	
+	private MoveBackCollision(final PlayerUnit unit, final Position2D backOffPosition, final float separation, final boolean goPerpendicular) {
+		this.unit = unit;
+		this.backOffPosition = backOffPosition;
+		this.separation = unit.getPhysicalRadius() + separation;
+		this.goPerpendicular = goPerpendicular;
 	}
 	
 	@Override

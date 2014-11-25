@@ -7,7 +7,7 @@ import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.game.physics.Position2D;
 import com.fourthrock.invade.game.tower.Tower;
 import com.fourthrock.invade.game.unit.PlayerUnit;
-import com.fourthrock.invade.game.unit.PlayerUnitAllocator;
+import com.fourthrock.invade.util.Allocator;
 
 /**
  * A class to represent one legion in the game.
@@ -90,7 +90,7 @@ public abstract class Player {
 	 * If enough time has passed, the Player
 	 * can generate a new PlayerUnit at a random tower.
 	 */
-	public void tryGenerateUnit(final PlayerUnitAllocator unitAllocator, final long dt) {
+	public void tryGenerateUnit(final Allocator<PlayerUnit> allUnits, final long dt) {
 		final int maxUnitCount = Math.min(6, towers.size()) * attrs.getMaxUnitsPerTowerCount();
 		if (units.size() == maxUnitCount) {
 			unitGenTime = 0;
@@ -105,7 +105,8 @@ public abstract class Player {
 				final Position2D towerPos = tower.getPosition();
 				final Position2D unitPos = towerPos.randomPositionOnCircle(Tower.SPAWN_RADIUS);
 				final float radialOrientation = unitPos.minus(towerPos).theta();
-				final PlayerUnit unit = unitAllocator.allocateUnit(this, unitPos, radialOrientation);
+				final PlayerUnit unit = allUnits.allocate();
+				unit.reset(this, unitPos, radialOrientation);
 				units.add(unit);
 			}
 		}
@@ -117,11 +118,11 @@ public abstract class Player {
 		}
 	}
 
-	public void removeDeadUnits(final PlayerUnitAllocator allocator) {
+	public void removeDeadUnits(final Allocator<PlayerUnit> allUnits) {
 		for(int i=units.size()-1; i>=0; i--) {
 			final PlayerUnit u = units.get(i);
 			if(!u.alive()) {
-				allocator.deallocateUnit(u);
+				allUnits.deallocate(u);
 				units.remove(i);
 			}
 		}
