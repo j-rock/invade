@@ -51,6 +51,7 @@ public class TreeCollider {
 		for(final PlayerUnit u : allUnits) {
 			placeCircle(unitIndex, u);
 		}
+
 		
 		colls.clear();
 		for(final PlayerUnit u : allUnits) {
@@ -58,20 +59,20 @@ public class TreeCollider {
 			final List<PlayerUnit> maybeCollidingUnits = findNearByPlayerUnits(u, unitIndex, allUnits);
 			
 			for(final Tower t : maybeCollidingTowers) {
+				if(withinActiveRange(u, t)) {
+					colls.addAttackTowerCollision(u, t);
+				}
 				if(withinPhysicalRange(u, t)) {
 					colls.addMoveBackCollision(u, t);
-					if(withinActiveRange(u, t)) {
-						colls.addAttackTowerCollision(u, t);
-					}
 				}
 			}
 			
 			for(final PlayerUnit u2 : maybeCollidingUnits) {
+				if(withinActiveRange(u, u2)) {
+					colls.addAttackUnitCollision(u, u2);
+				}
 				if(withinPhysicalRange(u, u2)) {
 					colls.addMoveBackCollision(u, u2);
-					if(withinActiveRange(u, u2)) {
-						colls.addAttackUnitCollision(u, u2);
-					}
 				}
 			}
 		}
@@ -142,7 +143,7 @@ public class TreeCollider {
 	}
 
 	private static void placeCircle(final SpatialIndex spatialIndex, final ColoredCircle c) {
-		final Rectangle r = makeRectangle(c.getPosition(), c.getPhysicalRadius());
+		final Rectangle r = makeRectangle(c.getPosition(), c.getActiveRadius());
 		final int circleIndex = spatialIndex.size();
 		spatialIndex.add(r, circleIndex);
 	}

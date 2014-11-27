@@ -20,9 +20,9 @@ package com.fourthrock.invade.game.maps;
  *  
  *  @author Joseph
  */
-public class DefaultMap extends Map {
+public class PentagonStarMap extends Map {
 	
-	public DefaultMap() {
+	public PentagonStarMap() {
 		super();
 
 		// k is a scaling factor designed to make Towers spaced nicely

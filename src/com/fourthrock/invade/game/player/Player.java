@@ -1,7 +1,9 @@
 package com.fourthrock.invade.game.player;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.game.physics.Position2D;
@@ -44,6 +46,15 @@ public abstract class Player {
 
 	public List<Tower> getTowers() {
 		return towers;
+	}
+	
+	public Set<Tower> getAdjacentTowers() {
+		final Set<Tower> adjacents = new HashSet<>();
+		for(final Tower t : towers) {
+			adjacents.add(t);
+			adjacents.addAll(t.getAdjacents());
+		}
+		return adjacents;
 	}
 	
 	public PlayerAttributes getAttributes() {
@@ -92,7 +103,7 @@ public abstract class Player {
 	 */
 	public void tryGenerateUnit(final Allocator<PlayerUnit> allUnits, final long dt) {
 		final int maxUnitCount = Math.min(6, towers.size()) * attrs.getMaxUnitsPerTowerCount();
-		if (units.size() == maxUnitCount) {
+		if (units.size() >= maxUnitCount) {
 			unitGenTime = 0;
 		} else if (towers.size() > 0) {
 			unitGenTime += dt;

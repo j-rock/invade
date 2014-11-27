@@ -83,7 +83,7 @@ public class FadeToBlackScene extends FixedEyeScene {
 		} else {
 			alpha = 1f - (float)(timePassed-halfTime) / halfTime;
 		}
-		final Color black = new Color(0f, 0f, 0f, Math.min(1f, alpha));
+		final Color black = Color.BLACK.withAlpha(Math.min(1f, alpha));
 		renderer.drawScreen(SQUARE, centerPos, coverScreenScale, black);
 	}
 	

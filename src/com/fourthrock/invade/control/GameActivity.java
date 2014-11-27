@@ -5,7 +5,7 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 
 import com.fourthrock.invade.game.GameState;
-import com.fourthrock.invade.game.scene.MenuScene;
+import com.fourthrock.invade.game.scene.ColorChoiceScene;
 
 /**
  * A class to handle the basic control flow logic of the OpenGL bits.
@@ -23,7 +23,7 @@ public class GameActivity extends Activity {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(gameState == null) {
-        	gameState = new GameState(new MenuScene());
+        	gameState = new GameState(new ColorChoiceScene());
         }
         view = new GameView(this, gameState);
         setContentView(view);

@@ -11,7 +11,8 @@ import com.fourthrock.invade.draw.OpenGLRunner;
 import com.fourthrock.invade.draw.PixelScreen2D;
 import com.fourthrock.invade.draw.RenderScreen2D;
 import com.fourthrock.invade.draw.ScaleVec;
-import com.fourthrock.invade.game.maps.DefaultMap;
+import com.fourthrock.invade.game.levels.Level;
+import com.fourthrock.invade.game.maps.PentagonStarMap;
 
 
 /**
@@ -21,28 +22,35 @@ import com.fourthrock.invade.game.maps.DefaultMap;
  * @author Joseph
  *
  */
-public class MenuScene extends FixedEyeScene {
+public class ColorChoiceScene extends FixedEyeScene {
+	private final Level levelChoice;
 	private final List<ColorPosition> choices;
 	private final float choiceRadius;
 	private Color choiceColor;
 	
-	public MenuScene() {
+	private ColorChoiceScene(final Level levelChoice) {
+		this.levelChoice = levelChoice;
+		
 		choices = new ArrayList<>();
 
 		choices.add(new ColorPosition(Color.GREEN, -2));
 		choices.add(new ColorPosition(Color.RED,   -1));
 		choices.add(new ColorPosition(Color.BLUE,   0));
 		choices.add(new ColorPosition(Color.PURPLE, 1));
-		choices.add(new ColorPosition(Color.ORANGE, 2));
+		choices.add(new ColorPosition(Color.YELLOW, 2));
 		
 		choiceRadius = 0.15f;
 		choiceColor = null;
+	}
+	
+	public ColorChoiceScene() {
+		this(new Level(new PentagonStarMap(), 1));
 	}
 
 	@Override
 	public Scene step(final long dt) {
 		if(choiceColor != null) {
-			final Scene game = new GamePlayScene(new DefaultMap(), choiceColor);
+			final Scene game = new GamePlayScene(levelChoice, choiceColor);
 			return new FadeToBlackScene(this, game);
 		} else {
 			return this;

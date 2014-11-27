@@ -1,18 +1,18 @@
 package com.fourthrock.invade.game.scene;
 
-import static com.fourthrock.invade.draw.DrawEnum.CIRCLE;
 import static com.fourthrock.invade.draw.DrawEnum.SQUARE;
-import static com.fourthrock.invade.draw.DrawEnum.TRIANGLE;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import android.util.Log;
 
 import com.fourthrock.invade.draw.CanvasRenderer;
 import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.draw.PixelScreen2D;
 import com.fourthrock.invade.draw.ScaleVec;
-import com.fourthrock.invade.game.maps.DefaultMap;
-import com.fourthrock.invade.game.maps.Map;
+import com.fourthrock.invade.game.levels.Level;
 import com.fourthrock.invade.game.physics.Position2D;
 import com.fourthrock.invade.game.physics.Vector2D;
 import com.fourthrock.invade.game.physics.collision.AttackTowerCollision;
@@ -20,7 +20,6 @@ import com.fourthrock.invade.game.physics.collision.AttackUnitCollision;
 import com.fourthrock.invade.game.physics.collision.CollisionCollection;
 import com.fourthrock.invade.game.physics.collision.MoveBackCollision;
 import com.fourthrock.invade.game.physics.collision.TreeCollider;
-import com.fourthrock.invade.game.player.AI;
 import com.fourthrock.invade.game.player.Human;
 import com.fourthrock.invade.game.player.Player;
 import com.fourthrock.invade.game.tower.Tower;
@@ -47,27 +46,25 @@ public class GamePlayScene extends WorldEyeScene {
 	private float angleOfTime;
 
 	
-	public GamePlayScene(final Map map, final Color humanColor) {
-		super(map.getMinZoom(), map.getMaxZoom(), map.getTowers().get(0).getPosition(), map.getBounds());
+	public GamePlayScene(final Level level, final Color humanColor) {
+		super(level.getMinZoom(), level.getMaxZoom(), level.getHumanPosition(), level.getBounds());
 		
 		this.units = new Allocator<>(new Allocateable<PlayerUnit>(){
 			@Override public PlayerUnit allocate() {
 				return new PlayerUnit();
 			}
 		});
-		this.collider = new TreeCollider(map.getTowers());
-		this.towers = map.getTowers();
-		this.towerEdges = map.getAdjSet();
+		this.collider = new TreeCollider(level.getTowers());
+		this.towers = level.getTowers();
+		this.towerEdges = level.getAdjSet();
 		this.players = new ArrayList<>();
 		this.human = new Human(humanColor);
 		this.playerUI = new PlayerUI(human);
 		this.angleOfTime = 0f;
 		
-		setupPlayersFromMap(map);
-	}
-
-	public GamePlayScene() {
-		this(new DefaultMap(), Color.GREEN);
+		players.add(human);
+		final List<Player> addedPlayers = level.setupPlayers(human);
+		players.addAll(addedPlayers);
 	}
 
 	@Override
@@ -86,7 +83,8 @@ public class GamePlayScene extends WorldEyeScene {
 		
 		if(!human.isAlive()) {
 			// TODO - make an actual lose game scene.
-			final Scene loseGameScene = new MenuScene();
+			Log.e("SUCK", "YOU SUCK");
+			final Scene loseGameScene = new ColorChoiceScene();
 			return new FadeToBlackScene(this, loseGameScene, 4000L);
 		}
 		else if(!moreThanOnePlayerAlive()){
@@ -123,68 +121,68 @@ public class GamePlayScene extends WorldEyeScene {
 		for(final AttackUnitCollision auc : colls.getAttackUnitCollisions()) {
 			auc.process(dt);
 		}
-
-		// TODO - add graphical triggers
 	}
 
 	@Override
 	public void render(final CanvasRenderer renderer) {
-		for(final Tower t : towers) {
-			final float orientation = (t.getOrientation() + angleOfTime) % 360f;
-			final ScaleVec adjustedScale = Tower.SCALE.scale((float)Math.max(0.5f, Math.sin(Math.PI*orientation/180f)));
-			renderer.draw(CIRCLE, t.getPosition(), new ScaleVec(Tower.SPAWN_RADIUS), t.getRenderColor().withAlpha(0.7f));
-			renderer.draw(CIRCLE, t.getPosition(), new ScaleVec(Tower.SPAWN_RADIUS*0.9f), new Color(0f, 0f, 0f, 1f));
-			renderer.draw(SQUARE, t.getPosition(), adjustedScale, orientation, t.getColor());
-			renderer.draw(SQUARE, t.getPosition(), adjustedScale.scale(0.5f), orientation, new Color(0f, 0f, 0f, 1f));
-		}
+		final Set<Tower> humanAdjTowers = human.getAdjacentTowers();
 		for(final Index2D adjIndex : towerEdges) {
 			final Tower tI = towers.get(adjIndex.x);
 			final Tower tJ = towers.get(adjIndex.y);
-			drawTowerLine(renderer, tI, tJ);
+			final float alphaMultiplier =
+				humanAdjTowers.contains(tI) && humanAdjTowers.contains(tJ)
+					? 1f
+					: 0.1f;
+			drawTowerLine(renderer, tI, tJ, alphaMultiplier);
+		}
+		for(final Tower t : towers) {
+			final float alpha = humanAdjTowers.contains(t) ? 1f : 0.2f;
+			t.preRender(renderer, alpha);
 		}
 		for(final PlayerUnit u : units) {
-			renderer.draw(TRIANGLE, u.getPosition(), PlayerUnit.SCALE, u.getOrientation(), u.getRenderColor());
+			u.preRender(renderer);
 		}
+		
+		final Color shadowBlack = Color.BLACK.withAlpha(0.7f);
+		for(final PlayerUnit u : units) {
+			u.postRender(renderer, shadowBlack);
+		}
+		
+		for(final Tower t : towers) {
+			final float alpha = humanAdjTowers.contains(t) ? 1f : 0.2f;
+			final float orientation = (t.getOrientation() + angleOfTime) % 360f;
+			t.postRender(renderer, alpha, orientation);
+		}
+		
 		super.render(renderer);
 	}
 	
 
 	@Override
-	public void renderScreen(CanvasRenderer renderer) {
+	public void renderScreen(final CanvasRenderer renderer) {
 		playerUI.render(renderer);
 	}
 
 	/**
 	 * Draws a thin line from Tower ts to Tower tt with Color c
 	 */
-	private void drawTowerLine(final CanvasRenderer renderer, final Tower ts, final Tower tt) {
+	private void drawTowerLine(final CanvasRenderer renderer, final Tower ts, final Tower tt, final float alphaMultiplier) {
 		final Position2D s = ts.getPosition();
 		final Position2D t = tt.getPosition();
 		final Vector2D displacement = t.minus(s);
-		final float phase = (float) ((ts.getOrientation() + tt.getOrientation() + angleOfTime) * Math.PI / 180f);
-		final float length = displacement.magnitude() - 2 * Tower.SPAWN_RADIUS;
-		final float height = PlayerUnit.BORDER_RADIUS * (float)(Math.abs(Math.cos(phase)));
-		final float angle = displacement.theta();
-		
-		final float alpha = (float)Math.abs(Math.sin(phase));
-		final Color color = (ts.getColor().equals(tt.getColor())) ? ts.getColor().withAlpha(alpha) : new Color(0.9f, 0.9f, 0.9f, alpha);
-		
 		final Position2D midpoint = s.add(t).scale(0.5f).asPosition();
-		renderer.draw(SQUARE, midpoint, new ScaleVec(length, height, 1f), angle, color);
-	}
-
-	private void setupPlayersFromMap(final Map map) {
-		players.add(human);
+		final float length = displacement.magnitude() - 2 * Tower.SPAWN_RADIUS;
 		
-		final Color[] colors = {Color.GREEN, Color.ORANGE, Color.PURPLE, Color.RED, Color.BLUE};
-		for(int i=0; players.size() < map.getNumberOfPlayers() && i < colors.length; i++) {
-			final Color c = colors[i];
-			if(!c.equals(human.getColor())) {
-				players.add(new AI(c));
-			}
-		}
-
-		map.assignPlayers(players);
+		final float phase = (float) ((ts.getOrientation() + tt.getOrientation() + angleOfTime) * Math.PI / 180f);
+		final float height = PlayerUnit.BORDER_RADIUS * (float)(Math.abs(2 * Math.cos(phase)));
+		
+		final float alpha = (float)Math.abs(Math.sin(phase)) * alphaMultiplier;
+		final Color color =
+			ts.getColor().equals(tt.getColor())
+				? ts.getColor().withAlpha(alpha)
+				: Color.SNOW.withAlpha(alpha);
+		
+		renderer.draw(SQUARE, midpoint, new ScaleVec(length, height, 1f), displacement.theta(), color);
 	}
 
 	private boolean moreThanOnePlayerAlive() {

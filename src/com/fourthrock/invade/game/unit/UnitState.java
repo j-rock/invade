@@ -1,6 +1,5 @@
 package com.fourthrock.invade.game.unit;
 
-import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.game.physics.Position2D;
 import com.fourthrock.invade.game.player.Player;
 import com.fourthrock.invade.game.tower.Tower;
@@ -14,11 +13,6 @@ public abstract class UnitState {
 	public static final UnitState MOVING = new MovingState();
 	public static final UnitState ATTACKING_UNIT = new AttackingUnitState();
 	public static final UnitState ATTACKING_TOWER = new AttackingTowerState();
-	
-	/**
-	 * What color should the PlayerUnit be? (Attacking units should look angry)
-	 */
-	public abstract Color getRenderColor(final Color original);
 	
 	/*
 	 * Move toward a target over time dt (attacking units don't budge!)

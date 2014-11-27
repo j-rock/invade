@@ -14,7 +14,7 @@ import com.fourthrock.invade.game.tower.Tower;
 public class WhiteAI extends AI {
 
 	public WhiteAI() {
-		super(Color.WHITE, new PlayerAttributes(0.3f));
+		super(Color.SNOW, new PlayerAttributes(0.15f));
 	}
 
 	@Override

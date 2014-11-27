@@ -1,7 +1,9 @@
 Control flow:
   TitleScene: Create it
-  MenuScene: Levels
-  EndGameScene: Have fonts and tie back to MenuScene
+  LevelChooserScene: Render level map
+  LevelMap: Assign levels
+  Level: Create a bunch of levels!
+  EndGameScene: Have fonts and tie back to LevelChooserScene
 
 
 Actual game play stuff:
@@ -11,7 +13,6 @@ Actual game play stuff:
 
 Game experience:
   PlayerAttributes: Fine tune parameters
-  GamePlayScene: See things at certain zooms
   TextureObject: Finish loading textures, give it a shot.
                  
   

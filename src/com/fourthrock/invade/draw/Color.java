@@ -1,5 +1,8 @@
 package com.fourthrock.invade.draw;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A class to represent RGBA colors.
  * 
@@ -7,13 +10,26 @@ package com.fourthrock.invade.draw;
  *
  */
 public class Color {
-
-	public static final Color WHITE = new Color(0.95f, 0.96f, 0.965f, 1f);
-	public static final Color RED = new Color(0.839f, 0.117f, 0.323f, 1f);
-	public static final Color GREEN = new Color(0f, 0.8f, 0.4f, 1f);
-	public static final Color BLUE = new Color(0f, 1f, 1f, 1f);
-	public static final Color ORANGE = new Color(1f, 0.6f, 0f, 1f);
-	public static final Color PURPLE = new Color(0.6f, 0.1313f, 0.8f, 1f);
+	
+	public static final Color BLACK  = new Color(    0f,       0f,      0f, 1f);
+	public static final Color SLATE  = new Color( 0.05f,    0.05f,   0.05f, 1f);
+	public static final Color WHITE  = new Color(    1f,       1f,      1f, 1f);
+	public static final Color SNOW   = new Color( 0.95f,    0.96f,  0.965f, 1f);
+	public static final Color GREEN  = new Color(    0f, 170/255f, 85/255f, 1f);
+	public static final Color RED    = new Color(0.839f,   0.117f,  0.323f, 1f);
+	public static final Color BLUE   = new Color(    0f, 190/255f,      1f, 1f);
+	public static final Color PURPLE = new Color(  0.6f,       0f,    0.8f, 1f);
+	public static final Color YELLOW = new Color(    1f, 190/255f,      0f, 1f);
+	
+	public static List<Color> allPlayableColors() {
+		final List<Color> cs = new ArrayList<>(5);
+		cs.add(GREEN);
+		cs.add(RED);
+		cs.add(BLUE);
+		cs.add(PURPLE);
+		cs.add(YELLOW);
+		return cs;
+	}
 	
 	public final float r, g, b, a;
 	
@@ -39,7 +55,12 @@ public class Color {
 	
 	@Override
 	public boolean equals(final Object that) {
-		if (!(that instanceof Color)) return false;
+		if (that == null || !(that instanceof Color)) {
+			return false;
+		}
+		if(this == that) {
+			return true;
+		}
 		
 		final Color c = (Color)that;
 		return this.r == c.r

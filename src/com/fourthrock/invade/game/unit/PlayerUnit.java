@@ -1,8 +1,13 @@
 package com.fourthrock.invade.game.unit;
 
+import static com.fourthrock.invade.draw.DrawEnum.CIRCLE;
+import static com.fourthrock.invade.draw.DrawEnum.SQUARE;
+
+import com.fourthrock.invade.draw.CanvasRenderer;
 import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.draw.ScaleVec;
 import com.fourthrock.invade.game.physics.Position2D;
+import com.fourthrock.invade.game.physics.Vector2D;
 import com.fourthrock.invade.game.physics.collision.ColoredCircle;
 import com.fourthrock.invade.game.player.Player;
 import com.fourthrock.invade.game.tower.Tower;
@@ -16,7 +21,7 @@ import com.fourthrock.invade.game.tower.Tower;
  */
 public class PlayerUnit implements ColoredCircle {
 	public static final float BORDER_RADIUS = 0.3f;
-	public static ScaleVec SCALE = new ScaleVec(BORDER_RADIUS * (float)Math.sqrt(2));
+	public static ScaleVec SCALE = new ScaleVec(BORDER_RADIUS);// * (float)Math.sqrt(2));
 
 	private Player player;
 	private Position2D position;
@@ -58,7 +63,9 @@ public class PlayerUnit implements ColoredCircle {
 	 * Gets the color used by GamePlayScene to draw the PlayerUnit
 	 */
 	public Color getRenderColor() {
-		return blendOnHealth(state.getRenderColor(getColor()));
+		final float healthRatio = health / player.getAttributes().getBaseUnitHealth();
+		final Color healthBlack = Color.BLACK.withAlpha(Math.min(0.6f, 1 - healthRatio));
+		return healthBlack.blend(getColor());
 	}
 	
 	public float getOrientation() {
@@ -71,6 +78,14 @@ public class PlayerUnit implements ColoredCircle {
 	
 	public float getSpeed() {
 		return player.getAttributes().getUnitMoveSpeed();
+	}
+	
+	public PlayerUnit getTargetUnit() {
+		return targetUnit;
+	}
+	
+	public Tower getTargetTower() {
+		return targetTower;
 	}
 	
 	public UnitState getState() {
@@ -87,10 +102,12 @@ public class PlayerUnit implements ColoredCircle {
 	
 	public void setMoving() {
 		state = UnitState.MOVING;
+		targetUnit = null;
+		targetTower = null;
 	}
 	
 	public void setAttackingUnit(final PlayerUnit u) {
-		this.targetUnit = u;
+		targetUnit = u;
 		setOrientation(u.getPosition());
 		state = UnitState.ATTACKING_UNIT;
 	}
@@ -126,18 +143,31 @@ public class PlayerUnit implements ColoredCircle {
 		state.fireAtTarget(player, targetTower, targetUnit, dt);
 	}
 	
-	/**
-	 * The lower the health, the darker the PlayerUnit appears.
-	 */
-	private Color blendOnHealth(final Color renderColor) {
-		final float healthRatio = health / player.getAttributes().getBaseUnitHealth();
-		final Color healthBlack = new Color(0f, 0f, 0f, 1 - healthRatio);
-		return healthBlack.blend(renderColor);
-	}
-	
 	private void setOrientation(final Position2D target) {
 		if(!target.equals(position)) {
 			orientation = target.minus(position).theta();
 		}
+	}
+
+	public void preRender(final CanvasRenderer renderer) {
+		if(targetUnit != null || targetTower != null) {
+			final Position2D t =
+				(targetUnit != null)
+					? targetUnit.getPosition()
+					: targetTower.getPosition();
+
+			final Vector2D displacement = t.minus(position);
+			final float length = displacement.magnitude() - 2f * getPhysicalRadius();
+			final float height = 0.07f * PlayerUnit.BORDER_RADIUS;
+			final Position2D midpoint = t.add(position).scale(0.5f).asPosition();
+		
+			renderer.draw(SQUARE, midpoint, new ScaleVec(length, height, 1f), displacement.theta(), getRenderColor());
+		}
+	}
+	
+	public void postRender(final CanvasRenderer renderer, final Color blender) {
+		final Color blendColor = blender.blend(getRenderColor());
+		renderer.draw(CIRCLE, position, PlayerUnit.SCALE, orientation, getRenderColor());
+		renderer.draw(CIRCLE, position, PlayerUnit.SCALE.scale(0.7f), orientation, blendColor);
 	}
 }

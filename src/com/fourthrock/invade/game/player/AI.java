@@ -40,7 +40,7 @@ public class AI extends Player {
 
 	@Override
 	public void decideTarget() {
-		final List<Tower> allAdjacentTowers = new ArrayList<>();
+		final List<Tower> allAdjacentTowers = new ArrayList<>(20);
 		for(final Tower t : getTowers()) {
 			allAdjacentTowers.addAll(t.getAdjacents());
 		}

@@ -56,6 +56,15 @@ public class Vector2D {
 	}
 	
 	/**
+	 * Returns the Vector2D addition
+	 * of this plus the Vector2D represented
+	 * by the x,y coordinates.
+	 */
+	public Vector2D add(final float x, final float y) {
+		return new Vector2D(this.x + x, this.y + y);
+	}
+	
+	/**
 	 * Returns a Vector2D with a perpendicular direction
 	 * and the same magnitude.
 	 */

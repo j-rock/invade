@@ -29,7 +29,7 @@ public class EndGameScene extends FixedEyeScene {
 	@Override
 	public Scene step(final long dt) {
 		if(playAgain) {
-			return new FadeToBlackScene(this, new MenuScene());
+			return new FadeToBlackScene(this, new ColorChoiceScene());
 		} else {
 			return this;
 		}

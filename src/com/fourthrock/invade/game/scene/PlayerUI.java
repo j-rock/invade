@@ -66,7 +66,7 @@ public class PlayerUI {
 		final float alpha = player.getAttributes().getAchievementPoints() > 0 ? 0f : 0.5f;
 		drawAttack(renderer, darken(alpha, Color.PURPLE));
 		drawHealth(renderer, darken(alpha, Color.RED));
-		drawSpeed(renderer,  darken(alpha, Color.ORANGE));
+		drawSpeed(renderer,  darken(alpha, Color.YELLOW));
 	}
 	
 	private void drawAttack(final CanvasRenderer renderer, final Color color) {
@@ -117,10 +117,10 @@ public class PlayerUI {
 	}
 	
 	private static Color darken(final float alpha, final Color c) {
-		return new Color(0f, 0f, 0f, alpha).blend(c);
+		return Color.BLACK.withAlpha(alpha).blend(c);
 	}
 	
 	private static Color lighten(final Color c) {
-		return new Color(1f, 1f, 1f, 0.9f).blend(c);
+		return Color.WHITE.withAlpha(0.9f).blend(c);
 	}
 }

@@ -7,8 +7,6 @@ import java.util.Set;
 
 import com.fourthrock.invade.game.physics.BoundingBox2D;
 import com.fourthrock.invade.game.physics.Position2D;
-import com.fourthrock.invade.game.player.Player;
-import com.fourthrock.invade.game.player.WhiteAI;
 import com.fourthrock.invade.game.tower.Tower;
 import com.fourthrock.invade.util.Index2D;
 
@@ -23,15 +21,14 @@ import com.fourthrock.invade.util.Index2D;
  * 
  * Subclasses must specify appropriate zooms, add towers,
  * and remember to mark their adjacency. This class
- * takes care of the rest. Note that the Human will
- * be assigned to the first Tower.
+ * takes care of the rest.
  * 
  * @author Joseph
  *
  */
 public abstract class Map {
-	private static final float MIN_ZOOM = 0.024f; // magic constant determined experimentally
-	private static final float MAX_ZOOM = 0.16f;  // magic constant determined experimentally
+	public static final float MIN_ZOOM = 0.024f; // magic constant determined experimentally
+	public static final float MAX_ZOOM = 0.22f;  // magic constant determined experimentally
 	private BoundingBox2D bounds;
 	protected final List<Tower> towers;
 
@@ -92,25 +89,6 @@ public abstract class Map {
 		}
 		
 		return adjIndices;
-	}
-
-	
-	/**
-	 * For each Player in players, we assign one Tower.
-	 * The remainder get their own unique WhiteAI protector,
-	 * which is added to the list of Players.
-	 */
-	public void assignPlayers(final List<Player> players) {
-		for(int i=0; i<players.size() && i<towers.size(); i++) {
-			towers.get(i).adoptNewPlayer(players.get(i));
-		}
-		
-		//If there are any spots left over, fill them with the White AI
-		for(int i=players.size(); i<towers.size(); i++) {
-			final Player white = new WhiteAI();
-			players.add(white);
-			towers.get(i).adoptNewPlayer(white);
-		}
 	}
 	
 	protected Tower addNewTower(final float x, final float y) {

@@ -27,12 +27,12 @@ public class PlayerAttributes {
 		final long ONE_SEC = 1000L;
 		
 		this.maxUnitsPerTowerCount = 15;
-		this.unitCreationWaitTime = ONE_SEC;
+		this.unitCreationWaitTime = ONE_SEC / 2;
 		
 		this.unitMoveSpeed    = Tower.BORDER_RADIUS / (1.8f * ONE_SEC);
-		this.unitBaseHealth   = healthPercentage * Tower.BASE_HEALTH / 200f;
 		this.unitAttackSpeed  = Tower.REGEN_RATE / 2f;
-		this.unitAttackRadius = PlayerUnit.BORDER_RADIUS * 3;
+		this.unitAttackRadius = PlayerUnit.BORDER_RADIUS * 6f;
+		this.unitBaseHealth   = healthPercentage * 2000 * unitAttackSpeed;
 		
 		this.level = 1;
 		this.progress = 0;
@@ -86,7 +86,7 @@ public class PlayerAttributes {
 	}
 	
 	public void registerTowerCapture() {
-		registerPoints(150);
+		registerPoints(40);
 	}
 
 	public void improveAttack() {
@@ -127,8 +127,8 @@ public class PlayerAttributes {
 	}
 	
 	private static int minPointsForLevel(final int lvl) {
-		// O(n^3 / logn) function for level growth.
-		return 100 + (int)((4 * lvl * lvl * lvl) / Math.log(lvl + 1));
+		// O(n^2 / logn) function for level growth.
+		return 100 + (int)((8 * lvl * lvl) / Math.log(lvl + 1));
 	}
 
 	private boolean readyTakeAchievement() {

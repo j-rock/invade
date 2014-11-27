@@ -63,7 +63,7 @@ public class OpenGLRunner extends CanvasRenderer implements GLSurfaceView.Render
 
 	@Override
     public void onSurfaceCreated(final GL10 unused, final EGLConfig config) {
-        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        GLES20.glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         allocateDrawObjects();
     }
 	
@@ -121,7 +121,7 @@ public class OpenGLRunner extends CanvasRenderer implements GLSurfaceView.Render
      * Actually go and start running the draw commands on the GameState
      */
     private void display() {
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 		GLES20.glEnable(GLES20.GL_BLEND);
 		GLES20.glBlendFunc(GLES20.GL_ONE, GLES20.GL_ONE_MINUS_SRC_ALPHA);
         gameState.render(this);

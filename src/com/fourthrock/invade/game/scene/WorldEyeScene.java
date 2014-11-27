@@ -82,7 +82,7 @@ public abstract class WorldEyeScene implements Scene {
 	@Override
 	public float[] getEye() {
 		final Position2D p = eye.getPosition();
-		return new float[] {p.x, p.y, -3};
+		return new float[] {-p.x, p.y, -3};
 	}
 
 	@Override
@@ -110,8 +110,8 @@ public abstract class WorldEyeScene implements Scene {
 	private Vector2D getWorldDisplacementFromScreen(final PixelScreen2D start, final PixelScreen2D end) {
 		final Position2D worldStart = getPositionFromScreen(start);
 		final Position2D worldEnd = getPositionFromScreen(end);
-		final Vector2D d = worldEnd.minus(worldStart);
-		return new Vector2D(d.x, -d.y);
+		final Vector2D d = worldStart.minus(worldEnd);
+		return new Vector2D(d.x, d.y);
 	}
 	
 	private static class Tap {
