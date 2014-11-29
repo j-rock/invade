@@ -86,7 +86,7 @@ public class PlayerAttributes {
 	}
 	
 	public void registerTowerCapture() {
-		registerPoints(40);
+		registerPoints(70);
 	}
 
 	public void improveAttack() {

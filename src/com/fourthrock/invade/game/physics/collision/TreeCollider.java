@@ -8,7 +8,7 @@ import java.util.List;
 import com.fourthrock.invade.game.physics.Position2D;
 import com.fourthrock.invade.game.tower.Tower;
 import com.fourthrock.invade.game.unit.PlayerUnit;
-import com.fourthrock.invade.util.Allocator;
+import com.fourthrock.invade.util.ObjectPool;
 import com.infomatiq.jsi.Point;
 import com.infomatiq.jsi.Rectangle;
 import com.infomatiq.jsi.SpatialIndex;
@@ -22,19 +22,19 @@ import com.infomatiq.jsi.rtree.RTree;
  * @author Joseph
  *
  */
-public class TreeCollider {
+public class TreeCollider<StaticCircle extends ColoredCircle> {
 	private final CollisionCollection colls;
-	private final List<Tower> towers;
-	private final SpatialIndex towerIndex;
+	private final List<StaticCircle> staticObjs;
+	private final SpatialIndex staticIndex;
 	
-	public TreeCollider(final List<Tower> allTowers) {
+	public TreeCollider(final List<StaticCircle> allTowers) {
 		this.colls = new CollisionCollection();
-		this.towers = allTowers;
-		this.towerIndex = new RTree();
-		towerIndex.init(null);
+		this.staticObjs = allTowers;
+		this.staticIndex = new RTree();
+		staticIndex.init(null);
 		
-		for(final Tower t : towers) {
-			placeCircle(towerIndex, t);
+		for(final StaticCircle s : staticObjs) {
+			placeCircle(staticIndex, s);
 		}
 	}
 	
@@ -44,8 +44,10 @@ public class TreeCollider {
 	 * there will be two collisions processed
 	 * (not necessarily added to the collection):
 	 * 		A on B and B on A.
+	 * 
+	 * Assumes this TreeCollider<T> is a TreeCollider<Tower>
 	 */
-	public CollisionCollection withdrawCollisions(final Allocator<PlayerUnit> allUnits) {
+	public CollisionCollection withdrawCollisions(final ObjectPool<PlayerUnit> allUnits) {
 		final SpatialIndex unitIndex = new RTree();
 		unitIndex.init(null);
 		for(final PlayerUnit u : allUnits) {
@@ -55,15 +57,15 @@ public class TreeCollider {
 		
 		colls.clear();
 		for(final PlayerUnit u : allUnits) {
-			final List<Tower> maybeCollidingTowers = findNearByTowers(u, towerIndex, towers);
+			final List<StaticCircle> maybeCollidingStatics = findNearByStatics(u, staticIndex, staticObjs);
 			final List<PlayerUnit> maybeCollidingUnits = findNearByPlayerUnits(u, unitIndex, allUnits);
 			
-			for(final Tower t : maybeCollidingTowers) {
+			for(final StaticCircle t : maybeCollidingStatics) {
 				if(withinActiveRange(u, t)) {
-					colls.addAttackTowerCollision(u, t);
+					colls.addAttackTowerCollision(u, (Tower)t);
 				}
 				if(withinPhysicalRange(u, t)) {
-					colls.addMoveBackCollision(u, t);
+					colls.addMoveBackCollision(u, (Tower)t);
 				}
 			}
 			
@@ -79,20 +81,30 @@ public class TreeCollider {
 		return colls;
 	}
 	
-	private static List<Tower> findNearByTowers(final ColoredCircle u, final SpatialIndex index, final List<Tower> allTowers) {
-		final List<Integer> ids = findNearByIDs(u, index);
-		final List<Tower> nearTowers = new ArrayList<>();
-		for(final Integer i : ids) {
-			nearTowers.add(allTowers.get(i));
+	public StaticCircle findStaticCollision(final Position2D pos) {
+		final ColoredCircle testPoint = new ColoredPoint(pos);
+		final List<StaticCircle> staticColls = findNearByStatics(testPoint, staticIndex, staticObjs);
+		if(staticColls.isEmpty()) {
+			return null;
+		} else {
+			return staticColls.get(0);
 		}
-		return nearTowers;
+	}
+	
+	private static <StaticCircle extends ColoredCircle> List<StaticCircle> findNearByStatics(final ColoredCircle u, final SpatialIndex index, final List<StaticCircle> allStatics) {
+		final List<Integer> ids = findNearByIDs(u, index);
+		final List<StaticCircle> nearStatics = new ArrayList<>();
+		for(final Integer i : ids) {
+			nearStatics.add(allStatics.get(i));
+		}
+		return nearStatics;
 	}
 	
 	/*
-	 * Wish I could use parametric polymorphism, but it would
-	 * involve turning Allocator into a List<T>
+	 * If I used parametric polymorphism, it would
+	 * involve turning ObjectPool into a List<T>
 	 */
-	private static List<PlayerUnit> findNearByPlayerUnits(final ColoredCircle u, final SpatialIndex index, final Allocator<PlayerUnit> allUnits) {
+	private static List<PlayerUnit> findNearByPlayerUnits(final ColoredCircle u, final SpatialIndex index, final ObjectPool<PlayerUnit> allUnits) {
 		final List<Integer> ids = findNearByIDs(u, index);
 		final List<PlayerUnit> nearUnits = new ArrayList<>();
 		for(final Integer i : ids) {

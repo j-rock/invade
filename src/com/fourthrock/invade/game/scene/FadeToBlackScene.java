@@ -33,7 +33,7 @@ public class FadeToBlackScene extends FixedEyeScene {
 	}
 	
 	/**
-	 * Default constructor fades for 3.5 seconds from fromScene to toScene.
+	 * Default constructor fades for 2 seconds from fromScene to toScene.
 	 */
 	public FadeToBlackScene(final Scene fromScene, final Scene toScene) {
 		this(fromScene, toScene, 2000L);

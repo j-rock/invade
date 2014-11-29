@@ -10,7 +10,6 @@ import java.util.List;
  *
  */
 public class Color {
-	
 	public static final Color BLACK  = new Color(    0f,       0f,      0f, 1f);
 	public static final Color SLATE  = new Color( 0.05f,    0.05f,   0.05f, 1f);
 	public static final Color WHITE  = new Color(    1f,       1f,      1f, 1f);
@@ -20,6 +19,10 @@ public class Color {
 	public static final Color BLUE   = new Color(    0f, 190/255f,      1f, 1f);
 	public static final Color PURPLE = new Color(  0.6f,       0f,    0.8f, 1f);
 	public static final Color YELLOW = new Color(    1f, 190/255f,      0f, 1f);
+	
+	public static final Color[] LIGHT_COLORS = new Color[]{
+		WHITE, SNOW, GREEN, RED, BLUE, PURPLE, YELLOW
+	};
 	
 	public static List<Color> allPlayableColors() {
 		final List<Color> cs = new ArrayList<>(5);

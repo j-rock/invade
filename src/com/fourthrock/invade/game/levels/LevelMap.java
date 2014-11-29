@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.fourthrock.invade.game.maps.Map;
+import com.fourthrock.invade.game.maps.PentagonStarMap;
 import com.fourthrock.invade.game.physics.BoundingBox2D;
 import com.fourthrock.invade.game.physics.Position2D;
 import com.fourthrock.invade.util.Index2D;
@@ -23,12 +24,14 @@ public class LevelMap {
 	private BoundingBox2D bounds;
 	private final List<Level> levels;
 	private final java.util.Map<Level, Position2D> levelToPosition;
+	private final List<Index2D> unlockPairs;
 
 	public LevelMap() {
 		this.bounds = BoundingBox2D.ORIGIN_POINT;
 		this.levels = new ArrayList<Level>();
 		this.levelToPosition = new HashMap<>();
 		addAllLevels();
+		this.unlockPairs = buildUnlockPairs();
 	}
 
 	public BoundingBox2D getBounds() {
@@ -39,8 +42,12 @@ public class LevelMap {
 		return levels;
 	}
 	
-	public java.util.Map<Level, Position2D> getPositionMapping() {
-		return levelToPosition;
+	public Position2D getLevelPosition(final int index) {
+		return levelToPosition.get(levels.get(index));
+	}
+	
+	public Position2D getPositionFor(final Level l) {
+		return levelToPosition.get(l);
 	}
 	
 	public float getMinZoom() {
@@ -51,11 +58,15 @@ public class LevelMap {
 		return Map.MAX_ZOOM;
 	}
 	
+	public List<Index2D> getUnlockPairs() {
+		return unlockPairs;
+	}
+	
 	/**
 	 * Computes the list of pairs of indices (i, j) such
 	 * that the ith Level unlocks the jth Level.
 	 */
-	public List<Index2D> getUnlockSet() {
+	private List<Index2D> buildUnlockPairs() {
 		final List<Index2D> unlocks = new ArrayList<>(levels.size());
 		for(int i=0; i<levels.size(); i++) {
 			for(int j=i+1; j<levels.size(); j++) {
@@ -69,7 +80,7 @@ public class LevelMap {
 		return unlocks;
 	}
 	
-	private void addNewLevel(final Level l, final float x, final float y) {
+	private void addNewLevel(final float x, final float y, final Level l) {
 		final Position2D p = new Position2D(x, y);
 		bounds = bounds.expandWith(p);
 		levels.add(l);
@@ -80,6 +91,10 @@ public class LevelMap {
 	 * Make sure to add levels in non-decreasing levelID order.
 	 */
 	private void addAllLevels() {
-		addNewLevel(new LevelOne(), 0f, 0f);
+		final float shift = 30f;
+		addNewLevel(0f, 0f, new LevelOne());
+		addNewLevel(shift, 0f, new LevelTwo());
+		addNewLevel(2*shift,  shift/2, new LevelThree());
+		addNewLevel(2*shift, -shift/2, new Level(new PentagonStarMap(), 4));
 	}
 }

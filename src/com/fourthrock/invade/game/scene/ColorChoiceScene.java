@@ -28,7 +28,7 @@ public class ColorChoiceScene extends FixedEyeScene {
 	private final float choiceRadius;
 	private Color choiceColor;
 	
-	private ColorChoiceScene(final Level levelChoice) {
+	public ColorChoiceScene(final Level levelChoice) {
 		this.levelChoice = levelChoice;
 		
 		choices = new ArrayList<>();

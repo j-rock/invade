@@ -2,7 +2,7 @@ package com.fourthrock.invade.game.player;
 
 import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.game.unit.PlayerUnit;
-import com.fourthrock.invade.util.Allocator;
+import com.fourthrock.invade.util.ObjectPool;
 
 public class EmptyPlayer extends Player {
 
@@ -21,7 +21,7 @@ public class EmptyPlayer extends Player {
 	}
 	
 	@Override
-	public void tryGenerateUnit(final Allocator<PlayerUnit> allUnits, final long dt) {
+	public void tryGenerateUnit(final ObjectPool<PlayerUnit> allUnits, final long dt) {
 		// do nothing
 	}
 

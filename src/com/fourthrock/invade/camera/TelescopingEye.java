@@ -73,7 +73,8 @@ public class TelescopingEye {
 	}
 
 	public void zoomTo(final float scaleFactor) {
-		zoom = Math.max(minZoom, Math.min(maxZoom, zoom * scaleFactor * scaleFactor * scaleFactor));
+		final float sqrScaleFactor = scaleFactor * scaleFactor;
+		zoom = Math.max(minZoom, Math.min(maxZoom, zoom * sqrScaleFactor * sqrScaleFactor));
 	}
 
 	/**

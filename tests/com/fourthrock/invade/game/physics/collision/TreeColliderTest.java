@@ -12,8 +12,8 @@ import com.fourthrock.invade.game.player.Player;
 import com.fourthrock.invade.game.player.WhiteAI;
 import com.fourthrock.invade.game.tower.Tower;
 import com.fourthrock.invade.game.unit.PlayerUnit;
-import com.fourthrock.invade.util.Allocateable;
 import com.fourthrock.invade.util.Allocator;
+import com.fourthrock.invade.util.ObjectPool;
 
 public class TreeColliderTest {
 	
@@ -26,7 +26,7 @@ public class TreeColliderTest {
 		final List<Tower> towers = new ArrayList<>();
 		towers.add(t);
 		
-		final Allocator<PlayerUnit> allUnits = new Allocator<>(new Allocateable<PlayerUnit>(){
+		final ObjectPool<PlayerUnit> allUnits = new ObjectPool<>(new Allocator<PlayerUnit>(){
 			@Override public PlayerUnit allocate() {
 				return new PlayerUnit();
 			}

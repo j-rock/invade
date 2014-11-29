@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import android.util.Log;
-
+import com.fourthrock.invade.draw.CanvasRenderer;
 import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.game.maps.Map;
 import com.fourthrock.invade.game.physics.BoundingBox2D;
@@ -87,14 +86,12 @@ public class Level {
 		for(int i=0;
 				i<humanAssignment && assignedPlayersCount < players.size();
 				i++) {
-			Log.e("A", "Assign " + i + " " + assignedPlayersCount);
 			getTowers().get(i).adoptNewPlayer(players.get(assignedPlayersCount++));
 		}
 		
 		for(int i=humanAssignment+1;
 				i<map.getNumberOfPlayers() && assignedPlayersCount < players.size();
 				i++) {
-			Log.e("A", "Assign " + i + " " + assignedPlayersCount);
 			getTowers().get(i).adoptNewPlayer(players.get(assignedPlayersCount++));
 		}
 	}
@@ -132,5 +129,9 @@ public class Level {
 	
 	protected int getHumanTowerAssignment() {
 		return 0;
+	}
+	
+	public void render(final CanvasRenderer renderer) {
+		
 	}
 }

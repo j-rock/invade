@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import android.util.Log;
-
 import com.fourthrock.invade.draw.CanvasRenderer;
 import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.draw.PixelScreen2D;
@@ -24,9 +22,9 @@ import com.fourthrock.invade.game.player.Human;
 import com.fourthrock.invade.game.player.Player;
 import com.fourthrock.invade.game.tower.Tower;
 import com.fourthrock.invade.game.unit.PlayerUnit;
-import com.fourthrock.invade.util.Allocateable;
 import com.fourthrock.invade.util.Allocator;
 import com.fourthrock.invade.util.Index2D;
+import com.fourthrock.invade.util.ObjectPool;
 
 /**
  * Main scene for actual Invade gameplay.
@@ -36,8 +34,8 @@ import com.fourthrock.invade.util.Index2D;
  *
  */
 public class GamePlayScene extends WorldEyeScene {
-	private final Allocator<PlayerUnit> units;
-	private final TreeCollider collider;
+	private final ObjectPool<PlayerUnit> units;
+	private final TreeCollider<Tower> collider;
 	private final PlayerUI playerUI;
 	private final List<Tower> towers;
 	private final List<Index2D> towerEdges;
@@ -49,12 +47,12 @@ public class GamePlayScene extends WorldEyeScene {
 	public GamePlayScene(final Level level, final Color humanColor) {
 		super(level.getMinZoom(), level.getMaxZoom(), level.getHumanPosition(), level.getBounds());
 		
-		this.units = new Allocator<>(new Allocateable<PlayerUnit>(){
+		this.units = new ObjectPool<>(new Allocator<PlayerUnit>(){
 			@Override public PlayerUnit allocate() {
 				return new PlayerUnit();
 			}
 		});
-		this.collider = new TreeCollider(level.getTowers());
+		this.collider = new TreeCollider<>(level.getTowers());
 		this.towers = level.getTowers();
 		this.towerEdges = level.getAdjSet();
 		this.players = new ArrayList<>();
@@ -65,6 +63,7 @@ public class GamePlayScene extends WorldEyeScene {
 		players.add(human);
 		final List<Player> addedPlayers = level.setupPlayers(human);
 		players.addAll(addedPlayers);
+		units.preAllocate(towers.size() * 15);
 	}
 
 	@Override
@@ -83,8 +82,7 @@ public class GamePlayScene extends WorldEyeScene {
 		
 		if(!human.isAlive()) {
 			// TODO - make an actual lose game scene.
-			Log.e("SUCK", "YOU SUCK");
-			final Scene loseGameScene = new ColorChoiceScene();
+			final Scene loseGameScene = new LevelChooserScene();
 			return new FadeToBlackScene(this, loseGameScene, 4000L);
 		}
 		else if(!moreThanOnePlayerAlive()){
@@ -126,6 +124,8 @@ public class GamePlayScene extends WorldEyeScene {
 	@Override
 	public void render(final CanvasRenderer renderer) {
 		final Set<Tower> humanAdjTowers = human.getAdjacentTowers();
+		
+		//Draw lines between Towers
 		for(final Index2D adjIndex : towerEdges) {
 			final Tower tI = towers.get(adjIndex.x);
 			final Tower tJ = towers.get(adjIndex.y);
@@ -135,25 +135,32 @@ public class GamePlayScene extends WorldEyeScene {
 					: 0.1f;
 			drawTowerLine(renderer, tI, tJ, alphaMultiplier);
 		}
+		
+		//Draw Tower health radius
 		for(final Tower t : towers) {
 			final float alpha = humanAdjTowers.contains(t) ? 1f : 0.2f;
 			t.preRender(renderer, alpha);
 		}
+		
+		//Draw PlayerUnit attacks
 		for(final PlayerUnit u : units) {
 			u.preRender(renderer);
 		}
 		
+		//Draw PlayerUnits
 		final Color shadowBlack = Color.BLACK.withAlpha(0.7f);
 		for(final PlayerUnit u : units) {
 			u.postRender(renderer, shadowBlack);
 		}
 		
+		//Draw Tower centers
 		for(final Tower t : towers) {
 			final float alpha = humanAdjTowers.contains(t) ? 1f : 0.2f;
 			final float orientation = (t.getOrientation() + angleOfTime) % 360f;
 			t.postRender(renderer, alpha, orientation);
 		}
 		
+		//Draw user taps
 		super.render(renderer);
 	}
 	
