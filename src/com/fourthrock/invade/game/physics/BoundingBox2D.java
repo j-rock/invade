@@ -18,7 +18,7 @@ public class BoundingBox2D {
 	
 	private final Position2D bottomLeft, topRight;
 	
-	public BoundingBox2D(final Position2D bottomLeft, final Position2D topRight) {
+	private BoundingBox2D(final Position2D bottomLeft, final Position2D topRight) {
 		this.bottomLeft = bottomLeft;
 		this.topRight = topRight;
 	}
@@ -34,33 +34,11 @@ public class BoundingBox2D {
 	}
 	
 	/**
-	 * Returns the distance between the left and right walls
-	 */
-	public float getWidth() {
-		return topRight.x - bottomLeft.x;
-	}
-	
-	/**
-	 * Returns the distance between the bottom and top walls
-	 */
-	public float getHeight() {
-		return topRight.y - bottomLeft.y;
-	}
-
-	public float getMinX() {
-		return bottomLeft.x;
-	}
-	
-	public float getMinY() {
-		return bottomLeft.y;
-	}
-	
-	/**
 	 * Tries to create the smallest BoundingBox2D that contains the point
 	 * centered at Position2D and also contains this BoundingBox2D.
 	 */
 	public BoundingBox2D expandWith(final Position2D p) {
-		final float minRad = Tower.SPAWN_RADIUS;
+		final float minRad = 1.2f * Tower.SPAWN_RADIUS;
 		final Position2D nextBot = new Position2D(
 				Math.min(bottomLeft.x, p.x - minRad),
 				Math.min(bottomLeft.y, p.y - minRad)
@@ -79,7 +57,7 @@ public class BoundingBox2D {
 	 */
 	public BoundingCircle2D toCircleBounds() {
 		final Position2D center = (bottomLeft.add(topRight)).scale(0.5f).asPosition();
-		final float radius = Math.max(getWidth(), getHeight())/2;
+		final float radius = Math.max(topRight.x - bottomLeft.x, topRight.y - bottomLeft.y)/2;
 		return new BoundingCircle2D(center, radius);
 	}
 }

@@ -27,19 +27,14 @@ import com.fourthrock.invade.util.Index2D;
  *
  */
 public abstract class Map {
-	public static final float MIN_ZOOM = 0.024f; // magic constant determined experimentally
-	public static final float MAX_ZOOM = 0.22f;  // magic constant determined experimentally
+	public static final float MIN_ZOOM = 0.02f; // magic constant determined experimentally
+	public static final float MAX_ZOOM = 0.19f;  // magic constant determined experimentally
 	private BoundingBox2D bounds;
 	protected final List<Tower> towers;
 
-	
-	private Map(final List<Tower> towers, final BoundingBox2D bounds) {
-		this.towers = towers;
-		this.bounds = bounds;
-	}
-
 	protected Map() {
-		this(new ArrayList<Tower>(), BoundingBox2D.ORIGIN_POINT);
+		this.towers = new ArrayList<>();
+		this.bounds = BoundingBox2D.ORIGIN_POINT;
 	}
 
 	public BoundingBox2D getBounds() {

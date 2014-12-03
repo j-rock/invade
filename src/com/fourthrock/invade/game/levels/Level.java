@@ -8,6 +8,7 @@ import com.fourthrock.invade.draw.CanvasRenderer;
 import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.game.maps.Map;
 import com.fourthrock.invade.game.physics.BoundingBox2D;
+import com.fourthrock.invade.game.physics.BoundingCircle2D;
 import com.fourthrock.invade.game.physics.Position2D;
 import com.fourthrock.invade.game.player.AI;
 import com.fourthrock.invade.game.player.EmptyPlayer;
@@ -131,7 +132,36 @@ public class Level {
 		return 0;
 	}
 	
-	public void render(final CanvasRenderer renderer) {
+	public void render(final CanvasRenderer renderer, final Position2D lPos, final float angleOfTime) {		
+		final float phase = (Math.abs(lPos.x + lPos.y) + angleOfTime) % 360f;
+		final Color rimColor = colorOfPhaseTime(phase, angleOfTime);
+		Tower.preRender(renderer, lPos, 1f, rimColor);
 		
+		final BoundingCircle2D bounds = map.getBounds().toCircleBounds();
+		final Position2D center = bounds.getCenter();
+		final float maxRadius = bounds.getRadius();
+		final float miniScale = Tower.BORDER_RADIUS / maxRadius;
+		for(final Tower t : getTowers()) {
+			final Position2D tMapPos =
+				t.getPosition()
+				.minus(center)
+				.scale(miniScale)
+				.add(lPos).asPosition();
+			
+			final float tMapPhase = (tMapPos.x + tMapPos.y + phase) % 360f;
+			
+			Tower.preRender(renderer, tMapPos, miniScale, rimColor);
+			Tower.postRender(renderer, tMapPos, miniScale, tMapPhase, rimColor);
+		}
+	}
+
+	private static Color colorOfPhaseTime(final float phase, final float time) {
+		final Color[] choices = Color.LIGHT_COLORS;
+		final float indexRatio = (phase / 50f) % choices.length;
+		final int c = (int)(Math.floor(indexRatio));
+		final int cNext = (c + 1) % choices.length;
+		final float rem = indexRatio - c;
+		final float alpha = (float)(Math.max(0.5f, Math.abs(Math.cos(time * Math.PI / 180f / 3))));
+		return choices[c].withAlpha(1 - rem).blend(choices[cNext]).withAlpha(alpha);
 	}
 }

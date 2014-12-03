@@ -16,7 +16,7 @@ public class PlayerUnitTest {
 		final Player p = new Human(Color.GREEN);
 		
 		final PlayerUnit u = new PlayerUnit();
-		u.reset(p, null, 0f);
+		u.reset(p, null, null, 0f);
 		final float health = p.getAttributes().getBaseUnitHealth();
 		final float damage = health / 2.7f;
 		

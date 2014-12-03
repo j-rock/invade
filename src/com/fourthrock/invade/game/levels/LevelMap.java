@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.fourthrock.invade.game.maps.KothMap;
 import com.fourthrock.invade.game.maps.Map;
 import com.fourthrock.invade.game.maps.PentagonStarMap;
 import com.fourthrock.invade.game.physics.BoundingBox2D;
@@ -92,9 +93,10 @@ public class LevelMap {
 	 */
 	private void addAllLevels() {
 		final float shift = 30f;
-		addNewLevel(0f, 0f, new LevelOne());
-		addNewLevel(shift, 0f, new LevelTwo());
+		addNewLevel(     0f,       0f, new LevelOne());
+		addNewLevel(  shift,       0f, new LevelTwo());
 		addNewLevel(2*shift,  shift/2, new LevelThree());
 		addNewLevel(2*shift, -shift/2, new Level(new PentagonStarMap(), 4));
+		addNewLevel(  shift,   -shift, new Level(new KothMap(), 5));
 	}
 }

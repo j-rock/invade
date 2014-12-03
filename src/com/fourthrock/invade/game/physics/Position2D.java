@@ -39,6 +39,11 @@ public class Position2D extends Vector2D {
 		return lerp(radius, dir);
 	}
 	
+	@Override
+	public Position2D scale(final float k) {
+		return new Position2D(k * x, k * y);
+	}
+	
 	/**
 	 * If this Position2D is (x,y), this method returns
 	 * (x + k*dx, y + k*dy)

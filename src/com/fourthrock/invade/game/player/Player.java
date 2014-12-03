@@ -22,7 +22,6 @@ public abstract class Player {
 	private final List<PlayerUnit> units;
 	private final List<Tower> towers;
 	private final PlayerAttributes attrs;
-	protected Position2D target;
 	private long unitGenTime;
 
 	protected Player(final Color color, final PlayerAttributes playerAttributes) {
@@ -60,11 +59,6 @@ public abstract class Player {
 	public PlayerAttributes getAttributes() {
 		return attrs;
 	}
-
-	public Position2D getTarget() {
-		return target;
-	}
-
 	
 	/*
 	 * If you don't own any Towers, you're dead.
@@ -77,14 +71,9 @@ public abstract class Player {
 	 * Updates the target position for the Player's units.
 	 */
 	public void updateTarget(final Position2D target) {
-		this.target = target;
-	}
-	
-	/**
-	 * Unsets the target position for the Player's units.
-	 */
-	public void cancelTarget() {
-		updateTarget(null);
+		for(final PlayerUnit u : units) {
+			u.setTargetPosition(target);
+		}
 	}
 
 	/**
@@ -101,7 +90,7 @@ public abstract class Player {
 	 * If enough time has passed, the Player
 	 * can generate a new PlayerUnit at a random tower.
 	 */
-	public void tryGenerateUnit(final ObjectPool<PlayerUnit> allUnits, final long dt) {
+	public PlayerUnit tryGenerateUnit(final ObjectPool<PlayerUnit> allUnits, final long dt) {
 		final int maxUnitCount = Math.min(6, towers.size()) * attrs.getMaxUnitsPerTowerCount();
 		if (units.size() >= maxUnitCount) {
 			unitGenTime = 0;
@@ -117,10 +106,12 @@ public abstract class Player {
 				final Position2D unitPos = towerPos.randomPositionOnCircle(Tower.SPAWN_RADIUS);
 				final float radialOrientation = unitPos.minus(towerPos).theta();
 				final PlayerUnit unit = allUnits.allocate();
-				unit.reset(this, unitPos, radialOrientation);
+				unit.reset(this, unitPos, towerPos, radialOrientation);
 				units.add(unit);
+				return unit;
 			}
 		}
+		return null;
 	}
 
 	public void fireUnits(final long dt) {
@@ -135,6 +126,7 @@ public abstract class Player {
 			if(!u.alive()) {
 				allUnits.deallocate(u);
 				units.remove(i);
+				attrs.registerDeath();
 			}
 		}
 	}

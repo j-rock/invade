@@ -26,5 +26,9 @@ public class BoundingCircle2D {
 	public float getRadius() {
 		return radius;
 	}
+	
+	public Position2D getCenter() {
+		return center;
+	}
 
 }

@@ -22,7 +22,7 @@ public class FragmentShader extends Shader {
 		  + "uniform sampler2D u_Texture;"
 		  + "varying vec2 v_TexCoordinate;"
 		  + "void main() {"
-		  + "  gl_FragColor = (v_Color * texture2D(u_Texture, v_TexCoordinate));"
+		  + "  gl_FragColor = v_Color * texture2D(u_Texture, v_TexCoordinate);"
 		  + "}"
 	);
 	

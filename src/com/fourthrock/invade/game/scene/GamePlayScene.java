@@ -80,15 +80,9 @@ public class GamePlayScene extends WorldEyeScene {
 		super.step(dt);
 		angleOfTime = (angleOfTime + dt/16.7f) % 360f;
 		
-		if(!human.isAlive()) {
-			// TODO - make an actual lose game scene.
+		if(!human.isAlive() || !moreThanOnePlayerAlive()) {
 			final Scene loseGameScene = new LevelChooserScene();
 			return new FadeToBlackScene(this, loseGameScene, 4000L);
-		}
-		else if(!moreThanOnePlayerAlive()){
-			final Player p = findLivingPlayer();
-			final Scene endGameScene = new EndGameScene(p.getColor(), human.getColor());
-			return new FadeToBlackScene(this, endGameScene, 4000L);
 		} else {
 			for(final Tower t : towers) {
 				t.regainHealth(dt);
@@ -203,14 +197,5 @@ public class GamePlayScene extends WorldEyeScene {
 			}
 		}
 		return false;
-	}
-	
-	private Player findLivingPlayer() {
-		for(final Player p : players) {
-			if(p.isAlive()) {
-				return p;
-			}
-		}
-		return null;
 	}
 }

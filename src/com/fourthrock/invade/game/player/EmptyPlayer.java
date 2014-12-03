@@ -21,8 +21,9 @@ public class EmptyPlayer extends Player {
 	}
 	
 	@Override
-	public void tryGenerateUnit(final ObjectPool<PlayerUnit> allUnits, final long dt) {
+	public PlayerUnit tryGenerateUnit(final ObjectPool<PlayerUnit> allUnits, final long dt) {
 		// do nothing
+		return null;
 	}
 
 }

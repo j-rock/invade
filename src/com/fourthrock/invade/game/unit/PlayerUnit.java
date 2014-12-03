@@ -26,16 +26,18 @@ public class PlayerUnit implements ColoredCircle {
 	private Player player;
 	private Position2D position;
 	private float orientation;
-	private float health;
+	private float damage;
 	private UnitState state;
+	private Position2D targetPosition;
 	private PlayerUnit targetUnit;
 	private Tower targetTower;
 
-	public void reset(final Player player, final Position2D position, final float orientation) {
+	public void reset(final Player player, final Position2D position, final Position2D targetPos, final float orientation) {
 		this.player = player;
 		this.position = position;
 		this.orientation = orientation;
-		this.health = player.getAttributes().getBaseUnitHealth();
+		this.damage = 0;
+		this.targetPosition = targetPos;
 		setMoving();
 	}
 
@@ -63,7 +65,7 @@ public class PlayerUnit implements ColoredCircle {
 	 * Gets the color used by GamePlayScene to draw the PlayerUnit
 	 */
 	public Color getRenderColor() {
-		final float healthRatio = health / player.getAttributes().getBaseUnitHealth();
+		final float healthRatio = getHealth() / player.getAttributes().getBaseUnitHealth();
 		final Color healthBlack = Color.BLACK.withAlpha(Math.min(0.6f, 1 - healthRatio));
 		return healthBlack.blend(getColor());
 	}
@@ -73,7 +75,7 @@ public class PlayerUnit implements ColoredCircle {
 	}
 
 	public float getHealth() {
-		return health;
+		return player.getAttributes().getBaseUnitHealth() - damage;
 	}
 	
 	public float getSpeed() {
@@ -93,11 +95,11 @@ public class PlayerUnit implements ColoredCircle {
 	}
 	
 	public boolean alive() {
-		return health > 0f;
+		return getHealth() > 0f;
 	}
 	
 	public void takeDamage(final float damage) {
-		health = Math.max(0f, health - damage);
+		this.damage += damage;
 	}
 	
 	public void setMoving() {
@@ -118,12 +120,17 @@ public class PlayerUnit implements ColoredCircle {
 		state = UnitState.ATTACKING_TOWER;
 	}
 	
+	
+	public void setTargetPosition(final Position2D targetPos) {
+		this.targetPosition = targetPos;
+	}
+	
 	/**
 	 * Delegates to the current UnitState how
 	 * to move towards the current Player's target.
 	 */
 	public void moveTowardsTarget(final long dt) {
-		final Position2D nextPosition = state.moveTowards(position, player.getTarget(), player.getAttributes().getUnitMoveSpeed(), dt);
+		final Position2D nextPosition = state.moveTowards(position, targetPosition, player.getAttributes().getUnitMoveSpeed(), dt);
 		setOrientation(nextPosition);
 		moveTo(nextPosition);
 	}

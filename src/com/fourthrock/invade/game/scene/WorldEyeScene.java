@@ -55,8 +55,7 @@ public abstract class WorldEyeScene implements Scene {
 	
 	@Override
 	public void handlePan(final PixelScreen2D start, final PixelScreen2D end) {
-		final Vector2D d = getWorldDisplacementFromScreen(start, end).scale(0.85f);
-		eye.displace(d);
+		eye.displace(getScaledWorldDisplacementFromScreen(start, end));
 		eye.stopMoving();
 	}
 
@@ -75,8 +74,8 @@ public abstract class WorldEyeScene implements Scene {
 		
 		final PixelScreen2D screenVelocityMillis = screenVelocity.scale(1 / 1000f).asPixelScreen2D();
 		final PixelScreen2D oneMillisFromStart = start.add(screenVelocityMillis).asPixelScreen2D();
-		final Vector2D eyeVelocity = getWorldDisplacementFromScreen(start, oneMillisFromStart);
-		eye.setMoving(eyeVelocity.scale(0.85f)); // Community recommends using a fraction of the actual fling velocity.
+		final Vector2D eyeVelocity = getScaledWorldDisplacementFromScreen(start, oneMillisFromStart);
+		eye.setMoving(eyeVelocity);
 	}
 
 	@Override
@@ -107,11 +106,12 @@ public abstract class WorldEyeScene implements Scene {
 		return picker.convertScreenToWorld(screenCoords);
 	}
 	
-	private Vector2D getWorldDisplacementFromScreen(final PixelScreen2D start, final PixelScreen2D end) {
+	private Vector2D getScaledWorldDisplacementFromScreen(final PixelScreen2D start, final PixelScreen2D end) {
 		final Position2D worldStart = getPositionFromScreen(start);
 		final Position2D worldEnd = getPositionFromScreen(end);
-		final Vector2D d = worldStart.minus(worldEnd);
-		return new Vector2D(d.x, d.y);
+		
+		// Community recommends using a fraction of the actual displacement.
+		return worldStart.minus(worldEnd).scale(0.85f);
 	}
 	
 	private static class Tap {

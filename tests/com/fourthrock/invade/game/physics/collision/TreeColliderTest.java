@@ -32,9 +32,9 @@ public class TreeColliderTest {
 			}
 		});
 		final PlayerUnit u = allUnits.allocate();
-		u.reset(player, new Position2D(0f, 0f), 0f);
+		u.reset(player, new Position2D(0f, 0f), null, 0f);
 		
-		final TreeCollider collider = new TreeCollider(towers);
+		final TreeCollider<Tower> collider = new TreeCollider<>(towers);
 		final CollisionCollection colls = collider.withdrawCollisions(allUnits);
 		
 		

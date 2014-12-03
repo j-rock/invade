@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.game.tower.Tower;
+import com.fourthrock.invade.game.unit.PlayerUnit;
+import com.fourthrock.invade.util.ObjectPool;
 
 /**
  * Represents an artificially intelligent Player.
@@ -31,11 +33,14 @@ public class AI extends Player {
 		this.targetTower = null;
 		this.achievementChoice = 0;
 	}
-
+	
 	@Override
-	public void cancelTarget() {
-		super.cancelTarget();
-		targetTower = null;
+	public PlayerUnit tryGenerateUnit(final ObjectPool<PlayerUnit> allUnits, final long dt) {
+		final PlayerUnit lastGenerated = super.tryGenerateUnit(allUnits, dt);
+		if(lastGenerated != null && targetTower != null) {
+			lastGenerated.setTargetPosition(targetTower.getPosition());
+		}
+		return lastGenerated;
 	}
 
 	@Override

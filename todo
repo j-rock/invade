@@ -1,27 +1,22 @@
-Control flow:
-  TitleScene: Create it
-  LevelChooserScene: Render level map
-  LevelMap: Assign levels
+Just make it:
+  Title screen (big bolded name)
+  Tutorial levels
+  Fonts (textures??)
+  
+Incorporate:
+  LevelChooserScene: Render according to unlocks
   Level: Create a bunch of levels!
-  EndGameScene: Have fonts and tie back to LevelChooserScene
+         Achieved boolean
+  Map: Make a big map
+       Make a randomly generated map
+  WorldEyeScene: Rectangular selection
+  WhiteAI: Decide target based on attacking units
+       AI: Different colors have different strategies
+  Human: Select all units button on screen
+  PlayerUI: Make upgrades more obvious      
+  WorldEyeScene: Make user taps prettier
 
-
-Actual game play stuff:
-  WhiteAI: decide target based on attacking units
-       AI: defend sometimes against attacking units
-
-
-Game experience:
-  PlayerAttributes: Fine tune parameters
-  TextureObject: Finish loading textures, give it a shot.
-                 
-  
-Logistics:
-  --Speed it up.
-  --Parallelize where possible
-
-  
-Possible design ideas:
-  AI: different colors have different techniques
-  Human: command different legions with bounding box selection
-         Select all units button on screen
+General:
+  Speed it up (consider parallelization)
+  Improve graphics
+  Fine tune game parameters

@@ -56,7 +56,7 @@ public class TelescopingEye {
 		
 		// v = v0 - a*dt
 		final Vector2D nextVelocity = velocity.minus(acceleration.scale(dt));
-		if(   nextVelocity.sqrMagnitude() <= 1e-14f  // velocity has diminished to epsilon
+		if(   nextVelocity.sqrMagnitude() <= 1e-15f  // velocity has diminished to epsilon
 		   || velocity.antiparallel(nextVelocity)) { // we decelerated to the point of going in the opposite direction.
 			stopMoving();
 		} else {
@@ -79,11 +79,11 @@ public class TelescopingEye {
 
 	/**
 	 * Sets the camera velocity and acceleration
-	 * such that the camera can move for a quarter second.
+	 * such that the camera can move for a second.
 	 */
 	public void setMoving(final Vector2D eyeVelocity) {
 		velocity = eyeVelocity;
-		final float timeMovingMillis = 250f;
+		final float timeMovingMillis = 300f;
 		acceleration = velocity.scale(1/timeMovingMillis);
 	}
 

@@ -122,16 +122,28 @@ public class Tower implements ColoredCircle {
 	}
 	
 	public void preRender(final CanvasRenderer renderer, final float alpha) {
-		final ScaleVec spawnScale = new ScaleVec(Tower.SPAWN_RADIUS);
-		renderer.draw(CIRCLE, position, spawnScale, getRenderColor().withAlpha(alpha * 3f /4));
-		renderer.draw(CIRCLE, position, spawnScale.scale(0.9f), Color.BLACK);
+		preRender(renderer, position, 1f, getRenderColor().withAlpha(alpha * 3f / 4));
 	}
 	
 	public void postRender(final CanvasRenderer renderer, final float alpha, final float orientation) {
-		final float orienCos = (float)Math.cos(Math.PI*orientation/360f);
-		final ScaleVec adjustedScale = Tower.SCALE.scale(1 - (orienCos * orienCos * orienCos * orienCos)/2);
-		renderer.draw(SQUARE, position, adjustedScale, orientation, getColor().withAlpha(alpha));
+		postRender(renderer, position, 1f, orientation, getColor().withAlpha(alpha));
+	}
+	
+	public static void preRender(final CanvasRenderer renderer, final Position2D position, final float scale, final Color rimColor) {
+		final ScaleVec spawnScale = new ScaleVec(Tower.SPAWN_RADIUS).scale(scale);
+		renderer.draw(CIRCLE, position, spawnScale, rimColor);
+		renderer.draw(CIRCLE, position, spawnScale.scale(0.9f), Color.BLACK);
+	}
+	
+	public static void postRender(final CanvasRenderer renderer, final Position2D position, final float scale,
+			final float orientation, final Color centerColor) {
+		final ScaleVec adjustedScale = Tower.SCALE.scale(scale * scaleOfPhase(orientation));
+		renderer.draw(SQUARE, position, adjustedScale, orientation, centerColor);
 		renderer.draw(SQUARE, position, adjustedScale.scale(0.5f), orientation, Color.BLACK);
 	}
-
+	
+	public static float scaleOfPhase(final float phase) {
+		final float cosPhase = (float)Math.cos(Math.PI*phase/360f);
+		return 1f - (cosPhase * cosPhase * cosPhase * cosPhase) / 2;
+	}
 }
