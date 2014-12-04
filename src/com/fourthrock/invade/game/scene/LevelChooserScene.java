@@ -1,22 +1,17 @@
 package com.fourthrock.invade.game.scene;
 
-import static com.fourthrock.invade.draw.DrawEnum.SQUARE;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import com.fourthrock.invade.draw.CanvasRenderer;
 import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.draw.PixelScreen2D;
-import com.fourthrock.invade.draw.ScaleVec;
 import com.fourthrock.invade.game.levels.Level;
 import com.fourthrock.invade.game.levels.LevelCircle;
 import com.fourthrock.invade.game.levels.LevelMap;
 import com.fourthrock.invade.game.physics.Position2D;
-import com.fourthrock.invade.game.physics.Vector2D;
 import com.fourthrock.invade.game.physics.collision.TreeCollider;
 import com.fourthrock.invade.game.tower.Tower;
-import com.fourthrock.invade.game.unit.PlayerUnit;
 import com.fourthrock.invade.util.Index2D;
 
 public class LevelChooserScene extends WorldEyeScene {
@@ -26,7 +21,7 @@ public class LevelChooserScene extends WorldEyeScene {
 	private Level levelChosen;
 	
 	private LevelChooserScene(final LevelMap levelMap) {
-		super(levelMap.getMinZoom(), levelMap.getMaxZoom(), new Position2D(0f, 0f), levelMap.getBounds());
+		super(levelMap.getMinZoom(), levelMap.getMaxZoom(), new Position2D(0f, 0f), levelMap.getBounds(), Color.BLACK);
 		this.levelMap = levelMap;
 		this.angleOfTime = 0f;
 		this.levelChosen = null;
@@ -84,17 +79,10 @@ public class LevelChooserScene extends WorldEyeScene {
 	}
 
 	private void drawUnlockLine(final CanvasRenderer renderer, final Position2D s, final Position2D t) {
-		final Vector2D displacement = t.minus(s);
-		final Position2D midpoint = s.add(t).scale(0.5f).asPosition();
-		final float length = displacement.magnitude() - 2 * Tower.SPAWN_RADIUS;
-
 		final float phase = (float) ((s.x + s.y + t.x + t.y + angleOfTime) * Math.PI / 180f);
-		final float height = PlayerUnit.BORDER_RADIUS * (float) (Math.abs(2 * Math.cos(phase)));
-
 		final float alpha = (float) Math.abs(Math.sin(phase));
 		final Color color = Color.SNOW.withAlpha(alpha);
-
-		renderer.draw(SQUARE, midpoint, new ScaleVec(length, height, 1f), displacement.theta(), color);
+		Tower.drawLine(renderer, s, Tower.SPAWN_RADIUS, t, Tower.SPAWN_RADIUS, phase, color);
 	}
 	
 	private TreeCollider<LevelCircle> constructCollider() {

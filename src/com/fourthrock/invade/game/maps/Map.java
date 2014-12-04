@@ -7,6 +7,8 @@ import java.util.Set;
 
 import com.fourthrock.invade.game.physics.BoundingBox2D;
 import com.fourthrock.invade.game.physics.Position2D;
+import com.fourthrock.invade.game.tower.HeavyTower;
+import com.fourthrock.invade.game.tower.LightTower;
 import com.fourthrock.invade.game.tower.Tower;
 import com.fourthrock.invade.util.Index2D;
 
@@ -87,10 +89,20 @@ public abstract class Map {
 	}
 	
 	protected Tower addNewTower(final float x, final float y) {
-		final Position2D p = new Position2D(x, y);
-		bounds = bounds.expandWith(p);
-		final Tower t = new Tower(p);
+		return addNewTower(new Tower(new Position2D(x, y)));
+	}
+	
+	protected Tower addNewHeavyTower(final float x, final float y) {
+		return addNewTower(new HeavyTower(new Position2D(x, y)));
+	}
+	
+	protected Tower addNewLightTower(final float x, final float y) {
+		return addNewTower(new LightTower(new Position2D(x, y)));
+	}
+	
+	protected Tower addNewTower(final Tower t) {
 		towers.add(t);
+		bounds = bounds.expandWith(t.getPosition(), t.getActiveRadius());
 		return t;
 	}
 }

@@ -1,6 +1,5 @@
 package com.fourthrock.invade.game.physics;
 
-import com.fourthrock.invade.game.tower.Tower;
 
 
 /**
@@ -37,8 +36,8 @@ public class BoundingBox2D {
 	 * Tries to create the smallest BoundingBox2D that contains the point
 	 * centered at Position2D and also contains this BoundingBox2D.
 	 */
-	public BoundingBox2D expandWith(final Position2D p) {
-		final float minRad = 1.2f * Tower.SPAWN_RADIUS;
+	public BoundingBox2D expandWith(final Position2D p, final float radius) {
+		final float minRad = 1.2f * radius;
 		final Position2D nextBot = new Position2D(
 				Math.min(bottomLeft.x, p.x - minRad),
 				Math.min(bottomLeft.y, p.y - minRad)

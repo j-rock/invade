@@ -1,7 +1,5 @@
 package com.fourthrock.invade.game.scene;
 
-import static com.fourthrock.invade.draw.DrawEnum.SQUARE;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -9,10 +7,8 @@ import java.util.Set;
 import com.fourthrock.invade.draw.CanvasRenderer;
 import com.fourthrock.invade.draw.Color;
 import com.fourthrock.invade.draw.PixelScreen2D;
-import com.fourthrock.invade.draw.ScaleVec;
 import com.fourthrock.invade.game.levels.Level;
 import com.fourthrock.invade.game.physics.Position2D;
-import com.fourthrock.invade.game.physics.Vector2D;
 import com.fourthrock.invade.game.physics.collision.AttackTowerCollision;
 import com.fourthrock.invade.game.physics.collision.AttackUnitCollision;
 import com.fourthrock.invade.game.physics.collision.CollisionCollection;
@@ -45,7 +41,7 @@ public class GamePlayScene extends WorldEyeScene {
 
 	
 	public GamePlayScene(final Level level, final Color humanColor) {
-		super(level.getMinZoom(), level.getMaxZoom(), level.getHumanPosition(), level.getBounds());
+		super(level.getMinZoom(), level.getMaxZoom(), level.getHumanPosition(), level.getBounds(), humanColor);
 		
 		this.units = new ObjectPool<>(new Allocator<PlayerUnit>(){
 			@Override public PlayerUnit allocate() {
@@ -165,25 +161,19 @@ public class GamePlayScene extends WorldEyeScene {
 	}
 
 	/**
-	 * Draws a thin line from Tower ts to Tower tt with Color c
+	 * Draws a thin line from Tower ts to Tower tt
 	 */
 	private void drawTowerLine(final CanvasRenderer renderer, final Tower ts, final Tower tt, final float alphaMultiplier) {
-		final Position2D s = ts.getPosition();
-		final Position2D t = tt.getPosition();
-		final Vector2D displacement = t.minus(s);
-		final Position2D midpoint = s.add(t).scale(0.5f).asPosition();
-		final float length = displacement.magnitude() - 2 * Tower.SPAWN_RADIUS;
-		
 		final float phase = (float) ((ts.getOrientation() + tt.getOrientation() + angleOfTime) * Math.PI / 180f);
-		final float height = PlayerUnit.BORDER_RADIUS * (float)(Math.abs(2 * Math.cos(phase)));
-		
 		final float alpha = (float)Math.abs(Math.sin(phase)) * alphaMultiplier;
 		final Color color =
 			ts.getColor().equals(tt.getColor())
 				? ts.getColor().withAlpha(alpha)
 				: Color.SNOW.withAlpha(alpha);
 		
-		renderer.draw(SQUARE, midpoint, new ScaleVec(length, height, 1f), displacement.theta(), color);
+		Tower.drawLine(renderer, ts.getPosition(), ts.getActiveRadius(),
+								 tt.getPosition(), tt.getActiveRadius(),
+								 phase, color);
 	}
 
 	private boolean moreThanOnePlayerAlive() {

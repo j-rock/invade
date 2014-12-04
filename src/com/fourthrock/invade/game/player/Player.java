@@ -91,8 +91,7 @@ public abstract class Player {
 	 * can generate a new PlayerUnit at a random tower.
 	 */
 	public PlayerUnit tryGenerateUnit(final ObjectPool<PlayerUnit> allUnits, final long dt) {
-		final int maxUnitCount = Math.min(6, towers.size()) * attrs.getMaxUnitsPerTowerCount();
-		if (units.size() >= maxUnitCount) {
+		if (units.size() >= attrs.getMaxUnitCapacity()) {
 			unitGenTime = 0;
 		} else if (towers.size() > 0) {
 			unitGenTime += dt;
@@ -103,7 +102,7 @@ public abstract class Player {
 				final int randIndex = (int)(Math.random() * towers.size());
 				final Tower tower = towers.get(randIndex);
 				final Position2D towerPos = tower.getPosition();
-				final Position2D unitPos = towerPos.randomPositionOnCircle(Tower.SPAWN_RADIUS);
+				final Position2D unitPos = towerPos.randomPositionOnCircle(tower.getActiveRadius());
 				final float radialOrientation = unitPos.minus(towerPos).theta();
 				final PlayerUnit unit = allUnits.allocate();
 				unit.reset(this, unitPos, towerPos, radialOrientation);
@@ -132,6 +131,7 @@ public abstract class Player {
 	}
 	
 	public void addTower(final Tower t) {
+		attrs.handleNewTower(t);
 		towers.add(t);
 	}
 	
@@ -148,6 +148,7 @@ public abstract class Player {
 				return;
 			}
 		}
+		attrs.handleLoseTower(t);
 	}
 	
 	
@@ -160,7 +161,4 @@ public abstract class Player {
 	 * Spend achievement points on skills
 	 */
 	public abstract void spendAchievementPoints();
-
-	
-	
 }

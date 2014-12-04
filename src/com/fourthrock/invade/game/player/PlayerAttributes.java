@@ -9,13 +9,16 @@ import com.fourthrock.invade.game.unit.PlayerUnit;
  * Handles upgrading logic.
  */
 public class PlayerAttributes {
-	private int maxUnitsPerTowerCount;
-	private long unitCreationWaitTime;
+	private static final long MAX_LEVEL = 9;
+	private static final long unitCreationWaitTime = 500L;
 	
-	private float unitMoveSpeed;
-	private float unitBaseHealth;
-	private float unitAttackSpeed;
-	private float unitAttackRadius;
+	private final float healthPercentage;
+	private int maxUnitCapacity;
+	
+	private int speedLevel;
+	private int healthLevel;
+	private int attackLevel;
+	private int attackRadiusLevel;
 	
 	private int level;
 	private int progress;
@@ -23,17 +26,10 @@ public class PlayerAttributes {
 	
 	public PlayerAttributes(final float healthPercentage) {
 		 // TODO - determine properly
+		this.healthPercentage = healthPercentage;
+		this.maxUnitCapacity = 0;
 		
-		final long ONE_SEC = 1000L;
-		
-		this.maxUnitsPerTowerCount = 15;
-		this.unitCreationWaitTime = ONE_SEC / 2;
-		
-		this.unitMoveSpeed    = Tower.BORDER_RADIUS / (1.8f * ONE_SEC);
-		this.unitAttackSpeed  = Tower.REGEN_RATE / 2f;
-		this.unitAttackRadius = PlayerUnit.BORDER_RADIUS * 6f;
-		this.unitBaseHealth   = healthPercentage * 2000 * unitAttackSpeed;
-		
+		speedLevel = healthLevel = attackLevel = attackRadiusLevel = 0;
 		this.level = 1;
 		this.progress = 0;
 		this.achievementPoints = 0;
@@ -42,30 +38,29 @@ public class PlayerAttributes {
 	public PlayerAttributes() {
 		this(1f);
 	}
-	
-
-	public int getMaxUnitsPerTowerCount() {
-		return maxUnitsPerTowerCount;
-	}
 
 	public long getUnitCreationWaitTime() {
 		return unitCreationWaitTime;
 	}
 	
 	public float getUnitMoveSpeed() {
-		return unitMoveSpeed;
+		final float baseSpeed = Tower.BORDER_RADIUS / (1.8f * 1000L);
+		return upgradeFunc(speedLevel, baseSpeed);
 	}
 	
 	public float getUnitAttackSpeed() {
-		return unitAttackSpeed;
-	}
-	
-	public float getUnitAttackRadius() {
-		return unitAttackRadius;
+		final float baseAttack = Tower.REGEN_RATE / 3f;
+		return upgradeFunc(attackLevel, baseAttack);
 	}
 	
 	public float getBaseUnitHealth() {
-		return unitBaseHealth;
+		final float baseHealth = healthPercentage * 2000f * Tower.REGEN_RATE / 2f;
+		return upgradeFunc(healthLevel, baseHealth);
+	}
+	
+	public float getUnitAttackRadius() {
+		final float baseAttackRadius = PlayerUnit.BORDER_RADIUS * 5f;
+		return upgradeFunc(attackRadiusLevel, baseAttackRadius);
 	}
 	
 	public int getAchievementPoints() {
@@ -75,6 +70,10 @@ public class PlayerAttributes {
 	public float getProgressRatio() {
 		final int remainingPoints = remainingPointsUntilNextLevel();
 		return ((float)progress) / (progress + remainingPoints);
+	}
+	
+	public int getMaxUnitCapacity() {
+		return Math.min(130, maxUnitCapacity);
 	}
 
 	public void registerKill() {
@@ -89,22 +88,56 @@ public class PlayerAttributes {
 		registerPoints(70);
 	}
 
+	public void handleNewTower(final Tower t) {
+		updateStatsByTower(1, t);
+	}
+
+	public void handleLoseTower(final Tower t) {
+		updateStatsByTower(-1, t);
+	}
+
 	public void improveAttack() {
-		if(readyTakeAchievement()) {
-			unitAttackSpeed *= 1.1;
+		if(canImproveAttack()) {
+			achievementPoints--;
+			attackLevel++;
 		}
 	}
 
 	public void improveHealth() {
-		if(readyTakeAchievement()) {
-			unitBaseHealth *= 1.1;
+		if(canImproveHealth()) {
+			achievementPoints--;
+			healthLevel++;
 		}
 	}
 
 	public void improveSpeed() {
-		if(readyTakeAchievement()) {
-			unitMoveSpeed *= 1.1;
+		if(canImproveSpeed()) {
+			achievementPoints--;
+			speedLevel++;
 		}
+	}
+	
+	public boolean canImproveAttack() {
+		return canImprove(attackLevel);
+	}
+	
+	public boolean canImproveHealth() {
+		return canImprove(healthLevel);
+	}
+	
+	public boolean canImproveSpeed() {
+		return canImprove(speedLevel);
+	}
+	
+	private boolean canImprove(final int level) {
+		return achievementPoints > 0 && level < MAX_LEVEL;
+	}
+	
+	private void updateStatsByTower(final int sign, final Tower t) {
+		attackLevel     += sign * t.getAttackLevelBuff();
+		healthLevel     += sign * t.getHealthLevelBuff();
+		speedLevel      += sign * t.getSpeedLevelBuff();
+		maxUnitCapacity += sign * t.getUnitCapacity();
 	}
 	
 	/**
@@ -128,16 +161,12 @@ public class PlayerAttributes {
 	
 	private static int minPointsForLevel(final int lvl) {
 		// O(n^2 / logn) function for level growth.
-		return 100 + (int)((8 * lvl * lvl) / Math.log(lvl + 1));
+		return 100 + (int)((16 * lvl * lvl) / Math.log(lvl + 1));
 	}
 
-	private boolean readyTakeAchievement() {
-		if(achievementPoints > 0) {
-			achievementPoints--;
-			return true;
-		} else {
-			return false;
-		}
+	private static float upgradeFunc(final int level, final float baseAmount) {
+		return baseAmount * (float)(Math.pow(1.1f, Math.min(MAX_LEVEL, level)));
 	}
+
 
 }

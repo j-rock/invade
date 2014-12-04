@@ -9,6 +9,7 @@ import com.fourthrock.invade.game.maps.Map;
 import com.fourthrock.invade.game.maps.PentagonStarMap;
 import com.fourthrock.invade.game.physics.BoundingBox2D;
 import com.fourthrock.invade.game.physics.Position2D;
+import com.fourthrock.invade.game.tower.Tower;
 import com.fourthrock.invade.util.Index2D;
 
 /**
@@ -83,7 +84,7 @@ public class LevelMap {
 	
 	private void addNewLevel(final float x, final float y, final Level l) {
 		final Position2D p = new Position2D(x, y);
-		bounds = bounds.expandWith(p);
+		bounds = bounds.expandWith(p, Tower.SPAWN_RADIUS);
 		levels.add(l);
 		levelToPosition.put(l, p);
 	}

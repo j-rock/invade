@@ -20,7 +20,7 @@ import com.fourthrock.invade.game.tower.Tower;
  *
  */
 public class PlayerUnit implements ColoredCircle {
-	public static final float BORDER_RADIUS = 0.3f;
+	public static final float BORDER_RADIUS = 0.4f;
 	public static ScaleVec SCALE = new ScaleVec(BORDER_RADIUS);// * (float)Math.sqrt(2));
 
 	private Player player;

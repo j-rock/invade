@@ -12,6 +12,7 @@ import com.fourthrock.invade.draw.PixelScreen2D;
 import com.fourthrock.invade.draw.RenderScreen2D;
 import com.fourthrock.invade.draw.ScaleVec;
 import com.fourthrock.invade.game.player.Player;
+import com.fourthrock.invade.game.player.PlayerAttributes;
 
 /**
  * Encapsulates the logic for rendering Player stats
@@ -21,7 +22,8 @@ import com.fourthrock.invade.game.player.Player;
  *
  */
 public class PlayerUI {
-	private final Player player;
+	private final PlayerAttributes attributes;
+	private final Color color;
 	private final float buttonRadius;
 
 	private RenderScreen2D attackPosition;
@@ -30,7 +32,8 @@ public class PlayerUI {
 	private RenderScreen2D progressBarPosition;
 
 	public PlayerUI(final Player player) {
-		this.player = player;
+		this.attributes = player.getAttributes();
+		this.color = player.getColor();
 		this.buttonRadius = 0.15f;
 	}
 	
@@ -42,11 +45,11 @@ public class PlayerUI {
 	 */
 	public boolean handleTap(final PixelScreen2D tapPos) {
 		if(withinSqrDist(attackPosition, tapPos)) {
-			player.getAttributes().improveAttack();
+			attributes.improveAttack();
 		} else if(withinSqrDist(healthPosition, tapPos)) {
-			player.getAttributes().improveHealth();
+			attributes.improveHealth();
 		} else if(withinSqrDist(speedPosition, tapPos)) {
-			player.getAttributes().improveSpeed();
+			attributes.improveSpeed();
 		} else {
 			return false;
 		}
@@ -57,16 +60,15 @@ public class PlayerUI {
 	 * Draw the user interface with the renderer.
 	 */
 	public void render(final CanvasRenderer renderer) {
-		final float progress = player.getAttributes().getProgressRatio();
+		final float progress = attributes.getProgressRatio();
 		calculatePositions(progress);
 		
 		final ScaleVec progressScale = new ScaleVec(progress*2*SCREEN_RATIO, 0.03f, 1f);
-		renderer.drawScreen(SQUARE, progressBarPosition, progressScale, player.getColor());
+		renderer.drawScreen(SQUARE, progressBarPosition, progressScale, color);
 		
-		final float alpha = player.getAttributes().getAchievementPoints() > 0 ? 0f : 0.5f;
-		drawAttack(renderer, darken(alpha, Color.PURPLE));
-		drawHealth(renderer, darken(alpha, Color.RED));
-		drawSpeed(renderer,  darken(alpha, Color.YELLOW));
+		drawAttack(renderer, darkenOn(attributes.canImproveAttack(), Color.PURPLE));
+		drawHealth(renderer, darkenOn(attributes.canImproveHealth(), Color.RED));
+		drawSpeed(renderer,  darkenOn(attributes.canImproveSpeed(), Color.YELLOW));
 	}
 	
 	private void drawAttack(final CanvasRenderer renderer, final Color color) {
@@ -116,7 +118,8 @@ public class PlayerUI {
 		this.speedPosition  = new RenderScreen2D(centerX + shift, liftedY);
 	}
 	
-	private static Color darken(final float alpha, final Color c) {
+	private static Color darkenOn(final boolean cond, final Color c) {
+		final float alpha = cond ? 0f : 0.5f;
 		return Color.BLACK.withAlpha(alpha).blend(c);
 	}
 	

@@ -135,7 +135,7 @@ public class Level {
 	public void render(final CanvasRenderer renderer, final Position2D lPos, final float angleOfTime) {		
 		final float phase = (Math.abs(lPos.x + lPos.y) + angleOfTime) % 360f;
 		final Color rimColor = colorOfPhaseTime(phase, angleOfTime);
-		Tower.preRender(renderer, lPos, 1f, rimColor);
+		Tower.preRender(renderer, lPos, Tower.SPAWN_RADIUS, rimColor);
 		
 		final BoundingCircle2D bounds = map.getBounds().toCircleBounds();
 		final Position2D center = bounds.getCenter();
@@ -150,8 +150,8 @@ public class Level {
 			
 			final float tMapPhase = (tMapPos.x + tMapPos.y + phase) % 360f;
 			
-			Tower.preRender(renderer, tMapPos, miniScale, rimColor);
-			Tower.postRender(renderer, tMapPos, miniScale, tMapPhase, rimColor);
+			Tower.preRender(renderer, tMapPos, Tower.SPAWN_RADIUS * miniScale, rimColor);
+			Tower.postRender(renderer, tMapPos, Tower.BORDER_RADIUS * miniScale, tMapPhase, rimColor);
 		}
 	}
 

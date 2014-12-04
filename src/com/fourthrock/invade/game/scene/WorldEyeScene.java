@@ -31,12 +31,14 @@ public abstract class WorldEyeScene implements Scene {
 	private final TelescopingEye eye;
 	private final Picker2D picker;
 	private final List<Tap> userTaps;
+	private final Color tapColor;
 
-	public WorldEyeScene(final float minZoom, final float maxZoom, final Position2D startEye, final BoundingBox2D cameraBounds) {
+	public WorldEyeScene(final float minZoom, final float maxZoom, final Position2D startEye, final BoundingBox2D cameraBounds, final Color tapColor) {
 		eye = new TelescopingEye(minZoom, maxZoom, startEye, cameraBounds.toCircleBounds());
 		
 		this.picker = new Picker2D(this);
 		this.userTaps = new ArrayList<>();
+		this.tapColor = tapColor;
 	}
 	
 	@Override
@@ -97,7 +99,7 @@ public abstract class WorldEyeScene implements Scene {
 				userTaps.remove(i);
 			} else {
 				tap.radius -= 17f / 400; // magic number that looks pretty.
-				renderer.draw(SQUARE, tap.pos, tap.getScale(), Tap.COLOR);
+				renderer.draw(SQUARE, tap.pos, tap.getScale(), tapColor);
 			}
 		}
 	}
@@ -115,7 +117,6 @@ public abstract class WorldEyeScene implements Scene {
 	}
 	
 	private static class Tap {
-		public static Color COLOR = Color.RED;
 		public final Position2D pos;
 		public float radius;
 		

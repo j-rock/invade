@@ -7,14 +7,17 @@ Incorporate:
   LevelChooserScene: Render according to unlocks
   Level: Create a bunch of levels!
          Achieved boolean
-  Map: Make a big map
-       Make a randomly generated map
+  Map: Make a randomly generated map
   WorldEyeScene: Rectangular selection
+  				 Make user taps prettier
   WhiteAI: Decide target based on attacking units
        AI: Different colors have different strategies
   Human: Select all units button on screen
-  PlayerUI: Make upgrades more obvious      
-  WorldEyeScene: Make user taps prettier
+  PlayerUI: Make upgrades more obvious
+  		    Demonstrate all relative stats
+  ColorChoiceScene: Animation augmenting "selected" color, have go button.
+  Tower: Give attack radius buff
+
 
 General:
   Speed it up (consider parallelization)
