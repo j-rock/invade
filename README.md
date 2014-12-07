@@ -1,5 +1,8 @@
 # Invade
 
+Project is being moved to [InvadeV2] while I try out libgdx.
+
+
 Invade is an Android game inspired by ICE
 
 See [ICE gameplay]. I hope to get a video of Invade gameplay soon.
@@ -11,13 +14,7 @@ Mode and I didn't feel like forking over money for the
 > In the process, I could learn a little bit about Android
 > game development, as well as *finally* make a full game.
 
-The project is made with Eclipse ADT, so after downloading [Eclipse ADT],
-download the project and: 
-```sh
-$ File > Import > Existing Project From Workspace
-```
-
-
 
 [ICE gameplay]:https://www.youtube.com/watch?v=WQyWHS7iQTk
 [Eclipse ADT]:http://developer.android.com/tools/sdk/eclipse-adt.html
+[InvadeV2]:http://github.com/j-rock/InvadeV2
