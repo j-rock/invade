@@ -100,6 +100,7 @@ public class GamePlayScene extends WorldEyeScene {
 	}
 
 	private void processCollisions(final CollisionCollection colls, final long dt) {
+		// TODO - parallel all of these
 		for(final MoveBackCollision mbc : colls.getMoveBackCollisions()) {
 			mbc.process(dt);
 		}

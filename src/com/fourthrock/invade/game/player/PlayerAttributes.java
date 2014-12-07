@@ -44,7 +44,7 @@ public class PlayerAttributes {
 	}
 	
 	public float getUnitMoveSpeed() {
-		final float baseSpeed = Tower.BORDER_RADIUS / (1.8f * 1000L);
+		final float baseSpeed = Tower.BORDER_RADIUS / (1.5f * 1000L);
 		return upgradeFunc(speedLevel, baseSpeed);
 	}
 	

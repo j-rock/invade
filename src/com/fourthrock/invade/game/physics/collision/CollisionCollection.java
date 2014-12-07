@@ -21,6 +21,8 @@ public class CollisionCollection {
 	public final ArrayList<MoveBackCollision> moveBacks;
 	
 	public CollisionCollection() {
+		// TODO - make sure ArrayLists can handle concurrent modification.
+		
 		attackTowers = new ArrayList<>(MIN_CAPACITY);
 		attackUnits  = new ArrayList<>(MIN_CAPACITY);
 		moveBacks    = new ArrayList<>(MIN_CAPACITY);

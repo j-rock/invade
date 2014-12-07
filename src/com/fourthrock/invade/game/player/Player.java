@@ -141,14 +141,14 @@ public abstract class Player {
 		// search to find and remove a Tower.
 		// Player's don't lose Towers too often,
 		// so this shouldn't slow us down too much.
-		
+
+		attrs.handleLoseTower(t);
 		for(int i=towers.size()-1; i>=0; i--) {
 			if(towers.get(i).equals(t)) {
 				towers.remove(i);
 				return;
 			}
 		}
-		attrs.handleLoseTower(t);
 	}
 	
 	

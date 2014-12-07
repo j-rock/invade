@@ -27,9 +27,9 @@ public class TreeCollider<StaticCircle extends ColoredCircle> {
 	private final List<StaticCircle> staticObjs;
 	private final SpatialIndex staticIndex;
 	
-	public TreeCollider(final List<StaticCircle> allTowers) {
+	public TreeCollider(final List<StaticCircle> allStatics) {
 		this.colls = new CollisionCollection();
-		this.staticObjs = allTowers;
+		this.staticObjs = allStatics;
 		this.staticIndex = new RTree();
 		staticIndex.init(null);
 		
@@ -56,6 +56,7 @@ public class TreeCollider<StaticCircle extends ColoredCircle> {
 
 		
 		colls.clear();
+		// TODO - parallel
 		for(final PlayerUnit u : allUnits) {
 			final List<StaticCircle> maybeCollidingStatics = findNearByStatics(u, staticIndex, staticObjs);
 			final List<PlayerUnit> maybeCollidingUnits = findNearByPlayerUnits(u, unitIndex, allUnits);

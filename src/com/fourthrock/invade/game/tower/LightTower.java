@@ -3,7 +3,7 @@ package com.fourthrock.invade.game.tower;
 import com.fourthrock.invade.game.physics.Position2D;
 
 public class LightTower extends Tower {
-	private static final float SIZE_INC = 0.7f;
+	private static final float SIZE_INC = 0.5f;
 
 	public LightTower(final Position2D position) {
 		super(position);

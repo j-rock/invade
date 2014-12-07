@@ -21,5 +21,6 @@ Incorporate:
 
 General:
   Speed it up (consider parallelization)
+  Incorporate LiquidFun/Box2D
   Improve graphics
   Fine tune game parameters
